@@ -1,7 +1,7 @@
-#! Data Recording API
+##! Data Recording API
 # NI
 #
-# Pre-requests: UHD with Python API enabled
+# Pre-requests: Install UHD with Python API enabled
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
@@ -21,6 +21,9 @@ from sigmf.utils import get_data_type_str
 
 # To save to specific path
 import os
+
+# To meausre elapsed time
+import time
 
 
 def parse_args():
@@ -52,44 +55,42 @@ def main():
     if not isinstance(args.channels, list):
         args.channels = [args.channels]
     for i in range(args.nrecords):
+        start_time = time.time()
         rx_data = usrp.recv_num_samps(num_samps, args.freq, args.rate, args.channels, args.gain)
+        end_time = time.time()
+        time_elapsed = end_time - start_time
+        print("Elapsed time of getting rx samples", time_elapsed)
         print("Received Rx Data of snapshot number: ", i)
+        # print(data)
 
-        # Combine real and imag in a vector as real[0], imag[0],real[1], imag[1]
-        a = 0
-        b = 0
-        data = np.zeros(2 * num_samps, dtype="float32")
-        for a in range(num_samps):
-            data[b] = rx_data.real[args.channels, a]
-            b = b + 1
-            data[b] = rx_data.imag[args.channels, a]
-            b = b + 1
-
-        # Write RX samples to file
-        # write those samples to file in rf32_le
-        # data.tofile('rx_data' + str(i) + '.sigmf-data')
-        data_output_file = os.path.join(args.output_file, "rx_data_" + str(i) + ".sigmf-data")
+        ## Write RX samples to file in cf32_le
+        start_time = time.time()
+        dataset_filename = "rx_data_" + str(i) + ".sigmf-data"
+        data_output_file = os.path.join(args.output_file, dataset_filename)
         # data_output_file  = os.path.join(os.path.expanduser('~'), args.output_file, 'rx_data_' + str(i) + '.sigmf-data')
-        data.tofile(data_output_file)
+        rx_data.tofile(data_output_file)
         print(data_output_file)
 
-        # Write Meta Data to file
-        # create the metadata
+        ## create the metadata
         meta = SigMFFile(
-            # data_file='rx_data_' + str(i) + '.sigmf-data', # extension is optional
             data_file=data_output_file,  # extension is optional
             global_info={
-                SigMFFile.DATATYPE_KEY: "rf32_le",  # in this case, 'rf32_le'
+                SigMFFile.DATATYPE_KEY: "cf32_le",  # in this case, 'cf32_le'
                 SigMFFile.SAMPLE_RATE_KEY: args.rate,
-                SigMFFile.AUTHOR_KEY: "abdo.gaber@ni.com",
-                SigMFFile.DESCRIPTION_KEY: "rx_data_" + str(i),
+                SigMFFile.NUM_CHANNELS_KEY: len(args.channels),
+                SigMFFile.AUTHOR_KEY: "Abdo Gaber abdo.gaber@ni.com",
+                SigMFFile.DESCRIPTION_KEY: "5GNR Waveform: NR, FR1, DL, FDD, 64-QAM, 30 kHz SCS, 20 MHz bandwidth, TM3.1",
+                SigMFFile.RECORDER_KEY: "UHD Python API",
+                SigMFFile.LICENSE_KEY: "URL to the license document",
+                SigMFFile.HW_KEY: "USRP X310",
+                # SigMFFile.DATASET_KEY: dataset_filename,
                 SigMFFile.VERSION_KEY: sigmf.__version__,
             },
         )
 
         # create a capture key at time index 0
         meta.add_capture(
-            0,
+            0,  # Sample Start
             metadata={
                 SigMFFile.FREQUENCY_KEY: args.freq,
                 SigMFFile.DATETIME_KEY: dt.datetime.utcnow().isoformat() + "Z",
@@ -98,22 +99,45 @@ def main():
 
         # add an annotation
         meta.add_annotation(
-            0,
-            num_samps,
+            0,  # Sample Start
+            num_samps,  # Sample count
             metadata={
                 SigMFFile.FLO_KEY: args.freq - args.rate / 2,
                 SigMFFile.FHI_KEY: args.freq + args.rate / 2,
-                SigMFFile.COMMENT_KEY: "rx_data_" + str(i),
+                SigMFFile.COMMENT_KEY: dataset_filename,
+                SigMFFile.LABEL_KEY: "5GNR_FR1",
+                SigMFFile.COMMENT_KEY: "",
+                "signal:detail": {
+                    "system": "5GNR Release 15",
+                    "standard": "5GNR_FR1",
+                    "duplexing": "FDD",
+                    "multiplexing": "ofdm",
+                    "multiple_access": "ofdm",
+                    "type": "digital",
+                    "mod_class": "qam",
+                    "carrier_variant": "single_carrier",
+                    "order": 64,
+                    "bandwidth": 2000000.0,
+                    "channel": 78,  # channel number of the signal within the communication system.
+                },
+                "signal:emitter": {
+                    "seid": 1,  # Unique ID of the emitter
+                    "manufacturer": "NI",
+                    "power_tx": 8.0,
+                },
             },
         )
 
-        # check for mistakes & write to disk
+        # check for mistakes
         assert meta.validate()
 
-        # meta.tofile('rx_data' + str(i) + '.sigmf-meta') # extension is optional
+        ## Write Meta Data to file
         meta_output_file = os.path.join(args.output_file, "rx_data_" + str(i) + ".sigmf-meta")
         # meta_output_file  = os.path.join(os.path.expanduser('~'), args.output_file, 'rx_data_' + str(i) + '.sigmf-meta')
         meta.tofile(meta_output_file)  # extension is optional
+        end_time = time.time()
+        time_elapsed = end_time - start_time
+        print("Elapsed time of writing data and meta data files", time_elapsed)
         print(meta_output_file)
 
 

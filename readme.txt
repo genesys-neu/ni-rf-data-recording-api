@@ -1,2 +1,2 @@
 terminal command:
-python3.9 rf_data_recorder_usrp_uhd.py --nrecords 5 --args="type=x300,addr=192.168.40.2" --freq 2e9 --rate 31e6 --duration 10e-3 --channels 0 --gain 30 --output-file /home/agaber/workarea/recorded-data
+python3.9 rf_data_recorder_usrp_uhd.py --nrecords 10 --args="type=x300,addr=192.168.40.2" --freq 2e9 --rate 31e6 --duration 10e-3 --channels 0 --gain 30 --output-file /home/agaber/workarea/recorded-data
