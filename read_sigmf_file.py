@@ -1,6 +1,6 @@
 import sigmf
 
-handle = sigmf.sigmffile.fromfile("recorded-data/rx_data_0.sigmf")
+handle = sigmf.sigmffile.fromfile("/home/agaber/workarea/recorded-data/rx_data_0.sigmf")
 print(handle.read_samples())  # returns all timeseries data
 handle.get_global_info()  # returns 'global' dictionary
 print(handle.get_global_info)
