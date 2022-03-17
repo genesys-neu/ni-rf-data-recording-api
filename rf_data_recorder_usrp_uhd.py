@@ -11,7 +11,7 @@ import numpy as np
 import uhd
 
 # To create USRP streamer
-from uhd import libpyuhd as lib
+import uhd
 
 # To write Data to sigmf file
 import sigmf
@@ -83,7 +83,7 @@ def main():
 
     # set up the stream
     print("Setup the stream ...")
-    st_args = lib.usrp.stream_args("fc32", "sc16")
+    st_args = uhd.usrp.StreamArgs("fc32", "sc16")
     st_args.channels = args.channels  # If you're only using one channel, then this is simply [0]
     rx_streamer = usrp.get_rx_stream(st_args)
 
