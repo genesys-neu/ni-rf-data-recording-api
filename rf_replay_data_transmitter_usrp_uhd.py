@@ -1,5 +1,8 @@
 ##! TX Waveform Playback
-# NI
+#
+# Copyright 2022 NI Dresden
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Pre-requests: Install UHD with Python API enabled
 # Current Supported waveform format is TDMS
@@ -16,14 +19,13 @@ import uhd
 from nptdms import TdmsFile
 from nptdms import tdms
 
-stop_signal_called = False
+stop_tx_signal_called = False
 
 # Ctrl+C handler
 def signal_handler(sig, frame):
-    global stop_signal_called
+    global stop_tx_signal_called
     print("Exiting . . .")
-    stop_signal_called = True
-
+    stop_tx_signal_called = True
 
 # ************************************************************************
 #    * Set up the program options
@@ -39,7 +41,7 @@ def parse_args():
     parser.add_argument(
         "-a",
         "--args",
-        default="type=x300,addr=192.168.60.2,master_clock_rate=184.32e6",
+        default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6",
         type=str,
         help="Device args to use when connecting to the USRP.",
     )
@@ -82,14 +84,14 @@ def parse_args():
     parser.add_argument(
         "-p",
         "--path",
-        default=("../../LabVIEW/TDMS Waveform Files/"),
+        default=("TDMS Waveform Files/"),
         type=str,
         help="path to TDMS file",
     )
     parser.add_argument(
         "-fl",
         "--file",
-        default=("NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM-OFDM-TM3.1.tdms"),
+        default=("NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1.tdms"),
         type=str,
         help="tdms file name",
     )
@@ -114,7 +116,6 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-
 def main():
     """
     Run Tx waveform playback
@@ -122,7 +123,6 @@ def main():
     args = parse_args()
 
     # Print help message
-    print("help")
     print("UHD/RFNoC Replay samples from file ")
     print("This application uses the Replay block to playback data from a file to ")
     print("a radio")
@@ -243,9 +243,7 @@ def main():
     tx_data_complex = tx_data_float[::2] + 1j * tx_data_float[1::2]
 
     # Get the file size
-    file_size = (
-        len(tx_data_float) * sample_size / 2
-    )  # bytes, 16-bit per I or Q of each sample, 2 bytes per each
+    file_size = len(tx_data_float) * sample_size / 2
 
     # Calculate the number of 64-bit words and samples to replay
     words_to_replay = int(file_size / replay_word_size)  # bytes
@@ -341,7 +339,7 @@ def main():
         # Setup SIGINT handler (Ctrl+C)
         signal.signal(signal.SIGINT, signal_handler)
         print("Press Ctrl+C to stop RF streaming")
-        while stop_signal_called == False:
+        while stop_tx_signal_called == False:
             time.sleep(0.1)  # sleep for 100ms
         # Remove SIGINT handler
         # signal.signal(signal.SIGINT, signal_dfl)
@@ -364,7 +362,6 @@ def main():
         print("Waiting until replay buffer is clear...")
         stream_duration = args.nsamps / args.rate
         time.sleep((stream_duration * 1000) + 0.5)  # Slop factor
-
 
 if __name__ == "__main__":
     sys.exit(not main())
