@@ -7,7 +7,7 @@ from nptdms import tdms
 
 # path to TDMS file
 tdms_file = TdmsFile.read(
-    "/home/agaber/workarea/lti-6g-sw/data-recording-tools/LabVIEW/TDMS Waveform Files/NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1.tdms"
+    "/home/agaber/workarea/lti-6g-sw/data-recording-tools/uhd/uhd-python-api/waveform-files/tdms/NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1.tdms"
 )
 
 
@@ -45,3 +45,14 @@ property_value = tdms_file["waveforms"]["Channel 0"].properties["NI_RF_SignalBan
 print("Example to get channel property value (bandwidth): ", str(property_value))
 print("Example to get IQ Rate: ", NI_RF_IQRate)
 # ('NI_RF_IQRate', 30720000.0), ('NI_RF_SignalBandwidth', 20000000.0), ('NI_RF_WaveformType', 'InterleavedIQCluster'), ('NI_RF_PAPR', 11.466749575704236), ('NI_RF_RuntimeScaling', -1.5), ('dt', 3.2552083333333335e-08), ('t0', 0.0)])
+
+
+# get all channels
+group = tdms_file["ModulationSettings"]
+all_group_channels = group.channels()
+print("Example to get all group channels: ", all_group_channels)
+# Get all properites
+channel_properties = group.properties
+print("Example to get all channel properties: ", channel_properties)
+description = channel.properties["description"]
+print("Waveform Description", description)

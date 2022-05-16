@@ -11,20 +11,24 @@ from pickle import FALSE, TRUE
 from unicodedata import name
 import numpy as np
 import uhd
+
 # To save to specific path
 import os
 from pathlib import Path
+
 # To measure elapsed time
 import time
+
 # To print colours
 from termcolor import colored, cprint
 import sync_settings
+
 # import related functions
 import write_rx_recorded_data_in_sigmf
 
 
 def rf_data_recorder(rx_args, tx_args):
-    """ RX Data Recorder"""
+    """RX Data Recorder"""
 
     # Define number of samples to fetch
     rx_args.num_rx_samps = int(np.ceil(rx_args.duration * rx_args.rate))
@@ -64,7 +68,12 @@ def rf_data_recorder(rx_args, tx_args):
         # Fetch data from usrp device
         start_time = time.time()
         rx_data = usrp.recv_num_samps(
-            rx_args.num_rx_samps, rx_args.freq, rx_args.rate, rx_args.channels, rx_args.gain, streamer=rx_streamer
+            rx_args.num_rx_samps,
+            rx_args.freq,
+            rx_args.rate,
+            rx_args.channels,
+            rx_args.gain,
+            streamer=rx_streamer,
         )
         print(
             "Received ",
@@ -80,15 +89,16 @@ def rf_data_recorder(rx_args, tx_args):
             rx_args.coerced_rx_gain = usrp.get_rx_gain()
             rx_args.coerced_rx_bandwidth = usrp.get_rx_bandwidth()
             rx_args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data yet
-        
+
         # Write data into files with the given format
         if rx_args.rx_recorded_data_saving_format == "SigMF":
-            write_rx_recorded_data_in_sigmf.write_rx_recorded_data_in_sigmf(rx_data, rx_args, tx_args)
+            write_rx_recorded_data_in_sigmf.write_rx_recorded_data_in_sigmf(
+                rx_data, rx_args, tx_args
+            )
         else:
             # Report error.
-            print("ERROR: selected writing rx recorded data format is not supported")
-            return
-        
+            raise Exception("ERROR: selected writing rx recorded data format is not supported")
+
         end_time = time.time()
         time_elapsed = end_time - start_time
         time_elapsed_ms = int(time_elapsed * 1000)

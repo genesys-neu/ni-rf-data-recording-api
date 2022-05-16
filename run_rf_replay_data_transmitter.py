@@ -19,6 +19,39 @@ import uhd
 from nptdms import TdmsFile
 from nptdms import tdms
 import sync_settings
+import scipy.io
+
+## Read waveform data in TDSM format
+def read_tdms_waveform_data(path, file):
+
+    # Open the file
+    tdms_file = TdmsFile.read(str(path) + str(file) + ".tdms")
+    # get all channels
+    group = tdms_file["waveforms"]
+    # get channel dat
+    channel = ""
+    if "Channel 0" in group:
+        channel = group["Channel 0"]
+    elif "segment0/channel0" in group:
+        channel = group["segment0/channel0"]
+    if not channel:
+        raise Exception("ERROR: Unkown channel name of a given TDMS Waveform")
+
+    wavform_IQ_rate = channel.properties["NI_RF_IQRate"]
+
+    tx_data_float = channel[:]
+    tx_data_complex = tx_data_float[::2] + 1j * tx_data_float[1::2]
+    return tx_data_complex, wavform_IQ_rate
+
+## Read waveform data in matlab format for IEEE waveform generator
+def read_mat_ieee_waveform_data(path, file):
+    # Open the file
+    mat_data = scipy.io.loadmat(str(path) + str(file) + "/sbb_str.mat")
+    # get data  
+    data = mat_data["sbb_str"]
+    tx_data_complex  = data[0][0][0]
+
+    return tx_data_complex#, wavform_IQ_rate
 
 
 def rf_replay_data_transmitter(args):
@@ -133,20 +166,21 @@ def rf_replay_data_transmitter(args):
     # Constants related to the Replay block
     replay_word_size = replay_ctrl.get_word_size()  # Size of words used by replay block
     print("Word size of Replay block: ", replay_word_size)
-    sample_size = 4
     # UHD do the job and set the sample size from Complex signed 64-bit is 32 bits per sample
+    sample_size = 4
 
-    # Open the file
-    tdms_file = TdmsFile.read(str(args.waveform_path) + str(args.waveform_file_name))
-    # get all channels
-    group = tdms_file["waveforms"]
-    # get channel data
-    channel = group["Channel 0"]
-    tx_data_float = channel[:]
-    tx_data_complex = tx_data_float[::2] + 1j * tx_data_float[1::2]
+    # Read waveform based on waveform format
+    if args.tx_waveform_format =="tdms": #args.file.endswith(".tdms"):
+        tx_data_complex, waveform_IQ_rate = read_tdms_waveform_data(args.waveform_path, args.waveform_file_name)
+        if args.rate != waveform_IQ_rate:
+            print("Note:The IQ Rate based on TDMS Waveform property should be: ", waveform_IQ_rate)
+    elif args.tx_waveform_format =="matlab_ieee": 
+        tx_data_complex = read_mat_ieee_waveform_data(args.waveform_path, args.waveform_file_name)
+    else:
+        raise Exception("ERROR: Unkown or not supported tx waveform format.")
 
     # Get the file size
-    file_size = len(tx_data_float) * sample_size / 2
+    file_size = len(tx_data_complex) * sample_size
 
     # Calculate the number of 64-bit words and samples to replay
     words_to_replay = int(file_size / replay_word_size)  # bytes

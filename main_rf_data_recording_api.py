@@ -13,14 +13,17 @@ from pathlib import Path
 from operator import index
 import numpy as np
 from pandas import DataFrame, merge
+
 # importing the threading module
 import threading
 from multiprocessing.sharedctypes import Value
+
 # import related functions
 import rf_data_recording_api_def
 import run_rf_replay_data_transmitter
 import run_rf_data_recorder
 import sync_settings
+
 
 def main():
 
@@ -59,10 +62,6 @@ def main():
         iteration_config = variations_map.variations_product.iloc[i]
         # iteration general config has only a single list
         iteration_general_config = variations_map.general_config_dic.iloc[0]
-        print("Iteration config: ")
-        print(iteration_config)
-        print("Iteration general config: ")
-        print(iteration_general_config)
 
         ## Create TX and RX RF Config classes
         tx_data_recording_api_config = rf_data_recording_api.TxRFDataRecorderConfig(
@@ -79,14 +78,30 @@ def main():
             )
         )
 
-        # Calculate USRP master clockrate based on given rate
-        tx_data_recording_api_config.args = rf_data_recording_api.calculate_master_clock_rate(
-            tx_data_recording_api_config.args
-        )
-        rx_data_recording_api_config.args = rf_data_recording_api.calculate_master_clock_rate(
-            rx_data_recording_api_config.args
+        # Get Tx Waveform config
+        tx_data_recording_api_config = rf_data_recording_api.read_waveform_config(
+            tx_data_recording_api_config
         )
 
+        # Update rate based on selected rate source
+        (
+            tx_data_recording_api_config,
+            rx_data_recording_api_config,
+        ) = rf_data_recording_api.update_rate(
+            tx_data_recording_api_config, rx_data_recording_api_config
+        )
+
+        # Calculate USRP master clockrate based on given rate
+        tx_data_recording_api_config.args = rf_data_recording_api.calculate_master_clock_rate(
+            tx_data_recording_api_config.rate, tx_data_recording_api_config.args
+        )
+        rx_data_recording_api_config.args = rf_data_recording_api.calculate_master_clock_rate(
+            rx_data_recording_api_config.rate, rx_data_recording_api_config.args
+        )
+
+        # print iteration config
+        rf_data_recording_api.print_iteration_config(iteration_config, iteration_general_config, tx_data_recording_api_config)
+        
         ## Create multi threads
         tx_proc = threading.Thread(
             target=run_rf_replay_data_transmitter.rf_replay_data_transmitter,
@@ -112,6 +127,7 @@ def main():
         rx_proc.join()
         # settling time
         time.sleep(0.5)
+
 
 if __name__ == "__main__":
     sys.exit(not main())

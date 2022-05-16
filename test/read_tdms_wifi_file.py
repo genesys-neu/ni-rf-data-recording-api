@@ -7,8 +7,9 @@ from nptdms import tdms
 
 # path to TDMS file
 tdms_file = TdmsFile.read(
-    "/home/agaber/workarea/lti-6g-sw/data-recording-tools/LabVIEW/TDMS Waveform Files/IEEE802.11ac_FR1_WiFi_FDD_MIMOTX1_BW-20MHz_CC-1_SCS-312.5kHz_Mod-MCS9_OFDM.tdms"
+    "/home/agaber/workarea/lti-6g-sw/data-recording-tools/LabVIEW/waveform-files/tdms/IEEE802.11ac_FR1_WiFi_FDD_MIMOTX1_BW-20MHz_CC-1_SCS-312.5kHz_Mod-MCS9_OFDM.tdms"
 )
+
 
 # get all groups
 all_tdms_groups = tdms_file.groups()
@@ -21,7 +22,12 @@ group = tdms_file["waveforms"]
 all_group_channels = group.channels()
 print("Example to get all group channels: ", all_group_channels)
 # get channel data
-channel = group["segment0/channel0"]
+channel=""
+if "Channel 0" in group:
+    channel = group["Channel 0"]
+elif "segment0/channel0" in group:
+    channel = group["segment0/channel0"]
+if not channel: raise Exception("ERROR:Unkown channel name of given TDMS Waveform")
 channel_data = channel[:]
 print("Data length:", len(channel_data))
 print("Print the first N I and Q samples: ", channel_data)

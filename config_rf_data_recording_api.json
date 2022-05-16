@@ -5,7 +5,10 @@
                         "tx_gain or rx_gain: gain for the RF chain, type = float",
                         "tx_antenna: antenna selection (TX/RX), type = str",
                         "tx_bandwidth:analog front-end filter bandwidth in Hz, type = float",
-                        "tx_waveform_file_name:tdms file name, type = str ",
+                        "tx_waveform_file_name:tdms/mat/... file name, type = str",
+                        "IEEE802.11ac_FR1_WiFi_FDD_MIMOTX1_BW-20MHz_CC-1_SCS-312.5kHz_Mod-MCS9_OFDM_config (.tdms)",
+                        "NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1(.tdms)",
+                        "ieee_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame (mat folder name",
                         "tx_reference or rx_reference: reference source (internal, external, gpsdo, type = str",
                         "tx_radio_id: radio block to use (e.g., 0 or 1), type = int",
                         "tx_radio_chan: radio channel to use, type = int",
@@ -16,21 +19,23 @@
                         "rx_channels: Channel selection (0,1)",
                         "rx_antenna: antenna selection (TX/RX, RX2), type = str",
                         "rx-duration: Time duration of IQ data acquisition, type=float", 
-                        "tx_waveform_path:path to TDMS file, type = str ",
+                        "tx_waveform_path:path to TDMS/mat/... file, type = str ",
+                        "tx_waveform_format:possible values: tdms, matlab_ieee, type = str ",
                         "rx_recorded_data_path: path to store captured rx data, type = str",
                         "rx_recorded_data_saving_format: rx recorded data saving format, type = str, possible values (SigMF)",
                         "nrecords: number of snapshots from RX IQ data acquisition",
-                        "channel_attenuation: expected channel atteuntion, type = float"
+                        "rate_source: possoible options (user_defined: given in variations section), (waveform_config: read from waveform config properties)",
+                        "channel_attenuation: expected channel attenuation, type = float"
                     ],
 "variations":[
             {"Parameter":   "tx_args",      "SeqType": "list",  "Values": ["type=x300,addr=192.168.40.2",
                                                                           "type=x300,addr=192.168.60.2"]},      
-            {"Parameter":   "freq",         "SeqType": "range",     "Values": [2e9,2e9,1e9]},
-            {"Parameter":   "rate",         "SeqType": "list",      "Values": [30.72e6]},
+            {"Parameter":   "freq",         "SeqType": "range",     "Values": [3.6e9,3.6e9,1e9]},
+            {"Parameter":   "rate",         "SeqType": "list",      "Values": [15.36e6]},
             {"Parameter":   "tx_gain",      "SeqType": "list",      "Values": [30]},
             {"Parameter":   "tx_antenna",   "SeqType": "list",      "Values": ["TX/RX"]},
             {"Parameter":   "tx_bandwidth", "SeqType": "list",      "Values": [20e6]},
-            {"Parameter":   "tx_waveform_file_name",  "SeqType": "list", "Values": ["NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1.tdms"]},
+            {"Parameter":   "tx_waveform_file_name",  "SeqType": "list", "Values": ["NR_FR1_DL_FDD_SISO_BW-10MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1"]},
             {"Parameter":   "tx_reference",  "SeqType": "list",      "Values": ["internal"]},
             {"Parameter":   "tx_radio_id",  "SeqType": "list",      "Values": [0]},
             {"Parameter":   "tx_radio_chan","SeqType": "list",      "Values": [0]},
@@ -45,10 +50,13 @@
             {"Parameter":   "rx_duration",  "SeqType": "list",      "Values": [10e-3]}
             ],
 "general_config":[
-            {"Parameter":"tx_waveform_path", "Value": "TDMS Waveform Files/"},
+            {"Parameter":"tx_waveform_path", "Value": "waveform-files/tdms/"},
+            {"Parameter":"tx_waveform_format", "Value": "tdms"},
             {"Parameter":"rx_recorded_data_path", "Value": "/home/agaber/workarea/recorded-data"},
             {"Parameter":"rx_recorded_data_saving_format", "Value": "SigMF"},
-            {"Parameter":"nrecords", "Value": 5},
+            {"Parameter":"nrecords", "Value": 10},
+            {"Parameter":"rate_source", "Value": "waveform_config"},
             {"Parameter":"channel_attenuation", "Value": 33.0}]
+            
 
 }

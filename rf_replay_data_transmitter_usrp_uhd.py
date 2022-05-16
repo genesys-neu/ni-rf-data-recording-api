@@ -18,6 +18,7 @@ from sympy import true
 import uhd
 from nptdms import TdmsFile
 from nptdms import tdms
+import scipy.io
 
 stop_tx_signal_called = False
 
@@ -26,6 +27,7 @@ def signal_handler(sig, frame):
     global stop_tx_signal_called
     print("Exiting . . .")
     stop_tx_signal_called = True
+
 
 # ************************************************************************
 #    * Set up the program options
@@ -84,20 +86,27 @@ def parse_args():
     parser.add_argument(
         "-p",
         "--path",
-        default=("TDMS Waveform Files/"),
+        default=("waveform-files/tdms/"),
         type=str,
-        help="path to TDMS file",
+        help="path to waveform file",
     )
     parser.add_argument(
         "-fl",
         "--file",
-        default=("NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1.tdms"),
+        default=("NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1"),
         type=str,
-        help="tdms file name",
+        help="waveform file name or a folder name without extension",
+    )
+    parser.add_argument(
+        "-wft",
+        "--tx_waveform_format",
+        default=("tdms"),
+        type=str,
+        help="possible values: tdms, matlab_ieee",
     )
     parser.add_argument("-f", "--freq", default=2e9, type=float, help="RF center frequency in Hz")
     parser.add_argument("-r", "--rate", default=30.72e6, type=float, help="rate of radio block")
-    parser.add_argument("-g", "--gain", default=30, type=float, help="gain for the RF chain")
+    parser.add_argument("-g", "--gain", default=20, type=float, help="gain for the RF chain")
     parser.add_argument("-ant", "--antenna", default="TX/RX", type=str, help="antenna selection")
     parser.add_argument(
         "-bw",
@@ -115,6 +124,41 @@ def parse_args():
     )
     args = parser.parse_args()
     return args
+
+
+## Read waveform data in TDMS format
+def read_tdms_waveform_data(path, file):
+
+    # Open the file
+    tdms_file = TdmsFile.read(str(path) + str(file) + ".tdms")
+    # get all channels
+    group = tdms_file["waveforms"]
+    # get channel dat
+    channel = ""
+    if "Channel 0" in group:
+        channel = group["Channel 0"]
+    elif "segment0/channel0" in group:
+        channel = group["segment0/channel0"]
+    if not channel:
+        raise Exception("ERROR: Unkown channel name of a given TDMS Waveform")
+
+    wavform_IQ_rate = channel.properties["NI_RF_IQRate"]
+
+    tx_data_float = channel[:]
+    tx_data_complex = tx_data_float[::2] + 1j * tx_data_float[1::2]
+    return tx_data_complex, wavform_IQ_rate
+
+
+## Read waveform data in matlab format for IEEE waveform generator
+def read_mat_ieee_waveform_data(path, file):
+    # Open the file
+    mat_data = scipy.io.loadmat(str(path) + str(file) + "/sbb_str.mat")
+    # get data
+    data = mat_data["sbb_str"]
+    tx_data_complex = data[0][0][0]
+
+    return tx_data_complex  # , wavform_IQ_rate
+
 
 def main():
     """
@@ -230,20 +274,21 @@ def main():
     # Constants related to the Replay block
     replay_word_size = replay_ctrl.get_word_size()  # Size of words used by replay block
     print("Word size of Replay block: ", replay_word_size)
-    sample_size = 4
     # UHD do the job and set the sample size from Complex signed 64-bit is 32 bits per sample
+    sample_size = 4
 
-    # Open the file
-    tdms_file = TdmsFile.read(str(args.path) + str(args.file))
-    # get all channels
-    group = tdms_file["waveforms"]
-    # get channel data
-    channel = group["Channel 0"]
-    tx_data_float = channel[:]
-    tx_data_complex = tx_data_float[::2] + 1j * tx_data_float[1::2]
+    # Read waveform based on waveform format
+    if args.tx_waveform_format == "tdms":  # args.file.endswith(".tdms"):
+        tx_data_complex, waveform_IQ_rate = read_tdms_waveform_data(args.path, args.file)
+        if args.rate != waveform_IQ_rate:
+            print("Note:The IQ Rate based on TDMS Waveform property should be: ", waveform_IQ_rate)
+    elif args.tx_waveform_format == "matlab_ieee":  # args.file.endswith(".mat"):
+        tx_data_complex = read_mat_ieee_waveform_data(args.path, args.file)
+    else:
+        raise Exception("ERROR: Unkown or not supported tx waveform format")
 
     # Get the file size
-    file_size = len(tx_data_float) * sample_size / 2
+    file_size = len(tx_data_complex) * sample_size
 
     # Calculate the number of 64-bit words and samples to replay
     words_to_replay = int(file_size / replay_word_size)  # bytes
@@ -353,15 +398,6 @@ def main():
         print("ERROR: Code is not ready to play a specific number of samples")
         return
 
-        replay_ctrl.config_play(replay_buff_addr, replay_buff_size, args.replay_chan)
-        stream_cmd = uhd.stream_cmd_t("STREAM_MODE_NUM_SAMPS_AND_DONE")
-        stream_cmd.num_samps = args.samps
-        print(f"Issuing replay command for {args.nsamps} samps...")
-        stream_cmd.stream_now = true
-        replay_ctrl.issue_stream_cmd(stream_cmd, args.replay_chan)
-        print("Waiting until replay buffer is clear...")
-        stream_duration = args.nsamps / args.rate
-        time.sleep((stream_duration * 1000) + 0.5)  # Slop factor
 
 if __name__ == "__main__":
     sys.exit(not main())

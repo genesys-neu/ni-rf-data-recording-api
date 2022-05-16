@@ -12,16 +12,21 @@ from pickle import FALSE, TRUE
 from unicodedata import name
 import numpy as np
 import uhd
+
 # To save to specific path
 import os
 from pathlib import Path
+
 # To measure elapsed time
 import time
+
 # To use data time
 from datetime import datetime
+
 # To print colours
 import sys
 from termcolor import colored, cprint
+
 # To write Data to sigmf file
 import sigmf
 import datetime as dt
@@ -61,6 +66,7 @@ def parse_args():
     parser.add_argument("-nr", "--nrecords", type=int, default=2)
 
     return parser.parse_args()
+
 
 def main():
 
@@ -116,7 +122,6 @@ def main():
             args.coerced_rx_bandwidth = usrp.get_rx_bandwidth()
             args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data
 
-
         # Get time stamp
         time_stamp_micro_sec = datetime.now().strftime("%Y_%m_%d-%H_%M_%S_%f")
         time_stamp_milli_sec = time_stamp_micro_sec[:-3]
@@ -136,7 +141,7 @@ def main():
                 SigMFFile.DATATYPE_KEY: "cf32_le",  # get_data_type_str(rx_data) - 'cf64_le' is not supported yet
                 SigMFFile.SAMPLE_RATE_KEY: args.coerced_rx_rate,  # args.rate,
                 SigMFFile.NUM_CHANNELS_KEY: len(args.channels),
-                SigMFFile.AUTHOR_KEY: "Abdo Gaber, abdo.gaber@ni.com",
+                SigMFFile.AUTHOR_KEY: "Abdo Gaber",
                 SigMFFile.DESCRIPTION_KEY: "5GNR Waveform: NR, FR1, DL, FDD, 64-QAM, 30 kHz SCS, 20 MHz bandwidth, TM3.1",
                 SigMFFile.RECORDER_KEY: "UHD Python API",
                 SigMFFile.LICENSE_KEY: "URL to the license document",
@@ -155,7 +160,7 @@ def main():
                 "capture_details": {
                     "acquisition_bandwidth": args.coerced_rx_bandwidth,
                     "gain": args.coerced_rx_gain,
-                    "attenuation": 30,
+                    "attenuation": 33,
                     "source_file": "rf_data_recorder_usrp_uhd.py",  # RF IQ recording filename that was used to create the file
                 },
             },
@@ -213,6 +218,7 @@ def main():
             "ms",
         )
         print("")
+
 
 if __name__ == "__main__":
     main()
