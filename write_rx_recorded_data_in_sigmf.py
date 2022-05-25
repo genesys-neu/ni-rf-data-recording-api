@@ -18,7 +18,7 @@ from pathlib import Path
 from datetime import datetime
 
 
-def write_rx_recorded_data_in_sigmf(rx_data, rx_args, tx_args):
+def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args):
     # Write recorded data to file
     # Get time stamp
     time_stamp_micro_sec = datetime.now().strftime("%Y_%m_%d-%H_%M_%S_%f")
@@ -38,7 +38,7 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, tx_args):
             SigMFFile.SAMPLE_RATE_KEY: rx_args.coerced_rx_rate,  # args.rate,
             SigMFFile.NUM_CHANNELS_KEY: len(rx_args.channels),
             SigMFFile.AUTHOR_KEY: "Abdo Gaber",
-            SigMFFile.DESCRIPTION_KEY: tx_args.waveform_file_name,
+            SigMFFile.DESCRIPTION_KEY: "USRP RX IQ DATA CAPTURE",
             SigMFFile.RECORDER_KEY: "UHD Python API",
             SigMFFile.LICENSE_KEY: "URL to the license document",
             SigMFFile.HW_KEY: "USRP " + rx_args.usrp_mboard_id,
@@ -65,114 +65,61 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, tx_args):
     )
 
     # Get tx waveform config
-    # based on file name
-    # tx_waveform_config = get_tx_waveform_config_info(tx_args.waveform_file_name)
-    tx_waveform_config = tx_args.waveform_config
+    txs_info = {}
+    label = ""
+    for idx, tx_args in enumerate(txs_args):
+        tx_waveform_config = tx_args.waveform_config
+        if idx == 0:
+            label = tx_waveform_config["standard"]
+        else:
+            label = label + "_" + tx_waveform_config["standard"]
+        signal_detail = {
+            "standard": tx_waveform_config["standard"],
+            "frequency_range": tx_waveform_config["frequency_range"],
+            "link_direction": tx_waveform_config["link_direction"],
+            "test_model": tx_waveform_config["test_model"],
+            "bandwidth": str(tx_args.bandwidth),
+            "subcarrier_spacing": tx_waveform_config["subcarrier_spacing"],
+            "duplexing": tx_waveform_config["duplexing"],
+            "multiplexing": tx_waveform_config["multiplexing"],
+            "multiple_access": tx_waveform_config["multiple_access"],
+            "modulation": tx_waveform_config["modulation"],
+            "MCS": tx_waveform_config["MCS"],
+            "code_rate": tx_waveform_config["code_rate"],
+            "data_type": rx_data.dtype.name,
+        }
+        if "IEEE" in tx_waveform_config["standard"]:
+            signal_detail["MAC_frame_type"] = tx_waveform_config["IEEE_MAC_frame_type"]
 
-    # check standard to prepare the
-    if "NR" in tx_waveform_config["Standard"]:
-        # Add an annotation
-        meta.add_annotation(
-            0,  # Sample Start
-            rx_args.num_rx_samps,  # Sample count
-            metadata={
-                SigMFFile.FLO_KEY: rx_args.coerced_rx_freq
-                - rx_args.coerced_rx_rate / 2,  # args.freq - args.rate / 2,
-                SigMFFile.FHI_KEY: rx_args.coerced_rx_freq
-                + rx_args.coerced_rx_rate / 2,  # args.freq + args.rate / 2,
-                SigMFFile.LABEL_KEY: tx_waveform_config["Standard"]
-                + "_"
-                + tx_waveform_config["Freqeuncy_Range"],
-                SigMFFile.COMMENT_KEY: "USRP RX IQ DATA CAPTURE",
-                SigMFFile.GENERATOR_KEY: rx_args.usrp_serial_number,
-                "signal:detail": {
-                    "data_type": rx_data.dtype.name,
-                    "system": tx_waveform_config["link_direction"]
-                    + "_SCS-"
-                    + str(tx_waveform_config["SCS"])
-                    + "_TestModel-"
-                    + tx_waveform_config["dl_test_model"],
-                    "standard": tx_waveform_config["Standard"]
-                    + "_"
-                    + tx_waveform_config["Freqeuncy_Range"],
-                    "duplexing": tx_waveform_config["duplexing"],
-                    "multiplexing": tx_waveform_config["multiplexing"],
-                    "multiple_access": tx_waveform_config["multiple_access"],
-                    "type": "digital",
-                    "mod_class": "",
-                    "carrier_variant": tx_waveform_config["CarrierCCIndex"],
-                    "order": tx_waveform_config["MOD"],
-                    "bandwidth": tx_waveform_config["Bandwidth"],
-                    # "channel": 78,  # channel number of the signal within the communication system.
-                },
-                "signal:emitter": {
-                    "seid": tx_args.usrp_serial_number,  # Unique ID of the emitter
-                    "manufacturer": "NI",
-                    "power_tx": 8.0,
-                },
-            },
-        )
-    elif "IEEE" in tx_waveform_config["Standard"]:
-        # Add an annotation
-        meta.add_annotation(
-            0,  # Sample Start
-            rx_args.num_rx_samps,  # Sample count
-            metadata={
-                SigMFFile.FLO_KEY: rx_args.coerced_rx_freq
-                - rx_args.coerced_rx_rate / 2,  # args.freq - args.rate / 2,
-                SigMFFile.FHI_KEY: rx_args.coerced_rx_freq
-                + rx_args.coerced_rx_rate / 2,  # args.freq + args.rate / 2,
-                SigMFFile.LABEL_KEY: tx_waveform_config["Standard"],
-                SigMFFile.COMMENT_KEY: "USRP RX IQ DATA CAPTURE",
-                SigMFFile.GENERATOR_KEY: rx_args.usrp_serial_number,
-                "signal:detail": {
-                    "data_type": rx_data.dtype.name,
-                    "system": "",
-                    "standard": tx_waveform_config["Standard"],
-                    "multiplexing": tx_waveform_config["multiplexing"],
-                    "multiple_access": tx_waveform_config["multiple_access"],
-                    "type": "digital",
-                    "mod_class": "",
-                    "MCS": "MCS_"
-                    + tx_waveform_config["MCS"]
-                    + "_CodeRate_"
-                    + tx_waveform_config["code_rate"],
-                    "order": tx_waveform_config["MOD"],
-                    "bandwidth": tx_waveform_config["Bandwidth"],
-                    "MAC_frame_type": tx_waveform_config["MAC_frame_type"],
-                },
-                "signal:emitter": {
-                    "seid": tx_args.usrp_serial_number,  # Unique ID of the emitter
-                    "manufacturer": "NI",
-                    "power_tx": 8.0,
-                },
-            },
-        )
-    else:
-        # Add an annotation
-        meta.add_annotation(
-            0,  # Sample Start
-            rx_args.num_rx_samps,  # Sample count
-            metadata={
-                SigMFFile.FLO_KEY: rx_args.coerced_rx_freq
-                - rx_args.coerced_rx_rate / 2,  # args.freq - args.rate / 2,
-                SigMFFile.FHI_KEY: rx_args.coerced_rx_freq
-                + rx_args.coerced_rx_rate / 2,  # args.freq + args.rate / 2,
-                SigMFFile.LABEL_KEY: tx_waveform_config["Standard"],
-                SigMFFile.COMMENT_KEY: "USRP RX IQ DATA CAPTURE",
-                SigMFFile.GENERATOR_KEY: rx_args.usrp_serial_number,
-                "signal:detail": {
-                    "data_type": rx_data.dtype.name,
-                    "system": "",
-                    "standard": tx_waveform_config["Standard"],
-                },
-                "signal:emitter": {
-                    "seid": tx_args.usrp_serial_number,  # Unique ID of the emitter
-                    "manufacturer": "NI",
-                    "power_tx": 8.0,
-                },
-            },
-        )
+        emitter_info = {
+            "usrp_mboard_serial": tx_args.usrp_mboard_serial,  # Unique ID of the emitter
+            "usrp_mboard_id": tx_args.usrp_mboard_id,
+            "manufacturer": "NI",
+            "frequency": str(tx_args.freq),
+            "rate": str(tx_args.rate),
+            "bandwidth": str(tx_args.bandwidth),
+            "usrp_gain": str(tx_args.gain),
+            "reference": tx_args.reference,
+        }
+        txs_info["Tx" + str(idx)] = {"detail": signal_detail, "emitter": emitter_info}
+
+    # Add an annotation
+    meta.add_annotation(
+        0,  # Sample Start
+        rx_args.num_rx_samps,  # Sample count
+        metadata={
+            SigMFFile.FLO_KEY: rx_args.coerced_rx_freq
+            - rx_args.coerced_rx_rate / 2,  # args.freq - args.rate / 2,
+            SigMFFile.FHI_KEY: rx_args.coerced_rx_freq
+            + rx_args.coerced_rx_rate / 2,  # args.freq + args.rate / 2,
+            SigMFFile.LABEL_KEY: label,
+            SigMFFile.COMMENT_KEY: "USRP RX IQ DATA CAPTURE",
+            SigMFFile.GENERATOR_KEY: rx_args.usrp_mboard_serial,
+            "num_tx_signals": len(txs_args),
+            "signal": txs_info,
+        },
+    )
+
     # Check for mistakes
     assert meta.validate()
 

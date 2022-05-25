@@ -27,7 +27,7 @@ import sync_settings
 import write_rx_recorded_data_in_sigmf
 
 
-def rf_data_recorder(rx_args, tx_args):
+def rf_data_recorder(rx_args, txs_args):
     """RX Data Recorder"""
 
     # Define number of samples to fetch
@@ -42,7 +42,7 @@ def rf_data_recorder(rx_args, tx_args):
     usrp_info = usrp.get_usrp_rx_info()
     print("RX USRP info:")
     print(usrp_info)
-    rx_args.usrp_serial_number = usrp_info["mboard_serial"]
+    rx_args.usrp_mboard_serial = usrp_info["mboard_serial"]
     rx_args.usrp_mboard_id = usrp_info["mboard_id"]
 
     # Set up the stream
@@ -93,7 +93,7 @@ def rf_data_recorder(rx_args, tx_args):
         # Write data into files with the given format
         if rx_args.rx_recorded_data_saving_format == "SigMF":
             write_rx_recorded_data_in_sigmf.write_rx_recorded_data_in_sigmf(
-                rx_data, rx_args, tx_args
+                rx_data, rx_args, txs_args
             )
         else:
             # Report error.

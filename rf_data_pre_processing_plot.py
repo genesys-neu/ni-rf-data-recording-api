@@ -27,8 +27,7 @@ dataset_folder = "/home/agaber/workarea/recorded-data"
 
 
 # specify base filename
-i = 4
-dataset_filename_base = "rx_data_tx7_" + str(i)
+dataset_filename_base = "rx_data_record_2022_05_23-17_06_36_899"
 
 # specify file name for meta data
 metadata_filename = os.path.join(dataset_folder, dataset_filename_base)
@@ -58,8 +57,9 @@ for idx, annotation in enumerate(annotations):
     freq_start = annotation.get(SigMFFile.FLO_KEY)
     freq_stop = annotation.get(SigMFFile.FHI_KEY)
 
-    signal_detail = annotation.get("signal:detail")
-    data_type = signal_detail["data_type"]
+    # = annotation.get("signal:Tx0:detail")
+    
+    data_type = "complex64" #signal_detail["data_type"]
 
 
 # specify filename for data

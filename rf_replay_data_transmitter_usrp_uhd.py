@@ -99,7 +99,7 @@ def parse_args():
     )
     parser.add_argument(
         "-wft",
-        "--tx_waveform_format",
+        "--waveform_format",
         default=("tdms"),
         type=str,
         help="possible values: tdms, matlab_ieee",
@@ -126,6 +126,10 @@ def parse_args():
     return args
 
 
+# ************************************************************************
+#    * Read Waveforms functions
+# ***********************************************************************/
+
 ## Read waveform data in TDMS format
 def read_tdms_waveform_data(path, file):
 
@@ -150,7 +154,7 @@ def read_tdms_waveform_data(path, file):
 
 
 ## Read waveform data in matlab format for IEEE waveform generator
-def read_mat_ieee_waveform_data(path, file):
+def read_matlab_ieee_waveform_data(path, file):
     # Open the file
     mat_data = scipy.io.loadmat(str(path) + str(file) + "/sbb_str.mat")
     # get data
@@ -158,6 +162,17 @@ def read_mat_ieee_waveform_data(path, file):
     tx_data_complex = data[0][0][0]
 
     return tx_data_complex  # , wavform_IQ_rate
+
+
+## Read waveform data in matlab format - arbitrary mode
+def read_matlab_waveform_data(path, file):
+    # Open the file
+    mat_data = scipy.io.loadmat(str(path) + str(file) + ".mat")
+    # get data
+    data = mat_data["waveform"]
+    tx_data_complex = data.flatten()
+
+    return tx_data_complex
 
 
 def main():
@@ -278,12 +293,14 @@ def main():
     sample_size = 4
 
     # Read waveform based on waveform format
-    if args.tx_waveform_format == "tdms":  # args.file.endswith(".tdms"):
+    if args.waveform_format == "tdms":  # args.file.endswith(".tdms"):
         tx_data_complex, waveform_IQ_rate = read_tdms_waveform_data(args.path, args.file)
         if args.rate != waveform_IQ_rate:
             print("Note:The IQ Rate based on TDMS Waveform property should be: ", waveform_IQ_rate)
-    elif args.tx_waveform_format == "matlab_ieee":  # args.file.endswith(".mat"):
-        tx_data_complex = read_mat_ieee_waveform_data(args.path, args.file)
+    elif args.waveform_format == "matlab_ieee":
+        tx_data_complex = read_matlab_ieee_waveform_data(args.path, args.file)
+    elif args.waveform_format == "matlab":
+        tx_data_complex = read_matlab_waveform_data(args.path, args.file)
     else:
         raise Exception("ERROR: Unkown or not supported tx waveform format")
 
@@ -298,7 +315,6 @@ def main():
 
     # Read data into np buffer, rounded down to number of words
     tx_data = np.tile(np.array(tx_data_complex, dtype=np.complex64), (num_ports, 1))
-
     # ************************************************************************
     # * Configure replay block
     # ***********************************************************************
@@ -356,7 +372,7 @@ def main():
     print(tx_data.size)
     num_tx_samps = tx_streamer.send(tx_data, tx_md, 5.0)
     if num_tx_samps != samples_to_replay:
-        print(f"ERROR: Unable to send {samples_to_replay} samples (sent {num_tx_samps} )")
+        print(f"ERROR: Unable to send {samples_to_replay} samples sent ({num_tx_samps} )")
 
     # ************************************************************************
     # * Wait for data to be stored in on-board memory
