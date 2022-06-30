@@ -1,0 +1,217 @@
+# RF Data Collection API Configuration
+#
+# Notes: 
+# - Seqtype: The parameter values can be given in range (start, stop, step), list, or single.
+#
+# =================================================
+# ============= general configuration =============
+# =================================================
+general_config:
+  # Path to store captured rx data, type = str
+  rx_recorded_data_path: "/home/agaber/workarea/recorded-data"
+  # Rx recorded data saving format, type = str, possible values (SigMF)
+  rx_recorded_data_saving_format: "SigMF"
+  # Number of snapshots from RX IQ data acquisition, type= int
+  nrecords: 10
+  # Tx USRPs execution mode: "parallel" or "sequential"
+  # parallel: TX USRPs will transmit their related waveforms simultaneously (in parallel)",
+  # sequential: TX USRPs will transmit their related waveforms one by one in sequential manner: Transmit wavefor1, record IQ data, Transmit waveform2, record...",
+  # Note: If there are more than one RX USRP, they will run in parallel."
+  txs_execution: "parallel"
+# ============================================
+# =============== Transmitters   =============
+# ============================================
+transmitters_config:
+  -
+    RFmode: "Tx"  # Tx or Rx, type=str
+    # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
+    type: "x300"  # USRP type, for example: x300, type=str.
+    IPaddress: "192.168.40.2" # IP address of USRP, type=str.
+    Parameters:
+      freq:       # RF center frequency in Hz, type = float.
+        SeqType: "range"
+        Values: [3.6e+9,3.6e+9,100.0e+6]
+      lo_offset:  # LO offset in Hz, type=float.
+        SeqType: "single" 
+        Values: 20.0e+6
+      enable_lo_offset:   # Enable LO offset, type: str2bool, True or False.
+        SeqType: "single"
+        Values: "False"
+      rate:       # rate of radio block, type = float.
+        SeqType: "list"
+        Values: [30.72e+6]
+      rate_source:  # waveform_config: The rate will be read from the waveform config file.
+      # ............ user_defined: The given rate by the user in this config file will be used.
+        SeqType: "single"
+        Values: "waveform_config"
+      bandwidth:    # TX analog front-end filter bandwidth in Hz, type = float.
+        # .......... If rate_source --> waveform_config: It will be read from the waveform config file.
+        # .......... If rate_source --> user_defined: The given bandwidth by the user in this config file will be used.
+        SeqType: "list"
+        Values: [20.0e+6]
+      waveform_file_name: # TX waveform file name without extension, type = str
+        # Example: "NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1(.tdms)",
+        # ........ "IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame (folder name), waveform in ssb_str.mat".
+        SeqType: "list"
+        Values: ["NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1"]
+      waveform_path:    # Path to tx waveform file or folder, type = str.
+        SeqType: "single"
+        Values: "waveform-files/tdms/"
+      waveform_format:  # Possible values: tdms, matlab_ieee, or matlab, type = str.
+        SeqType: "single"
+        Values: "tdms"
+      gain:     # Gain for the RF chain, type = float.
+        SeqType: "list"
+        Values: [30]
+      antenna:  # TX antenna selection (TX/RX), type = str.
+        SeqType: "list"
+        Values: ["TX/RX"]
+  -
+    RFmode: "Tx"  # Tx or Rx, type=str
+    # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
+    type: "x300"  # USRP type, for example: x300, type=str.
+    IPaddress: "192.168.50.2" # IP address of USRP, type=str.
+    Parameters:
+      freq:       # RF center frequency in Hz, type = float.
+        SeqType: "range"
+        Values: [3.62e+9,3.62e+9,100.0e+6]
+      lo_offset:  # LO offset in Hz, type=float.
+        SeqType: "single" 
+        Values: 20.0e+6
+      enable_lo_offset:   # Enable LO offset, type: str2bool, True or False.
+        SeqType: "single"
+        Values: "False"
+      rate:       # rate of radio block, type = float.
+        SeqType: "list"
+        Values: [15.36e+6]
+      rate_source:  # waveform_config: The rate will be read from the waveform config file.
+      # ............ user_defined: The given rate by the user in this config file will be used.
+        SeqType: "single"
+        Values: "waveform_config"
+      bandwidth:    # TX analog front-end filter bandwidth in Hz, type = float.
+      # .......... If rate_source --> waveform_config: It will be read from the waveform config file.
+      # .......... If rate_source --> user_defined: The given bandwidth by the user in this config file will be used.
+        SeqType: "list"
+        Values: [10.0e+6]
+      waveform_file_name: # TX waveform file name without extension, type = str
+      # Example: "NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1(.tdms)",
+      # ........ "IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame (folder name), waveform in ssb_str.mat".
+        SeqType: "list"
+        Values: ["LTE_FDD_DL_10MHz_CC-1_E-UTRA_E-TM2"]
+      waveform_path:    # Path to tx waveform file or folder, type = str.
+        SeqType: "single"
+        Values: "waveform-files/tdms/"
+      waveform_format:  # Possible values: tdms, matlab_ieee, or matlab, type = str.
+        SeqType: "single"
+        Values: "tdms"
+      gain:     # Gain for the RF chain, type = float.
+        SeqType: "list"
+        Values: [30]
+      antenna:  # TX antenna selection (TX/RX), type = str.
+        SeqType: "list"
+        Values: ["TX/RX"]
+  - 
+    RFmode: "Tx"  # Tx or Rx, type=str
+    # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
+    type: "x300"  # USRP type, for example: x300, type=str.
+    IPaddress: "192.168.60.2" # IP address of USRP, type=str.
+    Parameters:
+      freq:       # RF center frequency in Hz, type = float.
+        SeqType: "range"
+        Values: [3.64e+9,3.64e+9,100.0e+6]
+      lo_offset:  # LO offset in Hz, type=float.
+        SeqType: "single" 
+        Values: 10.0e+6
+      enable_lo_offset:   # Enable LO offset, type: str2bool, True or False.
+        SeqType: "single"
+        Values: "True"
+      rate:       # rate of radio block, type = float.
+        SeqType: "list"
+        Values: [10.0e+6]
+      rate_source:  # waveform_config: The rate will be read from the waveform config file.
+      # ............ user_defined: The given rate by the user in this config file will be used.
+        SeqType: "single"
+        Values: "waveform_config"
+      bandwidth:    # TX analog front-end filter bandwidth in Hz, type = float.
+      # .......... If rate_source --> waveform_config: It will be read from the waveform config file.
+      # .......... If rate_source --> user_defined: The given bandwidth by the user in this config file will be used.
+        SeqType: "list"
+        Values: [1.432e+6]
+      waveform_file_name: # TX waveform file name without extension, type = str
+      # Example: "NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1(.tdms)",
+      # ........ "IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame (folder name), waveform in ssb_str.mat".
+        SeqType: "list"
+        Values: ["RadarWaveform_Sample1"]
+      waveform_path:    # Path to tx waveform file or folder, type = str.
+        SeqType: "single"
+        Values: "waveform-files/matlab/"
+      waveform_format:  # Possible values: tdms, matlab_ieee, or matlab, type = str.
+        SeqType: "single"
+        Values: "matlab"
+      gain:     # Gain for the RF chain, type = float.
+        SeqType: "list"
+        Values: [30]
+      antenna:  # TX antenna selection (TX/RX), type = str.
+        SeqType: "list"
+        Values: ["TX/RX"]
+common_transmitters_config:
+  tx_reference:   # Tx sync reference source (internal, external, gpsdo), type = str.
+    SeqType: "list"
+    Values: ["internal"]
+  tx_radio_id:    # radio block to use (e.g., 0 or 1), type = in.
+    SeqType: "list"
+    Values: [0]
+  tx_radio_chan:  # radio channel to use, type = int.
+    SeqType: "list"
+    Values: [0]
+  tx_replay_id:   # replay block to use (e.g., 0 or 1), type = int.
+    SeqType: "list"
+    Values: [0]
+  tx_replay_chan: # replay channel to use, type = int.
+    SeqType: "list"
+    Values: [0]
+  tx_duc_chan:    # duc channel to use, type = int.
+    SeqType: "list"
+    Values: [0]
+# ============================================
+# ================== Receivers   =============
+# ============================================
+receivers_config:
+  -
+    RFmode: "Rx"    # Tx or Rx, type=str.
+    # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
+    type: "x300"    # USRP type, for example: x300, type=str.
+    IPaddress: "192.168.110.2" # IP address of USRP, type=str.
+    Parameters:
+      freq:         # RF center frequency in Hz, type = float.
+        SeqType: "range"
+        Values: [3.62e+9,3.62e+9,100.0e+6]
+      rate:         # rate of radio block, type = float.
+        SeqType: "list"
+        Values: [92.16e+6]
+      rate_source:  # waveform_config: The rate will be read from the waveform config file.
+      # ............................in case of multi TX, the maximum rate will be used.
+      # ............ user_defined: The given rate by the user in this config file will be used.
+        SeqType: "single"
+        Values: "user_defined"
+      bandwidth:
+        SeqType: "list"
+        Values: [92.16e+6]
+      gain:       # Gain for the RF chain, type = float.
+        SeqType: "list"
+        Values: [10]
+      channels:   # Rx Channel selection (X310: 0,1).
+        SeqType: "list"
+        Values: [0]
+      antenna:    # TX antenna selection (TX/RX, RX2), type = str.
+        SeqType: "list"
+        Values: ["TX/RX"]
+      reference:  # Tx sync reference source (internal, external, gpsdo), type = str.
+        SeqType: "list"
+        Values: ["internal"]
+      duration:   # Rx Time duration of IQ data acquisition, type=float.
+        SeqType: "list"
+        Values: [10.0e-3]
+      channel_attenuation: # Expected channel attenuation, type = float.
+        SeqType: "single"
+        Values: 33.0

@@ -9,17 +9,25 @@
 #
 import sys
 import signal
-from threading import Event
 import time
-from timeit import default_timer as timer
 import argparse
 import numpy as np
-from sympy import true
 import uhd
 from nptdms import TdmsFile
-from nptdms import tdms
 import sync_settings
 import scipy.io
+
+
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ("yes", "true", "t", "y", "1"):
+        return True
+    elif v.lower() in ("no", "false", "f", "n", "0"):
+        return False
+    else:
+        raise argparse.ArgumentTypeError("Boolean value expected.")
+
 
 ## Read waveform data in TDSM format
 def read_tdms_waveform_data(path, file):
@@ -66,7 +74,7 @@ def read_matlab_waveform_data(path, file):
     return tx_data_complex
 
 
-def rf_replay_data_transmitter(args):
+def rf_replay_data_transmitter(args, api_operation_mode):
     """
     Run Tx waveform playback
     """
@@ -80,10 +88,10 @@ def rf_replay_data_transmitter(args):
     # ************************************************************************
     print("Creating the RFNoC graph with args: ", args.args)
     graph = uhd.rfnoc.RfnocGraph(args.args)
-    print("USRP Static connections:")
-    for edge in graph.enumerate_static_connections():
-        print(edge.to_string())
-    print("")
+    # print("USRP Static connections:")
+    # for edge in graph.enumerate_static_connections():
+    #    print(edge.to_string())
+    # print("")
 
     # Create handle for radio object
     available_radios = graph.find_blocks("Radio")
@@ -142,7 +150,11 @@ def rf_replay_data_transmitter(args):
 
     # Set the center frequency
     print(f"Requesting TX Freq: {(args.freq / 1e6)} MHz...")
-    radio_ctrl.set_tx_frequency(args.freq, args.radio_chan)
+    if str2bool(args.enable_lo_offset):
+        radio_ctrl.set_tx_frequency(args.freq + args.lo_offset, args.radio_chan)
+        duc_ctrl.set_freq(-args.lo_offset, args.duc_chan)
+    else:
+        radio_ctrl.set_tx_frequency(args.freq, args.radio_chan)
     print(f"Actual TX Freq: {radio_ctrl.get_tx_frequency(args.radio_chan) / 1e6}  MHz...")
 
     # Set the sample rate
@@ -289,11 +301,13 @@ def rf_replay_data_transmitter(args):
     print(f"Issuing replay command for {samples_to_replay} samples in continuous mode...")
     time_spec = uhd.types.TimeSpec(0.0)
     replay_ctrl.play(replay_buff_addr, replay_buff_size, args.replay_chan, time_spec, repeat)
+
     # Send a command to start RX data aquestions
     sync_settings.start_rx_data_acquisition_called = True
     while sync_settings.stop_tx_signal_called == False:
-        time.sleep(0.1)  # sleep for 100ms
+        time.sleep(0.05)  # sleep for 50ms
+
     print("Stopping replay...")
     replay_ctrl.stop(args.replay_chan)
     print("Letting device settle...")
-    time.sleep(0.5)
+    time.sleep(0.05)  # sleep for 50ms

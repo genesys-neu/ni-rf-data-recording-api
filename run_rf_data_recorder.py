@@ -27,7 +27,7 @@ import sync_settings
 import write_rx_recorded_data_in_sigmf
 
 
-def rf_data_recorder(rx_args, txs_args):
+def rf_data_recorder(rx_args, txs_args, rx_data_nbytes_que):
     """RX Data Recorder"""
 
     # Define number of samples to fetch
@@ -57,12 +57,14 @@ def rf_data_recorder(rx_args, txs_args):
     for index in rx_args.channels:
         usrp.set_rx_antenna(rx_args.antenna, index)
 
-    # Wait to get a command to start RX data acquestion if TX is on TX mode already
+    # Wait to get a command to start RX data acquisition if TX is on TX mode already
     while sync_settings.start_rx_data_acquisition_called == False:
         time.sleep(0.1)  # sleep for 100ms
 
     # Run data recording loop over specified number of iterations
     print("Start fetching RX data from USRP...")
+
+    rx_data_nbytes = 0.0
     for i in range(rx_args.nrecords):
 
         # Fetch data from usrp device
@@ -81,8 +83,10 @@ def rf_data_recorder(rx_args, txs_args):
             " samples from Rx data from snapshot number #",
             colored(i, "green"),
         )
+        rx_data_nbytes = rx_data_nbytes + rx_data.nbytes
 
-        # Get USRP coerced values only once if we running the same config
+        # Get USRP coerced values only once
+        # To reduce latency, the number of records is executed per each configuration
         if i == 0:
             rx_args.coerced_rx_rate = usrp.get_rx_rate()
             rx_args.coerced_rx_freq = usrp.get_rx_freq()
@@ -107,6 +111,7 @@ def rf_data_recorder(rx_args, txs_args):
             colored(time_elapsed_ms, "yellow"),
             "ms",
         )
+    rx_data_nbytes_que.put(rx_data_nbytes)
 
     # Send command to TX thread to stop data transmission
     sync_settings.stop_tx_signal_called = True

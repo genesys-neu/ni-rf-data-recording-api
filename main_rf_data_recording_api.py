@@ -8,35 +8,34 @@
 #
 import sys
 import time
-from timeit import default_timer as timer
-from pathlib import Path
-from operator import index
-import numpy as np
-from pandas import DataFrame, merge
-
-# importing the threading module
-import threading
-from multiprocessing.sharedctypes import Value
+from queue import Queue
 
 # import related functions
 import rf_data_recording_api_def
-import run_rf_replay_data_transmitter
-import run_rf_data_recorder
 import sync_settings
+
+# To print colours
+from termcolor import colored
 
 
 def main():
 
     ## Get RF Data Collection API Configuration
-    config_file_name = "config_rf_data_recording_api.json"
+    # config_file_name = "config_rf_data_recording_api.json"
+    rf_data_acq_config_file = "config_rf_data_recording_api.yaml"
+    default_waveform_config_file = "default_waveform_config.yaml"
+    enable_console_logging = True
 
+    # Get Time Stamp for statistics
+    start_time = time.time()
     # Create RF data recording API class and load Config
-    print("Load RF Data recorder config ...")
-    rf_data_recording_api = rf_data_recording_api_def.RFDataRecorderAPI(config_file_name)
-
     ## Create all configuration variations - cross product
+    print("Load RF Data recorder config ...")
     print("Create configuration variations ...")
-    variations_map = rf_data_recording_api.CreateVariationsMap(rf_data_recording_api.config)
+    rf_data_recording_api = rf_data_recording_api_def.RFDataRecorderAPI(
+        rf_data_acq_config_file, enable_console_logging
+    )
+    variations_map = rf_data_recording_api.variations_map
     print("")
 
     ## Get mboard ID and serial number of TX and RX USRPs
@@ -44,26 +43,34 @@ def main():
     # For TX and RX: the master clock rate cannot be changed after opening the session
     # We need to know mBoard ID to select the proper master clock rate in advance
     # For TX based on RFNoc graph: Getting USRP SN is supported in Multi-USRP but not on RFNoC graph
-    print("Get Tx and RX USRPs mboards info ...")
-    variations_map = rf_data_recording_api.get_usrps_mboard_info(variations_map)
+    print("Get Tx and RX stations HW info ...")
+    variations_map = rf_data_recording_api.get_usrps_mboard_info(
+        variations_map, enable_console_logging
+    )
     print("")
+
+    # Create que to store rx data in bytes
+    # User will know the data size written to the memory
+    rx_data_nbytes_que = Queue()
 
     for i in range(len(variations_map.variations_product)):
         print("Variation Number: ", i)
 
         ##  Initlize sync settings
         sync_settings.init()
-        print(
-            "Sync Status: ",
-            sync_settings.start_rx_data_acquisition_called,
-            " ",
-            sync_settings.stop_tx_signal_called,
-        )
+        # print sync status
+        if enable_console_logging:
+            print(
+                "Sync Status: Start Data Acquestion called = ",
+                sync_settings.start_rx_data_acquisition_called,
+                " Stop Tx Signal called = ",
+                sync_settings.stop_tx_signal_called,
+            )
 
         ## Get TX and RX RF Data Recorder Config
         iteration_config = variations_map.variations_product.iloc[i]
         # iteration general config has only a single list
-        iteration_general_config = variations_map.general_config_dic.iloc[0]
+        iteration_general_config = variations_map.general_config.iloc[0]
 
         ## Create class list for all TX USRPs, each class has the TX config of related TX signal emitter
         # initialize the list
@@ -86,7 +93,8 @@ def main():
         ## Get Tx Waveform config
         for idx, tx_data_recording_api_config in enumerate(txs_data_recording_api_config):
             txs_data_recording_api_config[idx] = rf_data_recording_api.read_waveform_config(
-                tx_data_recording_api_config
+                tx_data_recording_api_config,
+                default_waveform_config_file,
             )
 
         ## Update rate of Tx and RX USRPs based on selected rate source
@@ -106,26 +114,68 @@ def main():
         )
 
         ## print iteration config
-        rf_data_recording_api.print_iteration_config(
-            iteration_config,
-            iteration_general_config,
-            txs_data_recording_api_config,
-            rxs_data_recording_api_config,
-        )
+        if enable_console_logging:
+            rf_data_recording_api.print_iteration_config(
+                iteration_config,
+                iteration_general_config,
+                txs_data_recording_api_config,
+                rxs_data_recording_api_config,
+            )
 
-        ## Start execution - TX emitters in parallel
-        if iteration_general_config["txs_execution"] == "parallel":
-            rf_data_recording_api.start_execution_txs_in_parallel(
-                txs_data_recording_api_config, rxs_data_recording_api_config
+        ## Get API Operation mode
+        api_operation_mode = iteration_general_config["API_operation_mode"]
+
+        # For Rx-only mode:
+        if (
+            api_operation_mode == rf_data_recording_api_def.RFDataRecorderAPI.API_operation_modes[1]
+        ):  # Rx only mode
+            rf_data_recording_api.start_rxs_execution(
+                txs_data_recording_api_config, rxs_data_recording_api_config, rx_data_nbytes_que
             )
-        ## Start execution - TX emitters in sequential
-        elif iteration_general_config["txs_execution"] == "sequential":
-            rf_data_recording_api.start_execution_txs_in_sequential(
-                txs_data_recording_api_config, rxs_data_recording_api_config
-            )
+
+        ### Start execution - TX emitters in parallel
+        # TX-only mode or Tx-Rx mode
         else:
-            raise Exception("Error: Unknow tx emitters execution order")
+            if iteration_general_config["txs_execution"] == "parallel":
+                rf_data_recording_api.start_execution_txs_in_parallel(
+                    txs_data_recording_api_config,
+                    rxs_data_recording_api_config,
+                    api_operation_mode,
+                    rx_data_nbytes_que,
+                )
+            ## Start execution - TX emitters in sequential
+            elif iteration_general_config["txs_execution"] == "sequential":
+                rf_data_recording_api.start_execution_txs_in_sequential(
+                    txs_data_recording_api_config,
+                    rxs_data_recording_api_config,
+                    api_operation_mode,
+                    rx_data_nbytes_que,
+                    enable_console_logging,
+                )
+            else:
+                raise Exception("Error: Unknow tx emitters execution order")
 
+    # Get end time
+    end_time = time.time()
+    time_elapsed = end_time - start_time
+    time_elapsed_s = int(time_elapsed * 1000) * 1 / 1000
+    print("")
+    print(
+        "Total elapsed time of getting rx samples and writing data and meta data files of ",
+        i + 1,
+        "config variations:",
+        colored(time_elapsed_s, "yellow"),
+        "s",
+    )
+    total_rx_data_nbytes = 0
+    while not rx_data_nbytes_que.empty():
+        total_rx_data_nbytes = total_rx_data_nbytes + rx_data_nbytes_que.get()
+
+    print(
+        "Total size of Rx Data: ",
+        colored(total_rx_data_nbytes / 1e6, "yellow"),
+        "MByte",
+    )
 
 
 if __name__ == "__main__":

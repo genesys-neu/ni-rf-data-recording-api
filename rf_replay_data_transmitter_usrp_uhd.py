@@ -9,15 +9,13 @@
 #
 import sys
 import signal
-from threading import Event
 import time
-from timeit import default_timer as timer
 import argparse
 import numpy as np
-from sympy import true
+
+# from sympy import true
 import uhd
 from nptdms import TdmsFile
-from nptdms import tdms
 import scipy.io
 
 stop_tx_signal_called = False
@@ -27,6 +25,17 @@ def signal_handler(sig, frame):
     global stop_tx_signal_called
     print("Exiting . . .")
     stop_tx_signal_called = True
+
+
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ("yes", "true", "t", "y", "1"):
+        return True
+    elif v.lower() in ("no", "false", "f", "n", "0"):
+        return False
+    else:
+        raise argparse.ArgumentTypeError("Boolean value expected.")
 
 
 # ************************************************************************
@@ -104,14 +113,24 @@ def parse_args():
         type=str,
         help="possible values: tdms, matlab_ieee",
     )
-    parser.add_argument("-f", "--freq", default=2e9, type=float, help="RF center frequency in Hz")
+    parser.add_argument("-f", "--freq", default=3e9, type=float, help="RF center frequency in Hz")
+    parser.add_argument("-loo", "--lo_offset", default=20e6, type=float, help="LO offset in Hz")
+    parser.add_argument(
+        "-enable_loo",
+        "--enable_lo_offset",
+        type=str2bool,
+        nargs="?",
+        const=True,
+        default=False,
+        help="Enable LO offset True or false",
+    )
     parser.add_argument("-r", "--rate", default=30.72e6, type=float, help="rate of radio block")
-    parser.add_argument("-g", "--gain", default=20, type=float, help="gain for the RF chain")
+    parser.add_argument("-g", "--gain", default=30, type=float, help="gain for the RF chain")
     parser.add_argument("-ant", "--antenna", default="TX/RX", type=str, help="antenna selection")
     parser.add_argument(
         "-bw",
         "--bandwidth",
-        default=20e6,
+        default=100e6,
         type=float,
         help="analog front-end filter bandwidth in Hz",
     )
@@ -219,6 +238,9 @@ def main():
         graph, replay_ctrl_id, args.replay_chan, radio_ctrl_id, args.radio_chan, False
     )
 
+    # Connect DUC to radio
+    graph.connect(duc_ctrl_id, args.duc_chan, radio_ctrl_id, args.radio_chan, False)
+
     print(f"Using Radio Block: {radio_ctrl_id}, channel {args.radio_chan}")
     print(f"Using Replay Block: {replay_ctrl_id}, channel {args.replay_chan}")
     print(f"Using DUC Block: {duc_ctrl_id}, channel {args.duc_chan}")
@@ -253,7 +275,11 @@ def main():
 
     # Set the center frequency
     print(f"Requesting TX Freq: {(args.freq / 1e6)} MHz...")
-    radio_ctrl.set_tx_frequency(args.freq, args.radio_chan)
+    if args.enable_lo_offset:
+        radio_ctrl.set_tx_frequency(args.freq + args.lo_offset, args.radio_chan)
+        duc_ctrl.set_freq(-args.lo_offset, args.duc_chan)
+    else:
+        radio_ctrl.set_tx_frequency(args.freq, args.radio_chan)
     print(f"Actual TX Freq: {radio_ctrl.get_tx_frequency(args.radio_chan) / 1e6}  MHz...")
 
     # Set the sample rate

@@ -5,14 +5,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # To write Data to sigmf file
+# To save to specific path
+import os
 import sigmf
 import datetime as dt
 from sigmf import SigMFFile
 from sigmf.utils import get_data_type_str
-
-# To save to specific path
-import os
-from pathlib import Path
 
 # To use data time
 from datetime import datetime
@@ -86,7 +84,6 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args):
             "modulation": tx_waveform_config["modulation"],
             "MCS": tx_waveform_config["MCS"],
             "code_rate": tx_waveform_config["code_rate"],
-            "data_type": rx_data.dtype.name,
         }
         if "IEEE" in tx_waveform_config["standard"]:
             signal_detail["MAC_frame_type"] = tx_waveform_config["IEEE_MAC_frame_type"]

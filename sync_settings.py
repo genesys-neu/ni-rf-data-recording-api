@@ -14,4 +14,3 @@ def init():
     global tx_usrp_serial_number
     stop_tx_signal_called = False
     start_rx_data_acquisition_called = False
-    tx_usrp_serial_number = ""

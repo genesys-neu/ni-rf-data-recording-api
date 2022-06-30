@@ -7,16 +7,16 @@
 # Pre-requests: Install UHD with Python API enabled
 #
 import os
-import json
-from timeit import default_timer as timer
+import queue
+import yaml
+import signal
+
+# to read csv file of matlab waveform created using IEEE reference generator
+import csv
+
+# from timeit import default_timer as timer
 from pathlib import Path
-from multiprocessing.sharedctypes import Value
-from operator import index
-from wave import Wave_write
-import numpy as np
-from pandas import DataFrame, merge
-import pandas
-from sympy import var
+import pandas as pd
 import uhd
 import math
 
@@ -25,68 +25,47 @@ import math
 from re import X
 import xml.etree.cElementTree as ET
 
-# to read csv file of matlab waveform created using IEEE reference generator
-import csv
-import re
-
 # to read tdms file
 from nptdms import TdmsFile
-from nptdms import tdms
+
+# from nptdms import tdms
 import time
 
 # importing the threading module
 import threading
-from multiprocessing.sharedctypes import Value
 
 # import related functions
-import rf_data_recording_api_def
 import run_rf_replay_data_transmitter
 import run_rf_data_recorder
 import sync_settings
+import rf_data_collection_config_interface
 
 
 class RFDataRecorderAPI:
     """Top-level RF Data Recorder API class"""
 
-    def __init__(self, config_file_name):
-        ## Read general parameter set from json config file
-        with open(os.path.join(os.path.dirname(__file__), config_file_name), "r") as file:
-            config = json.load(file)
-        self.config = config
-        # Initialize variations
-        self.variations_product = DataFrame([])
-        self.general_config_dic = DataFrame([])
+    def __init__(self, rf_data_acq_config_file, print_possible_configs: bool):
+        # read general parameter set from config file
+        variations_map = rf_data_collection_config_interface.generate_rf_data_collection_configs(
+            rf_data_acq_config_file, print_possible_configs
+        )
+
+        # Store them in the class
+        self.variations_map = variations_map
 
     # Modulation schemes: lookup table as a constant dictionary:
     modulation_schemes = {"1": "BPSK", "2": "QPSK", "4": "16QAM", "6": "64QAM", "8": "256QAM"}
     RFmode = ["Tx", "Rx"]
+    API_operation_modes = ["Tx-only", "Rx-only", "Tx-Rx"]
 
-    def initialize_waveform_config():
-        waveform_config = {
-            "standard": "",
-            "frequency_range": "",
-            "link_direction": "",
-            "duplexing": "",
-            "multiplexing": "",
-            "multiple_access": "",
-            "spreading": "",
-            "bandwidth": 0.0,
-            "rate": 0.0,
-            "MCS": "",
-            "modulation": "",
-            "modulation_order": "",
-            "code_rate": "",
-            "subcarrier_spacing": "",
-            "n_frames": "",
-            "test_model": "",
-            "carrier_CC_index": "",
-            "ssb_config_set": "",
-            "ssb_periodicity": "",
-            "IEEE_MAC_frame_type": "",
-            "IEEE_PSDU_length_bytes": "",
-        }
+    # Load Waveform Config dictionary
+    def initialize_waveform_config(default_waveform_config_file):
+        with open(
+            os.path.join(os.path.dirname(__file__), default_waveform_config_file), "r"
+        ) as file:
+            default_waveform_config = yaml.load(file, Loader=yaml.Loader)
 
-        return waveform_config
+        return default_waveform_config
 
     # Change numerical string with k, M, or G to float number
     def freq_string_to_float(x):
@@ -101,155 +80,6 @@ class RFDataRecorderAPI:
 
         return float(x_str)
 
-    # Calculate the range
-    def drange(start, stop, step):
-        r = start
-        while r <= stop:
-            yield r
-            r += step
-
-    # Change parameter from range to list
-    def change_parameter_range_to_list(parameter_config):
-        parameter_config["SeqType"] = "list"
-        parameter_values_range = parameter_config["Values"]
-        parameter_values_list = list(
-            RFDataRecorderAPI.drange(
-                parameter_values_range[0],
-                parameter_values_range[1],
-                parameter_values_range[2],
-            )
-        )
-        parameter_config["Values"] = parameter_values_list
-
-        return parameter_config
-
-    # Create variation map
-    class CreateVariationsMap:
-        """Top-level RFDataRecorder class"""
-
-        def __init__(self, config):
-            ## Read varaitions
-            variations = config["variations"]
-
-            # Initialize parameters
-            # define dictionay inclusing all parameters
-            variations_dict = {}
-            # number of TX and RX USRPs
-            num_tx_usrps = 0
-            num_rx_usrps = 0
-
-            ## Create list of variations for every parameter
-            for index, value in enumerate(variations):
-                device_config = variations[index]
-                # check if the given set of parameters are a set for a device or common parameters
-                # For a device
-                if "DeviceName" in device_config.keys():
-                    # Tx mode
-                    if device_config["RFmode"] == RFDataRecorderAPI.RFmode[0]:
-                        # get device ID
-                        num_tx_usrps = num_tx_usrps + 1
-                        device_id = device_config["RFmode"] + str(num_tx_usrps)
-                    # Rx mode
-                    elif device_config["RFmode"] == RFDataRecorderAPI.RFmode[1]:
-                        # get device ID
-                        num_rx_usrps = num_rx_usrps + 1
-                        device_id = device_config["RFmode"] + str(num_rx_usrps)
-                    else:
-                        raise Exception("ERROR: Unkown RF Mode of given device")
-                    # get device arguements
-                    variations_dict[device_id + "_args"] = [
-                        "type=" + device_config["type"] + ",addr=" + device_config["IPaddress"]
-                    ]
-
-                    # get device config parameters
-                    parameters = device_config["Parameters"]
-                    for index, value in enumerate(parameters):
-                        parameter_config = parameters[index]
-                        if parameter_config["SeqType"] == "range":
-                            parameter_config = RFDataRecorderAPI.change_parameter_range_to_list(
-                                parameter_config
-                            )
-                            variations_dict[
-                                device_id + "_" + parameter_config["Parameter"]
-                            ] = parameter_config["Values"]
-                        elif parameter_config["SeqType"] == "list":
-                            variations_dict[
-                                device_id + "_" + parameter_config["Parameter"]
-                            ] = parameter_config["Values"]
-                        elif parameter_config["SeqType"] == "single":
-                            variations_dict[device_id + "_" + parameter_config["Parameter"]] = [
-                                parameter_config["Values"]
-                            ]
-                        else:
-                            raise Exception(
-                                "ERROR: The supported variations options are: range, list, and single"
-                            )
-                # For a common TX or RX parameter
-                else:
-                    parameter_config = device_config
-                    if parameter_config["SeqType"] == "range":
-                        parameter_config = RFDataRecorderAPI.change_parameter_range_to_list(
-                            parameter_config
-                        )
-                        variations_dict[parameter_config["Parameter"]] = parameter_config["Values"]
-                    elif parameter_config["SeqType"] == "list":
-                        variations_dict[parameter_config["Parameter"]] = parameter_config["Values"]
-                    elif parameter_config["SeqType"] == "single":
-                        variations_dict[device_id + "_" + parameter_config["Parameter"]] = [
-                            parameter_config["Values"]
-                        ]
-                    else:
-                        raise Exception(
-                            "ERROR: The supported variations options are: range and list"
-                        )
-
-            ## Create a data frame based on all variations
-            # Do the cross product for all possible values
-            # First: Initialize data frame using the first parameter
-            variations_list = list(variations_dict.items())
-            parameter_config = variations_list[0]
-            parameter, value = parameter_config
-            variations_product = DataFrame({parameter: value})
-            for i in range(len(variations_list) - 1):
-                parameter_config = variations_list[i + 1]
-                parameter, value = parameter_config
-                data_frame_i = DataFrame({parameter: value})
-                variations_product = variations_product.merge(data_frame_i, how="cross")
-            # Store variations product in self class
-            self.variations_product = variations_product
-
-            # Print resulting variations product on terminal
-            print("Resulting variations cross product: ")
-            print(variations_product)
-            print("Number of variations: ", len(variations_product))
-
-            ## Get general config
-            general_config = config["general_config"]
-            parameter_config = general_config[0]
-            general_config_dic = DataFrame(
-                {parameter_config["Parameter"]: [parameter_config["Value"]]}
-            )
-            for i in range(len(general_config) - 1):
-                parameter_config = general_config[i + 1]
-                data_frame_i = DataFrame(
-                    {parameter_config["Parameter"]: [parameter_config["Value"]]}
-                )
-                general_config_dic = general_config_dic.merge(data_frame_i, how="cross")
-
-            # Store number of TX USRPs
-            data_frame_tx = DataFrame({"num_tx_usrps": [num_tx_usrps]})
-            general_config_dic = general_config_dic.merge(data_frame_tx, how="cross")  #
-            # Store number of RX USRPs
-            data_frame_rx = DataFrame({"num_rx_usrps": [num_rx_usrps]})
-            general_config_dic = general_config_dic.merge(data_frame_rx, how="cross")
-
-            # Store general variations product in self class
-            self.general_config_dic = general_config_dic
-
-            # Print resulting variations product on terminal
-            print("General Config Parameters: ")
-            print(general_config_dic)
-
     # Define TX Class for RF Data Reecording API Config Parameters
     class TxRFDataRecorderConfig:
         """Tx RFDataRecorder Config class"""
@@ -261,6 +91,10 @@ class RFDataRecorderAPI:
             self.args = iteration_config[tx_id + "_args"]
             # "RF center frequency in Hz, type = float ",
             self.freq = iteration_config[tx_id + "_freq"]
+            # lo_offset: type=float, help="LO offset in Hz")
+            self.lo_offset = iteration_config[tx_id + "_lo_offset"]
+            # enable_lo_offset: type=str2bool, Enable LO offset True or false")
+            self.enable_lo_offset = iteration_config[tx_id + "_enable_lo_offset"]
             # "rate of radio block, type = float ",
             self.rate = iteration_config[tx_id + "_rate"]
             # "rate_source: pssoible options
@@ -355,9 +189,9 @@ class RFDataRecorderAPI:
     # For TX and RX: the master clock rate cannot be changed after opening the session
     # We need to know mBoard ID to select the proper master clock rate in advance
     # For TX based on RFNoc graph: Getting USRP SN is supported in Multi-USRP but not on RFNoC graph
-    def get_usrps_mboard_info(self, variations_map):
+    def get_usrps_mboard_info(self, variations_map, enable_console_logging: bool):
         variations_product = variations_map.variations_product
-        general_config = variations_map.general_config_dic
+        general_config = variations_map.general_config
 
         def get_usrp_mboard_info(num_usrps, RFmode, variations_product):
             for n in range(num_usrps):
@@ -365,15 +199,39 @@ class RFDataRecorderAPI:
                 args_list = variations_product[RFmode + str(idx) + "_args"]
                 args = args_list[0]
                 usrp = uhd.usrp.MultiUSRP(args)
-                usrp_info = usrp.get_usrp_rx_info()
-                print(RFmode, " USRP number ", idx, " info:")
-                print(usrp_info)
+                if RFmode == RFDataRecorderAPI.RFmode[0]:
+                    usrp_info = usrp.get_usrp_tx_info()
+                    usrp_daughterboard_id = usrp_info["tx_id"]
+                else:
+                    usrp_info = usrp.get_usrp_rx_info()
+                    usrp_daughterboard_id = usrp_info["rx_id"]
+
+                temp = usrp_daughterboard_id.split(" ")
+                usrp_daughterboard_id_wo_ref = temp[0]
                 usrp_mboard_id = usrp_info["mboard_id"]
-                data_frame_i = DataFrame({RFmode + str(idx) + "_mboard_id": [usrp_mboard_id]})
-                variations_product = variations_product.merge(data_frame_i, how="cross")
                 usrp_serial_number = usrp_info["mboard_serial"]
-                data_frame_i = DataFrame(
+
+                if enable_console_logging:
+                    print(RFmode, " USRP number ", idx, " info:")
+                    print(
+                        "usrp_mboard_id:",
+                        usrp_mboard_id,
+                        ", usrp_serial_number:",
+                        usrp_serial_number,
+                        ", usrp_daughterboard_id:",
+                        usrp_daughterboard_id_wo_ref,
+                    )
+
+                data_frame_i = pd.DataFrame({RFmode + str(idx) + "_mboard_id": [usrp_mboard_id]})
+                variations_product = variations_product.merge(data_frame_i, how="cross")
+
+                data_frame_i = pd.DataFrame(
                     {RFmode + str(idx) + "_mboard_serial": [usrp_serial_number]}
+                )
+                variations_product = variations_product.merge(data_frame_i, how="cross")
+
+                data_frame_i = pd.DataFrame(
+                    {RFmode + str(idx) + "_transceiver_id": [usrp_daughterboard_id_wo_ref]}
                 )
                 variations_product = variations_product.merge(data_frame_i, how="cross")
 
@@ -381,18 +239,21 @@ class RFDataRecorderAPI:
 
         # get mBoard info of TX USRPs
         num_tx_usrps = int(general_config["num_tx_usrps"])
-        variations_product = get_usrp_mboard_info(
-            num_tx_usrps, RFDataRecorderAPI.RFmode[0], variations_product
-        )
+        if num_tx_usrps > 0:
+            variations_product = get_usrp_mboard_info(
+                num_tx_usrps, RFDataRecorderAPI.RFmode[0], variations_product
+            )
 
         # get mBoard info of RX USRPs
         num_rx_usrps = int(general_config["num_rx_usrps"])
-        variations_product = get_usrp_mboard_info(
-            num_rx_usrps, RFDataRecorderAPI.RFmode[1], variations_product
-        )
+        if num_rx_usrps > 0:
+            variations_product = get_usrp_mboard_info(
+                num_rx_usrps, RFDataRecorderAPI.RFmode[1], variations_product
+            )
 
-        print("Updated variations cross product including Tx and RX USRPs mBoard Infos: ")
-        print(variations_product)
+        if enable_console_logging:
+            print("Updated variations cross product including Tx and RX stations HW info: ")
+            print(variations_product)
 
         # Store variations product in its class
         variations_map.variations_product = variations_product
@@ -400,7 +261,7 @@ class RFDataRecorderAPI:
         return variations_map
 
     ## Read tdms waveform data config from rfws file
-    def read_tdms_waveform_config(path, file):
+    def read_tdms_waveform_config(path, file, default_waveform_config_file):
         folder_path = (Path(__file__).parent / path).resolve()
         # The tdms waveform config file is saved with the same name of waveform but it has .rfws extenstion
         file_path = str(folder_path) + "/" + file + ".rfws"
@@ -413,7 +274,7 @@ class RFDataRecorderAPI:
         # that have an attribute 'name' with the value e.i. 'Bandwidth (Hz)'
         # returns a list, either iterate over the list or select list element zero [0] if you expect only one hit
         # more sophisticated expressions are possible
-        waveform_config = RFDataRecorderAPI.initialize_waveform_config()
+        waveform_config = RFDataRecorderAPI.initialize_waveform_config(default_waveform_config_file)
 
         # get standard
         factory = root.findall(".//*[@name='factory']")
@@ -568,10 +429,8 @@ class RFDataRecorderAPI:
 
         return waveform_config
 
-        return waveform_config
-
     ## Read waveform data config in matlab format for IEEE waveform generator
-    def read_matlab_ieee_waveform_config(path, file):
+    def read_matlab_ieee_waveform_config(path, file, default_waveform_config_file):
         folder_path = (Path(__file__).parent / path / str(file)).resolve()
         file_path = str(folder_path) + "/cfg.csv"
 
@@ -587,7 +446,7 @@ class RFDataRecorderAPI:
             raise Exception("ERROR: Unsupported modulation scheme")
 
         # create harmonized dictionary
-        waveform_config = RFDataRecorderAPI.initialize_waveform_config()
+        waveform_config = RFDataRecorderAPI.initialize_waveform_config(default_waveform_config_file)
         waveform_config["standard"] = file
         waveform_config["multiplexing"] = "OFDM"
         waveform_config["bandwidth"] = float(cfg_dict["BW_str"]) * 1e6
@@ -601,7 +460,7 @@ class RFDataRecorderAPI:
 
         return waveform_config
 
-    def read_matlab_waveform_config(path, file):
+    def read_matlab_waveform_config(path, file, default_waveform_config_file):
         folder_path = (Path(__file__).parent / path).resolve()
         # The mat waveform config file is saved with the same name of waveform but in csv
         file_path = str(folder_path) + "/" + file + ".csv"
@@ -610,9 +469,8 @@ class RFDataRecorderAPI:
             cfg_dict = {}
             for row in csvreader:
                 cfg_dict[row[0]] = row[1]
-        print(type(cfg_dict))
         # create harmonized dictionary
-        waveform_config = RFDataRecorderAPI.initialize_waveform_config()
+        waveform_config = RFDataRecorderAPI.initialize_waveform_config(default_waveform_config_file)
         waveform_config["standard"] = cfg_dict["standard"]
         waveform_config["bandwidth"] = RFDataRecorderAPI.freq_string_to_float(cfg_dict["bandwidth"])
         waveform_config["rate"] = RFDataRecorderAPI.freq_string_to_float(cfg_dict["rate"])
@@ -621,7 +479,7 @@ class RFDataRecorderAPI:
         return waveform_config
 
     # read waveform config
-    def read_waveform_config(self, tx_data_recording_api_config):
+    def read_waveform_config(self, tx_data_recording_api_config, default_waveform_config_file):
         waveform_path = tx_data_recording_api_config.waveform_path
         waveform_file_name = tx_data_recording_api_config.waveform_file_name
         if tx_data_recording_api_config.waveform_format == "tdms":
@@ -629,6 +487,7 @@ class RFDataRecorderAPI:
                 RFDataRecorderAPI.read_tdms_waveform_config(
                     waveform_path,
                     waveform_file_name,
+                    default_waveform_config_file,
                 )
             )
         elif tx_data_recording_api_config.waveform_format == "matlab_ieee":
@@ -636,6 +495,7 @@ class RFDataRecorderAPI:
                 RFDataRecorderAPI.read_matlab_ieee_waveform_config(
                     waveform_path,
                     waveform_file_name,
+                    default_waveform_config_file,
                 )
             )
         elif tx_data_recording_api_config.waveform_format == "matlab":
@@ -643,10 +503,13 @@ class RFDataRecorderAPI:
                 RFDataRecorderAPI.read_matlab_waveform_config(
                     waveform_path,
                     waveform_file_name,
+                    default_waveform_config_file,
                 )
             )
         else:
-            waveform_config = RFDataRecorderAPI.initialize_waveform_config()
+            waveform_config = RFDataRecorderAPI.initialize_waveform_config(
+                default_waveform_config_file
+            )
             waveform_config["Standard"] = "unknown"
             tx_data_recording_api_config.waveform_config = waveform_config
 
@@ -781,6 +644,7 @@ class RFDataRecorderAPI:
             print("Warning: The code can derive the master clock rate for X310/X300 USRPs only.")
             print("         The default master clock rate will be used.")
             args_out = args_in
+
         return args_out
 
     # Calculate USRP master clockrate based on given rate
@@ -839,19 +703,154 @@ class RFDataRecorderAPI:
         print("Iteration general config: ")
         print(iteration_general_config)
 
+    ## Use Ctrl-handler to stop TX in case of Tx Only
+    def call_stop_tx_siganl():
+        # Ctrl+C handler
+        def signal_handler(sig, frame):
+            print("Exiting . . .")
+            sync_settings.stop_tx_signal_called = True
+
+        # Wait until the Tx station is ready and then print how to stop tx
+        while sync_settings.start_rx_data_acquisition_called == False:
+            time.sleep(0.1)  # sleep for 100ms
+
+        # ** Wait until user says to stop **
+        # Setup SIGINT handler (Ctrl+C)
+        signal.signal(signal.SIGINT, signal_handler)
+        print("")
+        print("Press Ctrl+C to stop RF streaming for this iteration ...")
+        while sync_settings.stop_tx_signal_called == False:
+            time.sleep(0.1)  # sleep for 100ms
+
     ## Start execution - TX emitters in parallel
     def start_execution_txs_in_parallel(
-        self, txs_data_recording_api_config, rxs_data_recording_api_config
+        self,
+        txs_data_recording_api_config,
+        rxs_data_recording_api_config,
+        api_operation_mode,
+        rx_data_nbytes_que,
     ):
 
+        # initialize threads
         threads = []
+        # start transmitters
         for idx, tx_data_recording_api_config in enumerate(txs_data_recording_api_config):
             process = threading.Thread(
                 target=run_rf_replay_data_transmitter.rf_replay_data_transmitter,
-                args=(txs_data_recording_api_config[idx],),
+                args=(
+                    txs_data_recording_api_config[idx],
+                    api_operation_mode,
+                ),
             )
             process.start()
             threads.append(process)
+
+        # start receivers
+        # Trigger Rx:
+        # ---------The data acquisition will start as soon as one Tx station is ready and started signal transmission
+        # ---------The flag: "sync_settings.start_rx_data_acquisition_called" is used for that
+        # Stop Tx:
+        # ------ As soon as the Rx data is recorded, the txs will stop data tranmission
+        # ------ The flag "sync_settings.stop_tx_signal_called" is used for that
+        for idx, rx_data_recording_api_config in enumerate(rxs_data_recording_api_config):
+            process = threading.Thread(
+                target=run_rf_data_recorder.rf_data_recorder,
+                args=(
+                    rxs_data_recording_api_config[idx],
+                    txs_data_recording_api_config,
+                    rx_data_nbytes_que,
+                ),
+            )
+            process.start()
+            threads.append(process)
+
+        # For Tx-only mode: the stop tx signal is done manaully using Ctrl+C command
+        if api_operation_mode == RFDataRecorderAPI.API_operation_modes[0]:
+            # Ctrl+C handler
+            RFDataRecorderAPI.call_stop_tx_siganl()
+
+        # We now pause execution on the main thread by 'joining' all of our started threads.
+        # This ensures that each has finished processing the urls.
+        for process in threads:
+            process.join()
+
+        # settling time
+        time.sleep(0.05)
+
+    ## Start execution - TX emitters in sequential
+    def start_execution_txs_in_sequential(
+        self,
+        txs_data_recording_api_config,
+        rxs_data_recording_api_config,
+        api_operation_mode,
+        rx_data_nbytes_que,
+        enable_console_logging,
+    ):
+
+        for idx, tx_data_recording_api_config in enumerate(txs_data_recording_api_config):
+            ##  Initlize sync settings
+            sync_settings.init()
+            if enable_console_logging:
+                print(
+                    "Sync Status: Start Data Acquestion called = ",
+                    sync_settings.start_rx_data_acquisition_called,
+                    " Stop Tx Signal called = ",
+                    sync_settings.stop_tx_signal_called,
+                )
+            # initialize threads
+            threads = []
+            # start transmitter
+            process = threading.Thread(
+                target=run_rf_replay_data_transmitter.rf_replay_data_transmitter,
+                args=(
+                    txs_data_recording_api_config[idx],
+                    api_operation_mode,
+                ),
+            )
+            process.start()
+            threads.append(process)
+
+            # start receivers
+            # Trigger Rx:
+            # ---------The data acquisition will start as soon as one Tx station is ready and started signal transmission
+            # ---------The flag: "sync_settings.start_rx_data_acquisition_called" is used for that
+            # Stop Tx:
+            # ------ As soon as the Rx data is recorded, the txs will stop data tranmission
+            # ------ The flag "sync_settings.stop_tx_signal_called" is used for that
+            for idx, rx_data_recording_api_config in enumerate(rxs_data_recording_api_config):
+                process = threading.Thread(
+                    target=run_rf_data_recorder.rf_data_recorder,
+                    args=(
+                        rxs_data_recording_api_config[idx],
+                        txs_data_recording_api_config,
+                        rx_data_nbytes_que,
+                    ),
+                )
+                process.start()
+                threads.append(process)
+
+            # Tx-only mode
+            if api_operation_mode == RFDataRecorderAPI.API_operation_modes[0]:
+                # Ctrl+C handler
+                RFDataRecorderAPI.call_stop_tx_siganl(api_operation_mode)
+
+            # We now pause execution on the main thread by 'joining' all of our started threads.
+            # This ensures that each has finished processing the urls.
+            for process in threads:
+                process.join()
+
+            # settling time
+            time.sleep(0.05)
+
+    ## Execute Rxs only for RX only mode
+    def start_rxs_execution(
+        self, txs_data_recording_api_config, rxs_data_recording_api_config, rx_data_nbytes_que
+    ):
+
+        threads = []
+        # For Rx only, no trigger required from Tx to start data acquisition
+        # Send a command to start RX data aquestions
+        sync_settings.start_rx_data_acquisition_called = True
 
         for idx, rx_data_recording_api_config in enumerate(rxs_data_recording_api_config):
             process = threading.Thread(
@@ -859,6 +858,7 @@ class RFDataRecorderAPI:
                 args=(
                     rxs_data_recording_api_config[idx],
                     txs_data_recording_api_config,
+                    rx_data_nbytes_que,
                 ),
             )
             process.start()
@@ -868,45 +868,6 @@ class RFDataRecorderAPI:
         # This ensures that each has finished processing the urls.
         for process in threads:
             process.join()
+
         # settling time
-        time.sleep(0.3)
-
-    ## Start execution - TX emitters in sequential
-    def start_execution_txs_in_sequential(
-        self, txs_data_recording_api_config, rxs_data_recording_api_config
-    ):
-
-        for idx, tx_data_recording_api_config in enumerate(txs_data_recording_api_config):
-            ##  Initlize sync settings
-            sync_settings.init()
-            print(
-                "Sync Status: ",
-                sync_settings.start_rx_data_acquisition_called,
-                " ",
-                sync_settings.stop_tx_signal_called,
-            )
-            threads = []
-            process = threading.Thread(
-                target=run_rf_replay_data_transmitter.rf_replay_data_transmitter,
-                args=(txs_data_recording_api_config[idx],),
-            )
-            process.start()
-            threads.append(process)
-
-            for idx, rx_data_recording_api_config in enumerate(rxs_data_recording_api_config):
-                process = threading.Thread(
-                    target=run_rf_data_recorder.rf_data_recorder,
-                    args=(
-                        rxs_data_recording_api_config[idx],
-                        txs_data_recording_api_config,
-                    ),
-                )
-                process.start()
-                threads.append(process)
-
-            # We now pause execution on the main thread by 'joining' all of our started threads.
-            # This ensures that each has finished processing the urls.
-            for process in threads:
-                process.join()
-            # settling time
-            time.sleep(0.3)
+        time.sleep(0.05)
