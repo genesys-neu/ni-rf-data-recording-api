@@ -1,0 +1,13 @@
+# ---------------------------------------------------------------------
+# Matlab-based LabVIEW reference file generation
+# National Instruments Dresden GmbH, Dresden, Germany
+# 
+# File Data Type        : Configuration Data
+# Generator script      : 
+# System model base path: 
+# System model SVN rev. : UNKNOWN
+# Run date/time         : 14-Apr-2022 13:22:03
+# Run by                : user "" on system ""
+# ---------------------------------------------------------------------
+mcs;mods;crate;ndbps;ncbps;scram_seed;N_sym;BW_str;format;PSDU_length
+7;6;3/4;216;288;89;2;20;0;27

@@ -1,0 +1,3 @@
+[submodule "compute-architectures/xilinx/Vitis-AI"]
+	path = compute-architectures/xilinx/Vitis-AI
+	url = https://ni@dev.azure.com/ni/Users/_git/Vitis-AI
