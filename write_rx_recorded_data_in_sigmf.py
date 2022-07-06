@@ -16,7 +16,7 @@ from sigmf.utils import get_data_type_str
 from datetime import datetime
 
 
-def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args):
+def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config):
     # Write recorded data to file
     # Get time stamp
     time_stamp_micro_sec = datetime.now().strftime("%Y_%m_%d-%H_%M_%S_%f")
@@ -35,11 +35,11 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args):
             SigMFFile.DATATYPE_KEY: "cf32_le",  # get_data_type_str(rx_data) - 'cf64_le' is not supported yet
             SigMFFile.SAMPLE_RATE_KEY: rx_args.coerced_rx_rate,  # args.rate,
             SigMFFile.NUM_CHANNELS_KEY: len(rx_args.channels),
-            SigMFFile.AUTHOR_KEY: "Abdo Gaber",
-            SigMFFile.DESCRIPTION_KEY: "USRP RX IQ DATA CAPTURE",
-            SigMFFile.RECORDER_KEY: "UHD Python API",
+            SigMFFile.AUTHOR_KEY: general_config["author"],
+            SigMFFile.DESCRIPTION_KEY: general_config["description"],
+            SigMFFile.RECORDER_KEY: "NI RF Data Collection API",
             SigMFFile.LICENSE_KEY: "URL to the license document",
-            SigMFFile.HW_KEY: "USRP " + rx_args.usrp_mboard_id,
+            SigMFFile.HW_KEY: rx_args.hw_type,
             SigMFFile.DATASET_KEY: dataset_filename,
             SigMFFile.VERSION_KEY: sigmf.__version__,
         },
@@ -54,10 +54,7 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args):
             "capture_details": {
                 "acquisition_bandwidth": rx_args.coerced_rx_bandwidth,
                 "gain": rx_args.coerced_rx_gain,
-                "attenuation": int(rx_args.channel_attenuation),  # args.channel_attenuation,
-                "source_file": os.path.basename(
-                    __file__
-                ),  # RF IQ recording filename that was used to create the file
+                # "source_file": os.path.basename(__file__),  # RF IQ recording filename that was used to create the file
             },
         },
     )
@@ -88,18 +85,39 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args):
         if "IEEE" in tx_waveform_config["standard"]:
             signal_detail["MAC_frame_type"] = tx_waveform_config["IEEE_MAC_frame_type"]
 
-        emitter_info = {
-            "usrp_mboard_serial": tx_args.usrp_mboard_serial,  # Unique ID of the emitter
-            "usrp_mboard_id": tx_args.usrp_mboard_id,
+        signal_emitter = {
+            "seid": tx_args.seid,  # Unique ID of the emitter
+            "hw": tx_args.hw_type,
+            "hw_subtype": tx_args.hw_subtype,
             "manufacturer": "NI",
             "frequency": str(tx_args.freq),
-            "rate": str(tx_args.rate),
+            "sample_rate": str(tx_args.rate),
             "bandwidth": str(tx_args.bandwidth),
-            "usrp_gain": str(tx_args.gain),
-            "reference": tx_args.reference,
+            "gain_tx": str(tx_args.gain),
+            "clock_reference": tx_args.clock_reference,
         }
-        txs_info["Tx" + str(idx)] = {"detail": signal_detail, "emitter": emitter_info}
+        # Filter out empty parameters (temporary, this step will be done after adding the parameter map)
+        signal_detail_filtered = {}
+        for i, value in signal_detail.items():
+            if len(value):
+                signal_detail_filtered[i] = value
 
+        txs_info["Tx_" + str(idx)] = {
+            "signal:detail": signal_detail_filtered,
+            "signal:emitter": signal_emitter,
+        }
+
+    # get channel info
+    channel_info = {
+        "attenuation": int(rx_args.channel_attenuation),
+    }
+    # get rx info
+    rx_info = {
+        "seid": rx_args.seid,
+        "hw_subtype": rx_args.hw_subtype,
+        "manufacturer": "NI",
+        "clock_reference": rx_args.clock_reference,
+    }
     # Add an annotation
     meta.add_annotation(
         0,  # Sample Start
@@ -110,10 +128,11 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args):
             SigMFFile.FHI_KEY: rx_args.coerced_rx_freq
             + rx_args.coerced_rx_rate / 2,  # args.freq + args.rate / 2,
             SigMFFile.LABEL_KEY: label,
-            SigMFFile.COMMENT_KEY: "USRP RX IQ DATA CAPTURE",
-            SigMFFile.GENERATOR_KEY: rx_args.usrp_mboard_serial,
+            SigMFFile.COMMENT_KEY: general_config["comment"],
             "num_tx_signals": len(txs_args),
-            "signal": txs_info,
+            "system_components:transmitter": txs_info,
+            "system_components:channel": channel_info,
+            "system_components:receiver": rx_info,
         },
     )
 

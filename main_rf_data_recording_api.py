@@ -9,6 +9,7 @@
 import sys
 import time
 from queue import Queue
+import argparse
 
 # import related functions
 import rf_data_recording_api_def
@@ -18,13 +19,10 @@ import sync_settings
 from termcolor import colored
 
 
-def main():
+def main(rf_data_acq_config_file):
 
     ## Get RF Data Collection API Configuration
-    # config_file_name = "config_rf_data_recording_api.json"
-    rf_data_acq_config_file = "config_rf_data_recording_api.yaml"
-    default_waveform_config_file = "default_waveform_config.yaml"
-    enable_console_logging = True
+    # given as input
 
     # Get Time Stamp for statistics
     start_time = time.time()
@@ -32,21 +30,31 @@ def main():
     ## Create all configuration variations - cross product
     print("Load RF Data recorder config ...")
     print("Create configuration variations ...")
-    rf_data_recording_api = rf_data_recording_api_def.RFDataRecorderAPI(
-        rf_data_acq_config_file, enable_console_logging
-    )
+    rf_data_recording_api = rf_data_recording_api_def.RFDataRecorderAPI(rf_data_acq_config_file)
     variations_map = rf_data_recording_api.variations_map
     print("")
 
-    ## Get mboard ID and serial number of TX and RX USRPs
+    # Read general config, it has only a single list
+    general_config = variations_map.general_config.iloc[0]
+
+    # get default wavefrom config
+    default_waveform_config_file = general_config["waveform_config_file"]
+    # get enabel console logging flag
+    enable_console_logging = rf_data_recording_api_def.RFDataRecorderAPI.str2bool(
+        general_config["enable_console_logging"]
+    )
+
+    ## Get Hw type, subtype and HW ID of TX and RX stations
+    # For USRP:
+    # HW type = USRP type, mboard ID, i.e. USRP X310
+    # HW subtype = USRP daughterboard type
+    # HW seid = USRP serial number
     # This extra step is a workaround to solve two limitations in UHD
     # For TX and RX: the master clock rate cannot be changed after opening the session
     # We need to know mBoard ID to select the proper master clock rate in advance
     # For TX based on RFNoc graph: Getting USRP SN is supported in Multi-USRP but not on RFNoC graph
     print("Get Tx and RX stations HW info ...")
-    variations_map = rf_data_recording_api.get_usrps_mboard_info(
-        variations_map, enable_console_logging
-    )
+    variations_map = rf_data_recording_api.get_hardware_info(variations_map, enable_console_logging)
     print("")
 
     # Create que to store rx data in bytes
@@ -69,24 +77,22 @@ def main():
 
         ## Get TX and RX RF Data Recorder Config
         iteration_config = variations_map.variations_product.iloc[i]
-        # iteration general config has only a single list
-        iteration_general_config = variations_map.general_config.iloc[0]
 
         ## Create class list for all TX USRPs, each class has the TX config of related TX signal emitter
         # initialize the list
         txs_data_recording_api_config = []
-        for idx in range(1, iteration_general_config["num_tx_usrps"] + 1):
+        for idx in range(1, general_config["num_tx_usrps"] + 1):
             tx_data_recording_api_config = rf_data_recording_api.TxRFDataRecorderConfig(
-                iteration_config, iteration_general_config, idx
+                iteration_config, general_config, idx
             )
             txs_data_recording_api_config.append(tx_data_recording_api_config)
 
         ## Create class list for all RX USRPs, each class has the RX config of related RX signal acquisition
         # initialize the list
         rxs_data_recording_api_config = []
-        for idx in range(1, iteration_general_config["num_rx_usrps"] + 1):
+        for idx in range(1, general_config["num_rx_usrps"] + 1):
             rx_data_recording_api_config = rf_data_recording_api.RxRFDataRecorderConfig(
-                iteration_config, iteration_general_config, idx
+                iteration_config, general_config, idx
             )
             rxs_data_recording_api_config.append(rx_data_recording_api_config)
 
@@ -117,38 +123,43 @@ def main():
         if enable_console_logging:
             rf_data_recording_api.print_iteration_config(
                 iteration_config,
-                iteration_general_config,
+                general_config,
                 txs_data_recording_api_config,
                 rxs_data_recording_api_config,
             )
 
         ## Get API Operation mode
-        api_operation_mode = iteration_general_config["API_operation_mode"]
+        api_operation_mode = general_config["API_operation_mode"]
 
         # For Rx-only mode:
         if (
             api_operation_mode == rf_data_recording_api_def.RFDataRecorderAPI.API_operation_modes[1]
         ):  # Rx only mode
             rf_data_recording_api.start_rxs_execution(
-                txs_data_recording_api_config, rxs_data_recording_api_config, rx_data_nbytes_que
+                txs_data_recording_api_config,
+                rxs_data_recording_api_config,
+                general_config,
+                rx_data_nbytes_que,
             )
 
         ### Start execution - TX emitters in parallel
         # TX-only mode or Tx-Rx mode
         else:
-            if iteration_general_config["txs_execution"] == "parallel":
+            if general_config["txs_execution"] == "parallel":
                 rf_data_recording_api.start_execution_txs_in_parallel(
                     txs_data_recording_api_config,
                     rxs_data_recording_api_config,
                     api_operation_mode,
+                    general_config,
                     rx_data_nbytes_que,
                 )
             ## Start execution - TX emitters in sequential
-            elif iteration_general_config["txs_execution"] == "sequential":
+            elif general_config["txs_execution"] == "sequential":
                 rf_data_recording_api.start_execution_txs_in_sequential(
                     txs_data_recording_api_config,
                     rxs_data_recording_api_config,
                     api_operation_mode,
+                    general_config,
                     rx_data_nbytes_que,
                     enable_console_logging,
                 )
@@ -179,4 +190,24 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(not main())
+    # flag to be disabled for execution from IDE
+    enable_cli_args = True
+
+    if enable_cli_args:
+        # parse arguments
+        parser = argparse.ArgumentParser(description="NI RF Data Collection API")
+        parser.add_argument(
+            "--main_config",
+            type=str,
+            default="config_rf_data_recording_api.yaml",
+            help="RF data collection API config file",
+        )
+        args = parser.parse_args()
+
+        main_config = args.main_config
+    else:
+        # use default config file
+        main_config = "config_rf_data_recording_api.yaml"
+
+    # start main program
+    main(main_config)

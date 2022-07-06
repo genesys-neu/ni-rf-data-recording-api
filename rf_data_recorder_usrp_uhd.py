@@ -38,7 +38,7 @@ def parse_args():
     """Parse the command line arguments"""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-a", "--args", default="type=x300,addr=192.168.80.2,master_clock_rate=184.32e6", type=str
+        "-a", "--args", default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6", type=str
     )
     parser.add_argument(
         "-o",
@@ -83,9 +83,13 @@ def main():
     print("Initialize usrp ...")
     usrp = uhd.usrp.MultiUSRP(args.args)
     usrp_info = usrp.get_usrp_rx_info()
-    print("RX USRP info:")
+    print("RX USRP info with default config:")
     print(usrp_info)
     usrp_serial_number = usrp_info["mboard_serial"]
+
+    # Set clock reference
+    print("Setup the clock reference ...")
+    usrp.set_clock_source(args.reference)
 
     # Set up the stream
     print("Setup the stream ...")

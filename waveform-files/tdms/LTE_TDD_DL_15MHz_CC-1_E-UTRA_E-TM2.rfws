@@ -44,8 +44,8 @@
               <key name="UplinkDownlinkConfiguration">3</key>
               <key name="SpecialSubframeConfiguration">8</key>
               <key name="LinkDirection">afGenLteTdd_ldDownlink</key>
-              <key name="TimeDomainWindowLength">3.4999999404e-01</key>
-              <key name="AutoTimeDomainWindowLength">true</key>
+              <key name="TimeDomainWindowLength">8.0000001192e-01</key>
+              <key name="AutoTimeDomainWindowLength">false</key>
               <key name="TimeDomainWindowingState">true</key>
               <key name="FilterOversamplingFactor">1</key>
               <key name="FilterAutoOversampling">true</key>
@@ -1889,32 +1889,32 @@
                   <key name="count">6</key>
                   <section name="0" version="1">
                     <key name="uid">ModulationParameterSettings</key>
-                    <key name="wid">a43b8bf5-a049-49c8-bc21-76cb8cce6df9</key>
+                    <key name="wid">ac2f6b91-ce7c-4ac7-a784-7859580bd458</key>
                     <section name="user" version="1"/>
                   </section>
                   <section name="1" version="1">
                     <key name="uid">MultiCarrierPanelLTE</key>
-                    <key name="wid">a71c330e-33bf-4363-ada6-940535cc039f</key>
+                    <key name="wid">e0903991-94c8-42d7-a736-da123c4dd5e7</key>
                     <section name="user" version="1"/>
                   </section>
                   <section name="2" version="1">
                     <key name="uid">FilterParameterSettings</key>
-                    <key name="wid">b3591839-3cbd-4256-8c05-bb6b10ae54cb</key>
+                    <key name="wid">07a9df8c-91d0-4c66-a9ac-a265256bd012</key>
                     <section name="user" version="1"/>
                   </section>
                   <section name="3" version="1">
                     <key name="uid">CfrParameterSettings</key>
-                    <key name="wid">3950f86f-7211-44bf-af63-d9366592f96d</key>
+                    <key name="wid">d737e5e6-0ab9-4291-beb9-8c7bcb2a2ad9</key>
                     <section name="user" version="1"/>
                   </section>
                   <section name="4" version="1">
                     <key name="uid">ImpairmentParameterSettings</key>
-                    <key name="wid">ae3f4608-9c78-431c-9adc-447b728799dc</key>
+                    <key name="wid">936abf5e-03c8-4e79-92f5-ce0406a9d85e</key>
                     <section name="user" version="1"/>
                   </section>
                   <section name="5" version="1">
                     <key name="uid">GraphicsPanel</key>
-                    <key name="wid">d27a36ce-735d-46c3-b98c-bbae44b0588b</key>
+                    <key name="wid">391e2292-500f-401e-9f40-bb14f88470e3</key>
                     <section name="user" version="3">
                       <key name="CurrentGraph">IQ FFT</key>
                       <key name="Deactivated">false</key>

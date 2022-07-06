@@ -12,12 +12,22 @@ general_config:
   # Rx recorded data saving format, type = str, possible values (SigMF)
   rx_recorded_data_saving_format: "SigMF"
   # Number of snapshots from RX IQ data acquisition, type= int
-  nrecords: 600
+  nrecords: 10
   # Tx USRPs execution mode: "parallel" or "sequential"
   # parallel: TX USRPs will transmit their related waveforms simultaneously (in parallel)",
   # sequential: TX USRPs will transmit their related waveforms one by one in sequential manner: Transmit wavefor1, record IQ data, Transmit waveform2, record...",
   # Note: If there are more than one RX USRP, they will run in parallel."
   txs_execution: "parallel"
+  # Default Tx Wavefrom Config dictionary
+  waveform_config_file: "default_waveform_config.yaml"
+  # Enable or disable console logging: "True" or "False"
+  enable_console_logging: "True"
+  # Author name, handle, email, and/or other ID like Amateur Call Sign. 
+  author: Abdo Gaber
+  # A text description of the SigMF Recording.
+  description: "API Rx Only Test"
+  # User Comment
+  comment: "Using NI RF Data Collection API"
 # ============================================
 # =============== Transmitters   =============
 # ============================================
@@ -155,7 +165,7 @@ transmitters_config:
         SeqType: "list"
         Values: ["TX/RX"]
 common_transmitters_config:
-  tx_reference:   # Tx sync reference source (internal, external, gpsdo), type = str.
+  tx_clock_reference:   # Tx sync reference source (internal, external, gpsdo), type = str.
     SeqType: "list"
     Values: ["internal"]
   tx_radio_id:    # radio block to use (e.g., 0 or 1), type = in.

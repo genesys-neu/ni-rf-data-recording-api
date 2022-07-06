@@ -151,7 +151,7 @@ def parse_args():
 
 ## Read waveform data in TDMS format
 def read_tdms_waveform_data(path, file):
-
+    print(str(path) + str(file) + ".tdms")
     # Open the file
     tdms_file = TdmsFile.read(str(path) + str(file) + ".tdms")
     # get all channels
@@ -278,6 +278,11 @@ def main():
     if args.enable_lo_offset:
         radio_ctrl.set_tx_frequency(args.freq + args.lo_offset, args.radio_chan)
         duc_ctrl.set_freq(-args.lo_offset, args.duc_chan)
+        print(
+            "Note: LO Freqeuncy offset is:",
+            args.lo_offset,
+            ". It should be greater than Signal BW /2 and less than (max_RF_bandwidth - Signal BW)/2",
+        )
     else:
         radio_ctrl.set_tx_frequency(args.freq, args.radio_chan)
     print(f"Actual TX Freq: {radio_ctrl.get_tx_frequency(args.radio_chan) / 1e6}  MHz...")

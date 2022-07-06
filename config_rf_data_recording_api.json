@@ -7,6 +7,11 @@
     "txs_execution: parallel --> TX USRPs will transmit their related waveform simultaneously (in parallel)",
     ".............: sequential--> TX USRPs will transmit their related waveform one by one in sequential manner: Transmit wavefor1, record IQ data, Transmit waveform2, record...",
     ".............: Note: If there are more than one RX USRP, they will run in parallel.",
+    "waveform_config_file: Default Tx Wavefrom Config dictionary --> default_waveform_config.yaml",
+    "enable_console_logging: Enable or disable console logging --> True",
+    "Author name, handle, email, and/or other ID like Amateur Call Sign",
+    "description: user description for the test case",
+    "comment: user comment",  
     "DeviceName: Arbitrary device name, type=str",
     "RFmode:Tx or Rx, type=str",
     "type: USRP type, for example: x300, type=str",
@@ -44,8 +49,13 @@
     "general_config": {
       "rx_recorded_data_path": "/home/agaber/workarea/recorded-data",
       "rx_recorded_data_saving_format": "SigMF",
-      "nrecords": 1,
-      "txs_execution": "parallel"
+      "nrecords": 10,
+      "txs_execution": "parallel",
+      "waveform_config_file": "default_waveform_config.yaml",
+      "enable_console_logging": "True",
+      "author": "Abdo Gaber",
+      "description": "CBRS use case", 
+      "comment": "Using UHD Python API"
     },
     "transmitters_config": [
       {
@@ -82,7 +92,7 @@
       } 
     ],
     "common_transmitters_config": {
-      "tx_reference":       {"SeqType": "list",     "Values": ["internal"]},
+      "tx_clock_reference":       {"SeqType": "list",     "Values": ["internal"]},
       "tx_radio_id":        {"SeqType": "list",     "Values": [ 0 ]},
       "tx_radio_chan":      {"SeqType": "list",     "Values": [ 0 ] },
       "tx_replay_id":       {"SeqType": "list",     "Values": [0 ] },
@@ -99,7 +109,7 @@
             "gain":         {"SeqType": "list",     "Values": [30]},
             "channels":     {"SeqType": "list",     "Values": [ 0 ] },
             "antenna":      {"SeqType": "list",     "Values":  ["TX/RX" ] },
-            "reference":    {"SeqType": "list",     "Values": ["internal"]},
+            "clock_reference":    {"SeqType": "list",     "Values": ["internal"]},
             "duration":     {"SeqType": "list",     "Values": [ 0.01] },
             "channel_attenuation": { "SeqType": "single","Values": 33 }
         }

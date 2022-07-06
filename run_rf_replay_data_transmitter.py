@@ -17,7 +17,7 @@ from nptdms import TdmsFile
 import sync_settings
 import scipy.io
 
-
+# string to boolean
 def str2bool(v):
     if isinstance(v, bool):
         return v
@@ -146,13 +146,25 @@ def rf_replay_data_transmitter(args, api_operation_mode):
     # Set clock reference
     num_mboards = graph.get_num_mboards()
     print(f"Number of mboards: {num_mboards}")
-    graph.get_mb_controller(0).set_clock_source(args.reference)
+    graph.get_mb_controller(0).set_clock_source(args.clock_reference)
 
     # Set the center frequency
     print(f"Requesting TX Freq: {(args.freq / 1e6)} MHz...")
     if str2bool(args.enable_lo_offset):
-        radio_ctrl.set_tx_frequency(args.freq + args.lo_offset, args.radio_chan)
-        duc_ctrl.set_freq(-args.lo_offset, args.duc_chan)
+        if args.lo_offset > args.bandwidth / 2 and args.lo_offset < (
+            (args.max_RF_bandwidth - args.bandwidth) / 2
+        ):
+            radio_ctrl.set_tx_frequency(args.freq + args.lo_offset, args.radio_chan)
+            duc_ctrl.set_freq(-args.lo_offset, args.duc_chan)
+        else:
+            raise Exception(
+                "ERROR: LO Freqeuncy offset is:",
+                args.lo_offset,
+                ". It should be greater than ",
+                args.bandwidth / 2,
+                " and less than ",
+                (args.max_RF_bandwidth - args.bandwidth) / 2,
+            )
     else:
         radio_ctrl.set_tx_frequency(args.freq, args.radio_chan)
     print(f"Actual TX Freq: {radio_ctrl.get_tx_frequency(args.radio_chan) / 1e6}  MHz...")

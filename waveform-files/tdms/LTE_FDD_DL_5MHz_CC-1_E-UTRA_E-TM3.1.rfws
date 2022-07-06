@@ -3066,32 +3066,32 @@
                   <key name="count">6</key>
                   <section name="0" version="1">
                     <key name="uid">ModulationParameterSettings</key>
-                    <key name="wid">be177877-9326-4ede-9fc3-397ea3b05d52</key>
+                    <key name="wid">75d6a931-74f4-4cc2-98e0-d602322af56d</key>
                     <section name="user" version="1"/>
                   </section>
                   <section name="1" version="1">
                     <key name="uid">MultiCarrierPanelLTE</key>
-                    <key name="wid">7afc5cc3-33fc-4548-97f5-4f0f79d11c33</key>
+                    <key name="wid">ee9c8c60-80a0-458c-9970-3eb9a2701fd3</key>
                     <section name="user" version="1"/>
                   </section>
                   <section name="2" version="1">
                     <key name="uid">FilterParameterSettings</key>
-                    <key name="wid">2611516e-442e-4a5d-a54c-e042771a827f</key>
+                    <key name="wid">918f27bf-1b6c-446b-8b8c-98399f606b08</key>
                     <section name="user" version="1"/>
                   </section>
                   <section name="3" version="1">
                     <key name="uid">CfrParameterSettings</key>
-                    <key name="wid">f12afb7e-de09-41de-8add-d3b47a869fb0</key>
+                    <key name="wid">fd1c2452-ea33-4d73-ba2b-f8acb2a131cc</key>
                     <section name="user" version="1"/>
                   </section>
                   <section name="4" version="1">
                     <key name="uid">ImpairmentParameterSettings</key>
-                    <key name="wid">09769c3b-7f3d-4a26-8264-91a3488b5972</key>
+                    <key name="wid">f12180ad-7e50-4c81-8c84-98afde7689a9</key>
                     <section name="user" version="1"/>
                   </section>
                   <section name="5" version="1">
                     <key name="uid">GraphicsPanel</key>
-                    <key name="wid">85f219bc-dd99-46b9-b573-7cfaae269c04</key>
+                    <key name="wid">216b4a3a-bac0-49a9-9451-6a4f9e880afe</key>
                     <section name="user" version="3">
                       <key name="CurrentGraph">IQ FFT</key>
                       <key name="Deactivated">false</key>

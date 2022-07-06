@@ -12,18 +12,28 @@ general_config:
   # Rx recorded data saving format, type = str, possible values (SigMF)
   rx_recorded_data_saving_format: "SigMF"
   # Number of snapshots from RX IQ data acquisition, type= int
-  nrecords: 1
+  nrecords: 10
   # Tx USRPs execution mode: "parallel" or "sequential"
   # parallel: TX USRPs will transmit their related waveforms simultaneously (in parallel)",
   # sequential: TX USRPs will transmit their related waveforms one by one in sequential manner: Transmit wavefor1, record IQ data, Transmit waveform2, record...",
   # Note: If there are more than one RX USRP, they will run in parallel."
   txs_execution: "parallel"
+  # Default Tx Wavefrom Config dictionary
+  waveform_config_file: "default_waveform_config.yaml"
+  # Enable or disable console logging: "True" or "False"
+  enable_console_logging: "True"
+  # Author name, handle, email, and/or other ID like Amateur Call Sign. 
+  author: Abdo Gaber
+  # A text description of the SigMF Recording.
+  description: "API Rx Only Test"
+  # User Comment
+  comment: "Using NI RF Data Collection API"
 # ============================================
 # =============== Transmitters   =============
 # ============================================
 transmitters_config:
 common_transmitters_config:
-  tx_reference:   # Tx sync reference source (internal, external, gpsdo), type = str.
+  tx_clock_reference:   # Tx sync reference source (internal, external, gpsdo), type = str.
     SeqType: "list"
     Values: ["internal"]
   tx_radio_id:    # radio block to use (e.g., 0 or 1), type = in.
@@ -45,44 +55,6 @@ common_transmitters_config:
 # ================== Receivers   =============
 # ============================================
 receivers_config:
-  -
-    RFmode: "Rx"    # Tx or Rx, type=str.
-    # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
-    type: "x300"    # USRP type, for example: x300, type=str.
-    IPaddress: "192.168.110.2" # IP address of USRP, type=str.
-    Parameters:
-      freq:         # RF center frequency in Hz, type = float.
-        SeqType: "range"
-        Values: [3.6e+9,3.6e+9,100.0e+6]
-      rate:         # rate of radio block, type = float.
-        SeqType: "list"
-        Values: [92.16e+6]
-      rate_source:  # waveform_config: The rate will be read from the waveform config file.
-      # ............................in case of multi TX, the maximum rate will be used.
-      # ............ user_defined: The given rate by the user in this config file will be used.
-        SeqType: "single"
-        Values: "user_defined"
-      bandwidth:
-        SeqType: "list"
-        Values: [92.16e+6]
-      gain:       # Gain for the RF chain, type = float.
-        SeqType: "list"
-        Values: [30]
-      channels:   # Rx Channel selection (X310: 0,1).
-        SeqType: "list"
-        Values: [0]
-      antenna:    # TX antenna selection (TX/RX, RX2), type = str.
-        SeqType: "list"
-        Values: ["TX/RX"]
-      reference:  # Tx sync reference source (internal, external, gpsdo), type = str.
-        SeqType: "list"
-        Values: ["internal"]
-      duration:   # Rx Time duration of IQ data acquisition, type=float.
-        SeqType: "list"
-        Values: [10.0e-3]
-      channel_attenuation: # Expected channel attenuation, type = float.
-        SeqType: "single"
-        Values: 33.0
   -
     RFmode: "Rx"    # Tx or Rx, type=str.
     # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
@@ -112,7 +84,45 @@ receivers_config:
       antenna:    # TX antenna selection (TX/RX, RX2), type = str.
         SeqType: "list"
         Values: ["TX/RX"]
-      reference:  # Rx sync reference source (internal, external, gpsdo), type = str.
+      clock_reference:  # Tx sync reference source (internal, external, gpsdo), type = str.
+        SeqType: "list"
+        Values: ["internal"]
+      duration:   # Rx Time duration of IQ data acquisition, type=float.
+        SeqType: "list"
+        Values: [10.0e-3]
+      channel_attenuation: # Expected channel attenuation, type = float.
+        SeqType: "single"
+        Values: 33.0
+  -
+    RFmode: "Rx"    # Tx or Rx, type=str.
+    # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
+    type: "x300"    # USRP type, for example: x300, type=str.
+    IPaddress: "192.168.110.2" # IP address of USRP, type=str.
+    Parameters:
+      freq:         # RF center frequency in Hz, type = float.
+        SeqType: "range"
+        Values: [3.6e+9,3.6e+9,100.0e+6]
+      rate:         # rate of radio block, type = float.
+        SeqType: "list"
+        Values: [92.16e+6]
+      rate_source:  # waveform_config: The rate will be read from the waveform config file.
+      # ............................in case of multi TX, the maximum rate will be used.
+      # ............ user_defined: The given rate by the user in this config file will be used.
+        SeqType: "single"
+        Values: "user_defined"
+      bandwidth:
+        SeqType: "list"
+        Values: [92.16e+6]
+      gain:       # Gain for the RF chain, type = float.
+        SeqType: "list"
+        Values: [30]
+      channels:   # Rx Channel selection (X310: 0,1).
+        SeqType: "list"
+        Values: [0]
+      antenna:    # TX antenna selection (TX/RX, RX2), type = str.
+        SeqType: "list"
+        Values: ["TX/RX"]
+      clock_reference:  # Rx sync reference source (internal, external, gpsdo), type = str.
         SeqType: "list"
         Values: ["internal"]
       duration:   # Rx Time duration of IQ data acquisition, type=float.

@@ -38,16 +38,16 @@ import threading
 import run_rf_replay_data_transmitter
 import run_rf_data_recorder
 import sync_settings
-import rf_data_collection_config_interface
+import rf_data_recording_config_interface
 
 
 class RFDataRecorderAPI:
     """Top-level RF Data Recorder API class"""
 
-    def __init__(self, rf_data_acq_config_file, print_possible_configs: bool):
+    def __init__(self, rf_data_acq_config_file):
         # read general parameter set from config file
-        variations_map = rf_data_collection_config_interface.generate_rf_data_collection_configs(
-            rf_data_acq_config_file, print_possible_configs
+        variations_map = rf_data_recording_config_interface.generate_rf_data_recording_configs(
+            rf_data_acq_config_file
         )
 
         # Store them in the class
@@ -67,6 +67,17 @@ class RFDataRecorderAPI:
 
         return default_waveform_config
 
+    # string to boolean
+    def str2bool(v):
+        if isinstance(v, bool):
+            return v
+        if v.lower() in ("yes", "true", "t", "y", "1"):
+            return True
+        elif v.lower() in ("no", "false", "f", "n", "0"):
+            return False
+        else:
+            raise Exception("ERROR: Boolean value expected.")
+
     # Change numerical string with k, M, or G to float number
     def freq_string_to_float(x):
         if "k" in x:
@@ -84,7 +95,7 @@ class RFDataRecorderAPI:
     class TxRFDataRecorderConfig:
         """Tx RFDataRecorder Config class"""
 
-        def __init__(self, iteration_config, iteration_general_config, idx):
+        def __init__(self, iteration_config, general_config, idx):
             # ============= TX Config parameters =============
             tx_id = RFDataRecorderAPI.RFmode[0] + str(idx)
             # Device args to use when connecting to the USRP, type=str",
@@ -113,8 +124,8 @@ class RFDataRecorderAPI:
             self.waveform_path = iteration_config[tx_id + "_waveform_path"]
             # "possible values: tdms, matlab_ieee, type = str ",
             self.waveform_format = iteration_config[tx_id + "_waveform_format"]
-            # "reference source (internal, external, gpsdo, type = str",
-            self.reference = iteration_config["tx_reference"]
+            # "clock reference source (internal, external, gpsdo, type = str",
+            self.clock_reference = iteration_config["tx_clock_reference"]
             # "radio block to use (e.g., 0 or 1), type = int",
             self.radio_id = iteration_config["tx_radio_id"]
             # "radio channel to use, type = int",
@@ -125,9 +136,14 @@ class RFDataRecorderAPI:
             self.replay_chan = iteration_config["tx_replay_chan"]
             # "duc channel to use, type = int ",
             self.duc_chan = iteration_config["tx_duc_chan"]
-            # "to store USRP mboard ID (X310, or ....) and mboard serial number SN
-            self.usrp_mboard_id = iteration_config[tx_id + "_mboard_id"]
-            self.usrp_mboard_serial = iteration_config[tx_id + "_mboard_serial"]
+            # "Hardware type, i.e. for USRP: USRP mboard ID (X310, or ....)
+            self.hw_type = iteration_config[tx_id + "_hw_type"]
+            # "Hardware subtype, i.e. for USRP: daughter board type (UBX-160, CBX-120)
+            self.hw_subtype = iteration_config[tx_id + "_hw_subtype"]
+            # "Hardware serial number, i.e. for USRP: mboard serial number
+            self.seid = iteration_config[tx_id + "_seid"]
+            # "HW RF maximum supported bandwidth
+            self.max_RF_bandwidth = iteration_config[tx_id + "_max_RF_bandwidth"]
             # Define dictionary for tx wavform config
             waveform_config = {}
             self.waveform_config = waveform_config
@@ -136,7 +152,7 @@ class RFDataRecorderAPI:
     class RxRFDataRecorderConfig:
         """Rx RFDataRecorder Config class"""
 
-        def __init__(self, iteration_config, iteration_general_config, idx):
+        def __init__(self, iteration_config, general_config, idx):
             # ============= RX Config parameters =============
             rx_id = RFDataRecorderAPI.RFmode[1] + str(idx)
             # Device args to use when connecting to the USRP, type=str",
@@ -157,25 +173,27 @@ class RFDataRecorderAPI:
             self.channels = iteration_config[rx_id + "_channels"]
             # "antenna selection, type = str",
             self.antenna = iteration_config[rx_id + "_antenna"]
-            # "reference source (internal, external, gpsdo, type = str",
-            self.reference = iteration_config[rx_id + "_reference"]
+            # "clock reference source (internal, external, gpsdo, type = str",
+            self.clock_reference = iteration_config[rx_id + "_clock_reference"]
             # "time duration of IQ data acquisition"
             self.duration = iteration_config[rx_id + "_duration"]
-            # expected channel atteuntion, type = float"
-            self.channel_attenuation = iteration_config[rx_id + "_channel_attenuation"]
             # "number of snapshots from RX IQ data acquisition"
-            self.nrecords = iteration_general_config["nrecords"]
+            self.nrecords = general_config["nrecords"]
             # "path to store captured rx data, type = str",
             self.rx_recorded_data_path = (
-                Path(__file__).parent / iteration_general_config["rx_recorded_data_path"]
+                Path(__file__).parent / general_config["rx_recorded_data_path"]
             ).resolve()
             # rx recorded data saving format, type = str, possible values "SigMF"
-            self.rx_recorded_data_saving_format = iteration_general_config[
-                "rx_recorded_data_saving_format"
-            ]
-            # "to store USRP mboard ID (X310, or ....) and mboard serial number SN
-            self.usrp_mboard_id = iteration_config[rx_id + "_mboard_id"]
-            self.usrp_mboard_serial = iteration_config[rx_id + "_mboard_serial"]
+            self.rx_recorded_data_saving_format = general_config["rx_recorded_data_saving_format"]
+            # "Hardware type, i.e. for USRP: USRP mboard ID (X310, or ....)
+            self.hw_type = iteration_config[rx_id + "_hw_type"]
+            # "Hardware subtype, i.e. for USRP: daughter board type (UBX-160, CBX-120)
+            self.hw_subtype = iteration_config[rx_id + "_hw_subtype"]
+            # "Hardware serial number, i.e. for USRP: mboard serial number
+            self.seid = iteration_config[rx_id + "_seid"]
+            # "HW RF maximum supported bandwidth
+            self.max_RF_bandwidth = iteration_config[rx_id + "_max_RF_bandwidth"]
+
             # initialize rx parameters
             self.num_rx_samps = 0
             self.coerced_rx_rate = 0.0
@@ -183,13 +201,20 @@ class RFDataRecorderAPI:
             self.coerced_rx_gain = 0.0
             self.coerced_rx_bandwidth = 0.0
             self.coerced_rx_lo_source = 0.0
+            # channel parameters of this RX
+            # expected channel atteuntion, type = float"
+            self.channel_attenuation = iteration_config[rx_id + "_channel_attenuation"]
 
-    ## Get mboard ID and serial number of TX and RX USRPs
+    ## Get Hw type, subtype and HW ID of TX and RX stations
+    # For USRP:
+    # HW type = USRP type, mboard ID, i.e. USRP X310
+    # HW subtype = USRP daughterboard type
+    # HW seid = USRP serial number
     # This extra step is a workaround to solve two limitations in UHD
     # For TX and RX: the master clock rate cannot be changed after opening the session
     # We need to know mBoard ID to select the proper master clock rate in advance
     # For TX based on RFNoc graph: Getting USRP SN is supported in Multi-USRP but not on RFNoC graph
-    def get_usrps_mboard_info(self, variations_map, enable_console_logging: bool):
+    def get_hardware_info(self, variations_map, enable_console_logging: bool):
         variations_product = variations_map.variations_product
         general_config = variations_map.general_config
 
@@ -198,17 +223,22 @@ class RFDataRecorderAPI:
                 idx = n + 1
                 args_list = variations_product[RFmode + str(idx) + "_args"]
                 args = args_list[0]
+                # open the session to USRP
                 usrp = uhd.usrp.MultiUSRP(args)
+                # get USRP daughterboard ID, UBX, CBX ...etc
                 if RFmode == RFDataRecorderAPI.RFmode[0]:
                     usrp_info = usrp.get_usrp_tx_info()
+                    usrp_bandwidth = usrp.get_tx_bandwidth()
                     usrp_daughterboard_id = usrp_info["tx_id"]
                 else:
                     usrp_info = usrp.get_usrp_rx_info()
                     usrp_daughterboard_id = usrp_info["rx_id"]
-
+                    usrp_bandwidth = usrp.get_rx_bandwidth()
+                # get USRP type, i.e. X310
+                usrp_mboard_id = usrp_info["mboard_id"]
                 temp = usrp_daughterboard_id.split(" ")
                 usrp_daughterboard_id_wo_ref = temp[0]
-                usrp_mboard_id = usrp_info["mboard_id"]
+                # get USRP serial number
                 usrp_serial_number = usrp_info["mboard_serial"]
 
                 if enable_console_logging:
@@ -220,33 +250,43 @@ class RFDataRecorderAPI:
                         usrp_serial_number,
                         ", usrp_daughterboard_id:",
                         usrp_daughterboard_id_wo_ref,
+                        ", usrp_RF_bandwidth:",
+                        usrp_bandwidth,
                     )
 
-                data_frame_i = pd.DataFrame({RFmode + str(idx) + "_mboard_id": [usrp_mboard_id]})
-                variations_product = variations_product.merge(data_frame_i, how="cross")
-
                 data_frame_i = pd.DataFrame(
-                    {RFmode + str(idx) + "_mboard_serial": [usrp_serial_number]}
+                    {RFmode + str(idx) + "_hw_type": ["USRP " + usrp_mboard_id]}
                 )
                 variations_product = variations_product.merge(data_frame_i, how="cross")
 
                 data_frame_i = pd.DataFrame(
-                    {RFmode + str(idx) + "_transceiver_id": [usrp_daughterboard_id_wo_ref]}
+                    {RFmode + str(idx) + "_hw_subtype": [usrp_daughterboard_id_wo_ref]}
+                )
+                variations_product = variations_product.merge(data_frame_i, how="cross")
+
+                data_frame_i = pd.DataFrame({RFmode + str(idx) + "_seid": [usrp_serial_number]})
+                variations_product = variations_product.merge(data_frame_i, how="cross")
+
+                data_frame_i = pd.DataFrame(
+                    {RFmode + str(idx) + "_max_RF_bandwidth": [usrp_bandwidth]}
                 )
                 variations_product = variations_product.merge(data_frame_i, how="cross")
 
             return variations_product
 
-        # get mBoard info of TX USRPs
+        # get hW info of TX Stations
+
         num_tx_usrps = int(general_config["num_tx_usrps"])
         if num_tx_usrps > 0:
+            # if Tx station is USRP
             variations_product = get_usrp_mboard_info(
                 num_tx_usrps, RFDataRecorderAPI.RFmode[0], variations_product
             )
 
-        # get mBoard info of RX USRPs
+        # get hW info of RX Stations
         num_rx_usrps = int(general_config["num_rx_usrps"])
         if num_rx_usrps > 0:
+            # if Rx station is USRP
             variations_product = get_usrp_mboard_info(
                 num_rx_usrps, RFDataRecorderAPI.RFmode[1], variations_product
             )
@@ -278,11 +318,11 @@ class RFDataRecorderAPI:
 
         # get standard
         factory = root.findall(".//*[@name='factory']")
-        factory = factory[0].text
-        waveform_config["standard"] = factory
+        standard = factory[0].text
+        waveform_config["standard"] = standard
 
         # Get parameters of NR standard
-        if "NR" in factory:
+        if "NR" in standard:
 
             # get bandwidth
             bwElements = root.findall(".//*[@name='Bandwidth (Hz)']")
@@ -312,7 +352,7 @@ class RFDataRecorderAPI:
                     # get DL test model
                     dl_test_models = root.findall(".//*[@name='DL Test Model']")
                     dl_test_model = dl_test_models[0].text
-                    waveform_config["test_model"] = dl_test_model
+                    waveform_config["test_model"] = "3GPP " + standard + "-" + dl_test_model
 
                     # get modulation type
                     mod = root.findall(".//*[@name='DL Test Model Modulation Type']")
@@ -383,7 +423,7 @@ class RFDataRecorderAPI:
             )
             waveform_config["rate"] = waveform_IQ_rate
 
-        elif "LTE" in factory:
+        elif "LTE" in standard:
 
             def get_lte_parameter_config(key, str_idx):
                 y = key.find("_" + str_idx)
@@ -411,7 +451,7 @@ class RFDataRecorderAPI:
             test_models = root.findall(".//*[@name='TestModel']")
             test_model_str = test_models[0].text
             test_model = get_lte_parameter_config(test_model_str, "tm")
-            waveform_config["test_model"] = test_model
+            waveform_config["test_model"] = "3GPP " + standard + "-" + test_model
 
             # get subcarrier spacing
             waveform_config["subcarrier_spacing"] = "15kHz"
@@ -655,7 +695,7 @@ class RFDataRecorderAPI:
         for tx_idx, tx_data_recording_api_config in enumerate(txs_data_recording_api_config):
             tx_data_recording_api_config.args = RFDataRecorderAPI.calculate_master_clock_rate(
                 tx_data_recording_api_config.rate,
-                tx_data_recording_api_config.usrp_mboard_id,
+                tx_data_recording_api_config.hw_type,
                 tx_data_recording_api_config.args,
             )
             txs_data_recording_api_config[tx_idx] = tx_data_recording_api_config
@@ -664,7 +704,7 @@ class RFDataRecorderAPI:
         for rx_idx, rx_data_recording_api_config in enumerate(rxs_data_recording_api_config):
             rx_data_recording_api_config.args = RFDataRecorderAPI.calculate_master_clock_rate(
                 rx_data_recording_api_config.rate,
-                rx_data_recording_api_config.usrp_mboard_id,
+                rx_data_recording_api_config.hw_type,
                 rx_data_recording_api_config.args,
             )
             rxs_data_recording_api_config[rx_idx] = rx_data_recording_api_config
@@ -675,7 +715,7 @@ class RFDataRecorderAPI:
     def print_iteration_config(
         self,
         iteration_config,
-        iteration_general_config,
+        general_config,
         txs_data_recording_api_config,
         rxs_data_recording_api_config,
     ):
@@ -700,8 +740,8 @@ class RFDataRecorderAPI:
         warnings.filterwarnings("default")
         print("Iteration config: ")
         print(iteration_config)
-        print("Iteration general config: ")
-        print(iteration_general_config)
+        print("General config: ")
+        print(general_config)
 
     ## Use Ctrl-handler to stop TX in case of Tx Only
     def call_stop_tx_siganl():
@@ -728,6 +768,7 @@ class RFDataRecorderAPI:
         txs_data_recording_api_config,
         rxs_data_recording_api_config,
         api_operation_mode,
+        general_config,
         rx_data_nbytes_que,
     ):
 
@@ -758,6 +799,7 @@ class RFDataRecorderAPI:
                 args=(
                     rxs_data_recording_api_config[idx],
                     txs_data_recording_api_config,
+                    general_config,
                     rx_data_nbytes_que,
                 ),
             )
@@ -783,6 +825,7 @@ class RFDataRecorderAPI:
         txs_data_recording_api_config,
         rxs_data_recording_api_config,
         api_operation_mode,
+        general_config,
         rx_data_nbytes_que,
         enable_console_logging,
     ):
@@ -823,6 +866,7 @@ class RFDataRecorderAPI:
                     args=(
                         rxs_data_recording_api_config[idx],
                         txs_data_recording_api_config,
+                        general_config,
                         rx_data_nbytes_que,
                     ),
                 )
@@ -844,7 +888,11 @@ class RFDataRecorderAPI:
 
     ## Execute Rxs only for RX only mode
     def start_rxs_execution(
-        self, txs_data_recording_api_config, rxs_data_recording_api_config, rx_data_nbytes_que
+        self,
+        txs_data_recording_api_config,
+        rxs_data_recording_api_config,
+        general_config,
+        rx_data_nbytes_que,
     ):
 
         threads = []
@@ -858,6 +906,7 @@ class RFDataRecorderAPI:
                 args=(
                     rxs_data_recording_api_config[idx],
                     txs_data_recording_api_config,
+                    general_config,
                     rx_data_nbytes_que,
                 ),
             )
