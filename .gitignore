@@ -1,0 +1,12 @@
+# Python
+**/.venv
+**/__pycache__
+**.python-version
+**/.vscode
+
+# LabVIEW
+**/*.aliases
+**/*.lvlps
+
+# Link simulator
+**/link-simulators/basic-lte-ofdm/python/data
