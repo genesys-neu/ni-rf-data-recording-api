@@ -43,7 +43,7 @@ def parse_args():
     parser.add_argument(
         "-o",
         "--rx_recorded_data_path",
-        default=(Path(__file__).parent / "../../../../recorded-data").resolve(),
+        default=(Path(__file__).parent / "../../../../../recorded-data").resolve(),
         type=str,
     )
     parser.add_argument("-f", "--freq", default=2e9, type=float, help="RF center frequency in Hz")
@@ -82,10 +82,35 @@ def main():
     # Initialize usrp
     print("Initialize usrp ...")
     usrp = uhd.usrp.MultiUSRP(args.args)
+
+    # get USRP daughterboard ID, UBX, CBX ...etc
     usrp_info = usrp.get_usrp_rx_info()
     print("RX USRP info with default config:")
     print(usrp_info)
+    usrp_daughterboard_id = usrp_info["rx_id"]
+    temp = usrp_daughterboard_id.split(" ")
+    usrp_daughterboard_id_wo_ref = temp[0]
+    usrp_bandwidth = usrp.get_rx_bandwidth()
+    # get USRP type, i.e. X310
+    usrp_mboard_id = usrp_info["mboard_id"]
+    # get USRP serial number
     usrp_serial_number = usrp_info["mboard_serial"]
+
+    print("USRP info:")
+    print(
+        "usrp_mboard_id:",
+        usrp_mboard_id,
+        ", usrp_serial_number:",
+        usrp_serial_number,
+        ", usrp_daughterboard_id:",
+        usrp_daughterboard_id_wo_ref,
+        ", usrp_RF_bandwidth:",
+        usrp_bandwidth,
+    )
+    hw_type = "USRP " + usrp_mboard_id
+    hw_subtype = usrp_daughterboard_id_wo_ref
+    seid = usrp_serial_number
+    max_RF_bandwidth = usrp_bandwidth
 
     # Set clock reference
     print("Setup the clock reference ...")
@@ -148,8 +173,8 @@ def main():
                 SigMFFile.AUTHOR_KEY: "Abdo Gaber",
                 SigMFFile.DESCRIPTION_KEY: "5GNR Waveform: NR, FR1, DL, FDD, 64-QAM, 30 kHz SCS, 20 MHz bandwidth, TM3.1",
                 SigMFFile.RECORDER_KEY: "UHD Python API",
-                SigMFFile.LICENSE_KEY: "URL to the license document",
-                SigMFFile.HW_KEY: "USRP " + usrp_info["mboard_id"],
+                SigMFFile.LICENSE_KEY: "NI RF Data Recording API",
+                SigMFFile.HW_KEY: hw_type,
                 SigMFFile.DATASET_KEY: dataset_filename,
                 SigMFFile.VERSION_KEY: sigmf.__version__,
             },
@@ -164,12 +189,54 @@ def main():
                 "capture_details": {
                     "acquisition_bandwidth": args.coerced_rx_bandwidth,
                     "gain": args.coerced_rx_gain,
-                    "attenuation": 33,
-                    "source_file": "rf_data_recorder_usrp_uhd.py",  # RF IQ recording filename that was used to create the file
                 },
             },
         )
 
+        # get waveform config
+        txs_info = {}
+        signal_detail = {
+            "standard": "5GNR_FR1",
+            "frequency_range": "FR1",
+            "link_direction": "Downlink",
+            "test_model": "TM3.1",
+            "bandwidth": "20000000",
+            "subcarrier_spacing": "30000",
+            "duplexing": "FDD",
+            "multiplexing": "OFDM",
+            "multiple_access": "OFDM",
+            "modulation": "64-QAM",
+        }
+
+        signal_emitter = {
+            "seid": 1,  # Unique ID of the emitter
+            "hw": "USRP X310",
+            "hw_subtype": "UBX-120",
+            "manufacturer": "NI",
+            "frequency": "20000000000",
+            "sample_rate": "30720000",
+            "bandwidth": "160000000",
+            "gain_tx": "20",
+            "clock_reference": "internal",
+        }
+
+        txs_info["Tx_0"] = {
+            "signal:detail": signal_detail,
+            "signal:emitter": signal_emitter,
+        }
+
+        # get channel info
+        channel_info = {
+            "attenuation": "33",
+        }
+        # get rx info
+        rx_info = {
+            "seid": seid,
+            "hw_subtype": hw_subtype,
+            "manufacturer": "NI",
+            "clock_reference": args.reference,
+            "bandwidth": max_RF_bandwidth,
+        }
         # Add an annotation
         meta.add_annotation(
             0,  # Sample Start
@@ -181,26 +248,10 @@ def main():
                 + args.coerced_rx_rate / 2,  # args.freq + args.rate / 2,
                 SigMFFile.LABEL_KEY: "5GNR_FR1",
                 SigMFFile.COMMENT_KEY: "USRP RX IQ DATA CAPTURE",
-                SigMFFile.GENERATOR_KEY: usrp_serial_number,
-                "signal:detail": {
-                    "data_type": rx_data.dtype.name,
-                    "system": "5GNR Release 15",
-                    "standard": "5GNR_FR1",
-                    "duplexing": "FDD",
-                    "multiplexing": "ofdm",
-                    "multiple_access": "ofdm",
-                    "type": "digital",
-                    "mod_class": "qam",
-                    "carrier_variant": "single_carrier",
-                    "order": 64,
-                    "bandwidth": 2000000.0,
-                    "channel": 78,  # channel number of the signal within the communication system.
-                },
-                "signal:emitter": {
-                    "seid": 1,  # Unique ID of the emitter
-                    "manufacturer": "NI",
-                    "power_tx": 8.0,
-                },
+                "num_tx_signals": "uknown",
+                "system_components:transmitter": txs_info,
+                "system_components:channel": channel_info,
+                "system_components:receiver": rx_info,
             },
         )
 

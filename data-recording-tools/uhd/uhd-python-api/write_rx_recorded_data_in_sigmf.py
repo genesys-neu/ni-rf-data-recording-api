@@ -37,7 +37,7 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config):
             SigMFFile.NUM_CHANNELS_KEY: len(rx_args.channels),
             SigMFFile.AUTHOR_KEY: general_config["author"],
             SigMFFile.DESCRIPTION_KEY: general_config["description"],
-            SigMFFile.RECORDER_KEY: "NI RF Data Collection API",
+            SigMFFile.RECORDER_KEY: "NI RF Data Recording API",
             SigMFFile.LICENSE_KEY: "URL to the license document",
             SigMFFile.HW_KEY: rx_args.hw_type,
             SigMFFile.DATASET_KEY: dataset_filename,
@@ -92,7 +92,7 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config):
             "manufacturer": "NI",
             "frequency": str(tx_args.freq),
             "sample_rate": str(tx_args.rate),
-            "bandwidth": str(tx_args.bandwidth),
+            "bandwidth": str(tx_args.max_RF_bandwidth),
             "gain_tx": str(tx_args.gain),
             "clock_reference": tx_args.clock_reference,
         }
@@ -117,6 +117,7 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config):
         "hw_subtype": rx_args.hw_subtype,
         "manufacturer": "NI",
         "clock_reference": rx_args.clock_reference,
+        "bandwidth": str(rx_args.max_RF_bandwidth),
     }
     # Add an annotation
     meta.add_annotation(
