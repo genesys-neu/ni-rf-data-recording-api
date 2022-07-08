@@ -18,7 +18,7 @@ general_config:
   # sequential: TX USRPs will transmit their related waveforms one by one in sequential manner: Transmit wavefor1, record IQ data, Transmit waveform2, record...",
   # Note: If there are more than one RX USRP, they will run in parallel."
   txs_execution: "parallel"
-  # Default Tx Wavefrom Config dictionary
+  # Default Tx Waveform Config dictionary
   waveform_config_file: "default_waveform_config.yaml"
   # Enable or disable console logging: "True" or "False"
   enable_console_logging: "True"
@@ -38,7 +38,7 @@ transmitters_config:
     type: "x300"  # USRP type, for example: x300, type=str.
     IPaddress: "192.168.40.2" # IP address of USRP, type=str.
     Parameters:
-      freq:       # RF center frequency in Hz, type = float.
+      freq:       # RF target center frequency in Hz, type = float.
         SeqType: "range"
         Values: [3.6e+9,3.6e+9,100.0e+6]
       lo_offset:  # LO offset in Hz, type=float.
@@ -82,7 +82,7 @@ transmitters_config:
     type: "x300"  # USRP type, for example: x300, type=str.
     IPaddress: "192.168.50.2" # IP address of USRP, type=str.
     Parameters:
-      freq:       # RF center frequency in Hz, type = float.
+      freq:       # RF target center frequency in Hz, type = float.
         SeqType: "range"
         Values: [3.62e+9,3.62e+9,100.0e+6]
       lo_offset:  # LO offset in Hz, type=float.
@@ -126,7 +126,7 @@ transmitters_config:
     type: "x300"  # USRP type, for example: x300, type=str.
     IPaddress: "192.168.60.2" # IP address of USRP, type=str.
     Parameters:
-      freq:       # RF center frequency in Hz, type = float.
+      freq:       # RF target center frequency in Hz, type = float.
         SeqType: "range"
         Values: [3.64e+9,3.64e+9,100.0e+6]
       lo_offset:  # LO offset in Hz, type=float.
