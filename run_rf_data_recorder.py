@@ -42,8 +42,8 @@ def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
     usrp_info = usrp.get_usrp_rx_info()
     # print("RX USRP info:")
     # print(usrp_info)
-    rx_args.usrp_mboard_serial = usrp_info["mboard_serial"]
-    rx_args.usrp_mboard_id = usrp_info["mboard_id"]
+    # rx_args.usrp_mboard_serial = usrp_info["mboard_serial"]
+    # rx_args.usrp_mboard_id = usrp_info["mboard_id"]
 
     # Set clock reference
     usrp.set_clock_source(rx_args.clock_reference)

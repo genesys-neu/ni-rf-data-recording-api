@@ -111,7 +111,7 @@ def parse_args():
         "--waveform_format",
         default=("tdms"),
         type=str,
-        help="possible values: tdms, matlab_ieee",
+        help="possible values: tdms, matlab, matlab_ieee",
     )
     parser.add_argument("-f", "--freq", default=3e9, type=float, help="RF center frequency in Hz")
     parser.add_argument("-loo", "--lo_offset", default=20e6, type=float, help="LO offset in Hz")
@@ -139,7 +139,7 @@ def parse_args():
         "--reference",
         default="internal",
         type=str,
-        help="reference source (internal, external, gpsdo)",
+        help="clock reference source (internal, external, gpsdo)",
     )
     args = parser.parse_args()
     return args
