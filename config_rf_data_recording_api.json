@@ -7,7 +7,7 @@
     "txs_execution: parallel --> TX USRPs will transmit their related waveform simultaneously (in parallel)",
     ".............: sequential--> TX USRPs will transmit their related waveform one by one in sequential manner: Transmit wavefor1, record IQ data, Transmit waveform2, record...",
     ".............: Note: If there are more than one RX USRP, they will run in parallel.",
-    "waveform_config_file: Default Tx Waveform Config dictionary --> default_waveform_config.yaml",
+    "wireless_link_parameter_map: Parameters pair is given via parameter map dictionary (e.g. RFWS parameter name vs. SigMF meta-data parameter name)",
     "This will be replaced in future releases by a dictionary that includes a list of parameters for each standard individually.",
     "enable_console_logging: Enable or disable console logging --> True",
     "Author name, handle, email, and/or other ID like Amateur Call Sign",
@@ -52,7 +52,7 @@
       "rx_recorded_data_saving_format": "SigMF",
       "nrecords": 10,
       "txs_execution": "parallel",
-      "waveform_config_file": "default_waveform_config.yaml",
+      "wireless_link_parameter_map": "wireless_link_parameter_map.yaml",
       "enable_console_logging": "True",
       "author": "Abdo Gaber",
       "description": "CBRS use case", 
@@ -65,32 +65,48 @@
           "freq":           {"SeqType": "range",    "Values": [3.6e9, 3.6e9,100e6]},
           "lo_offset":      {"SeqType": "single",   "Values": 20.0e6},
           "enable_lo_offset":{"SeqType": "single",  "Values": "False"},
-          "rate":           {"SeqType": "list",     "Values": [15360000 ]},
+          "rate":           {"SeqType": "list",     "Values": [15360000]},
           "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
           "bandwidth":      {"SeqType": "list",     "Values": [10e6 ]},
           "waveform_file_name": {"SeqType": "list", "Values": ["NR_FR1_DL_FDD_SISO_BW-10MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1" ] },
           "waveform_path":  {"SeqType": "single",   "Values": "waveform-files/tdms/" },
           "waveform_format":{"SeqType": "single",   "Values": "tdms"},
-          "gain":           {"SeqType": "list",     "Values": [30]},
+          "gain":           {"SeqType": "list",     "Values": [20]},
           "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}
         }
       },
       {
         "RFmode": "Tx","type": "x300","IPaddress": "192.168.50.2",
         "Parameters": {
-          "freq":           {"SeqType": "range",    "Values": [3.6e9, 3.6e9,100e6]},
+          "freq":           {"SeqType": "range",    "Values": [3.61e9, 3.61e9,100e6]},
           "lo_offset":      {"SeqType": "single",   "Values": 20.0e6},
           "enable_lo_offset":{"SeqType": "single",  "Values": "False"},
           "rate":           {"SeqType": "list",     "Values": [15360000 ]},
           "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
-          "bandwidth":      {"SeqType": "list",     "Values": [10e6 ]},
+          "bandwidth":      {"SeqType": "list",     "Values": [10e6]},
           "waveform_file_name": {"SeqType": "list", "Values": ["LTE_FDD_DL_10MHz_CC-1_E-UTRA_E-TM2" ] },
           "waveform_path":  {"SeqType": "single",   "Values": "waveform-files/tdms/" },
           "waveform_format":{"SeqType": "single",   "Values": "tdms"},
-          "gain":           {"SeqType": "list",     "Values": [30]},
+          "gain":           {"SeqType": "list",     "Values": [20]},
           "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}
         }
-      } 
+      } ,
+      {
+        "RFmode": "Tx","type": "x300","IPaddress": "192.168.60.2",
+        "Parameters": {
+          "freq":           {"SeqType": "range",    "Values": [3.62e9, 3.62e9,100e6]},
+          "lo_offset":      {"SeqType": "single",   "Values": 10.0e6},
+          "enable_lo_offset":{"SeqType": "single",  "Values": "False"},
+          "rate":           {"SeqType": "list",     "Values": [10e6]},
+          "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
+          "bandwidth":      {"SeqType": "list",     "Values": [1.428e6]},
+          "waveform_file_name": {"SeqType": "list", "Values": ["RadarWaveform_BW_1428k"] },
+          "waveform_path":  {"SeqType": "single",   "Values": "waveform-files/matlab/"},
+          "waveform_format":{"SeqType": "single",   "Values": "matlab"},
+          "gain":           {"SeqType": "list",     "Values": [20]},
+          "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}
+        }
+      }
     ],
     "common_transmitters_config": {
       "tx_clock_reference":       {"SeqType": "list",     "Values": ["internal"]},
@@ -103,11 +119,11 @@
       {
         "RFmode": "Rx", "type": "x300","IPaddress": "192.168.110.2",
         "Parameters": {
-            "freq":         {"SeqType": "range",    "Values": [3.6e9, 3.6e9,100e6]},
-            "rate":         {"SeqType": "list",     "Values": [15360000 ]},
+            "freq":         {"SeqType": "range",    "Values": [3.61e9, 3.61e9,100e6]},
+            "rate":         {"SeqType": "list",     "Values": [92.16e6]},
             "rate_source":  {"SeqType": "single",   "Values": "user_defined"},
-            "bandwidth":    {"SeqType": "list",     "Values": [92e6 ]},
-            "gain":         {"SeqType": "list",     "Values": [30]},
+            "bandwidth":    {"SeqType": "list",     "Values": [92.16e6 ]},
+            "gain":         {"SeqType": "list",     "Values": [20]},
             "channels":     {"SeqType": "list",     "Values": [ 0 ] },
             "antenna":      {"SeqType": "list",     "Values":  ["TX/RX" ] },
             "clock_reference":    {"SeqType": "list",     "Values": ["internal"]},

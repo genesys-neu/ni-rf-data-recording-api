@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 
 path = "../waveform-files/matlab/"
-file = "RadarWaveform_Sample1"
+file = "RadarWaveform_BW_1428k"
 
 
 def initalize_waveform_config():

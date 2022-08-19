@@ -1,10 +1,19 @@
-##! Data Recording API
 #
-# Copyright 2022 NI Dresden
+# Copyright 2022 National Instruments Corporation
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: MIT
 #
-# Pre-requests: Install UHD with Python API enabled
+"""
+RF Data Recorder (Rx Only)
+"""
+# Description:
+#   Use for Rx data acquistion and save RX data and meta-data to files in SigMF format
+#   User needs to specify Tx signal config detial and Tx HW info manually (signal_detail, signal_emitter)
+#
+# Parameters:
+#   Look to parse the command line arguments
+#
+#   Pre-requests: Install UHD with Python API enabled
 #
 
 import argparse

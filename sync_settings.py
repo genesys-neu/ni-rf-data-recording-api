@@ -1,8 +1,14 @@
-# define global variables to sync betweem tx and rx start and stop execution
 #
-# Copyright 2022 NI Dresden
+# Copyright 2022 National Instruments Corporation
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: MIT
+#
+"""
+TX and Rx Data Acquition Sync
+"""
+# Description:
+#   define global variables to sync betweem Tx and Rx start and stop execution
+#
 
 
 def init():

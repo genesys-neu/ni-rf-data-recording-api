@@ -1,22 +1,32 @@
-##! Data Recording API
 #
-# Copyright 2022 NI Dresden
+# Copyright 2022 National Instruments Corporation
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: MIT
+#
+"""
+NI RF Data Recording API - Main File
+"""
+# Description:
+#   This is the main file of RF Data Recording API
+#
+# Parameters:
+#   main_config: configuration file name
+#   Note: if main_config parameter is not given, default config file will be used "config_rf_data_recording_api.yaml"
 #
 # Pre-requests: Install UHD with Python API enabled
 #
-import sys
 import time
 from queue import Queue
 import argparse
 
+# to print colours
+from termcolor import colored
+
 # import related functions
 import rf_data_recording_api_def
 import sync_settings
-
-# To print colours
-from termcolor import colored
+import read_waveform_config_interface
+import data_format_conversion_lib
 
 
 def main(rf_data_acq_config_file):
@@ -38,9 +48,9 @@ def main(rf_data_acq_config_file):
     general_config = variations_map.general_config.iloc[0]
 
     # get default wavefrom config
-    default_waveform_config_file = general_config["waveform_config_file"]
+    wireless_link_parameter_map = general_config["wireless_link_parameter_map"]
     # get enabel console logging flag
-    enable_console_logging = rf_data_recording_api_def.RFDataRecorderAPI.str2bool(
+    enable_console_logging = data_format_conversion_lib.str2bool(
         general_config["enable_console_logging"]
     )
 
@@ -98,9 +108,11 @@ def main(rf_data_acq_config_file):
 
         ## Get Tx Waveform config
         for idx, tx_data_recording_api_config in enumerate(txs_data_recording_api_config):
-            txs_data_recording_api_config[idx] = rf_data_recording_api.read_waveform_config(
+            txs_data_recording_api_config[
+                idx
+            ] = read_waveform_config_interface.read_tx_waveform_config(
                 tx_data_recording_api_config,
-                default_waveform_config_file,
+                wireless_link_parameter_map,
             )
 
         ## Update rate of Tx and RX USRPs based on selected rate source

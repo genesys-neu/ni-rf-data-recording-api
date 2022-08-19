@@ -1,11 +1,18 @@
-##! Data Pre-Processing API
-# NI & NEU
 #
-# Pre-requests:
+# Copyright 2022 National Instruments Corporation
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: MIT
 #
-# To save to specific path
+"""
+RF Data Pre-Processing API
+"""
+# Description:
+#   Used to plot the spectrogram of recorded IQ data
+#
+# Parameters:
+#   dataset_folder: specify path to folder of recorded data
+#   dataset_filename_base: specify base filename
+#
 import os
 import math
 import numpy as np
@@ -13,14 +20,11 @@ import matplotlib.pyplot as plt
 import scipy.signal as scipysig
 from sigmf import SigMFFile, sigmffile
 
-# initalize local variables
-plot_enabled = True
-
+## Parameters:
 # specify folder
 dataset_folder = "/home/agaber/workarea/recorded-data"
-
 # specify base filename
-dataset_filename_base = "rx_data_record_2022_06_28-15_39_22_095"  # rate
+dataset_filename_base = "rx_data_record_2022_08_12-14_16_38_749"
 
 # specify file name for meta data
 metadata_filename = os.path.join(dataset_folder, dataset_filename_base)

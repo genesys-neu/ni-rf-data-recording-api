@@ -1,0 +1,8 @@
+# ---------------------------------------------------------------------,
+# Wavefrom Configuration
+# ---------------------------------------------------------------------,
+standard: "radar"
+spreading: "FMCW"
+bandwidth: 2.0e+6
+sampling_rate: 20.0e+6
+time_duration: 9.901e-3

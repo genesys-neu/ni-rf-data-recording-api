@@ -1,7 +1,6 @@
 # Read TDMS file
 # npTDSM documentation can be found here: https://nptdms.readthedocs.io/en/stable/
 
-import numpy as np
 from nptdms import TdmsFile
 import matplotlib.pyplot as plt
 

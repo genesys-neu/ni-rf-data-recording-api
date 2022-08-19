@@ -1,8 +1,13 @@
-##! Write RX Data to a file in SigMF Format
 #
-# Copyright 2022 NI Dresden
+# Copyright 2022 National Instruments Corporation
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: MIT
+#
+"""
+Save data and meta-data interfacen - SigMF format
+"""
+# Description:
+#   Write data and meta-data to files in SigMF format
 #
 # To write Data to sigmf file
 # To save to specific path
@@ -45,7 +50,7 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config):
         },
     )
 
-    # Create a capture key at time index 0
+    # add capture field to SigMF metadata
     meta.add_capture(
         0,  # Sample Start
         metadata={
@@ -63,27 +68,11 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config):
     txs_info = {}
     label = ""
     for idx, tx_args in enumerate(txs_args):
-        tx_waveform_config = tx_args.waveform_config
+        signal_detail = tx_args.waveform_config
         if idx == 0:
-            label = tx_waveform_config["standard"]
+            label = signal_detail["standard"]
         else:
-            label = label + "_" + tx_waveform_config["standard"]
-        signal_detail = {
-            "standard": tx_waveform_config["standard"],
-            "frequency_range": tx_waveform_config["frequency_range"],
-            "link_direction": tx_waveform_config["link_direction"],
-            "test_model": tx_waveform_config["test_model"],
-            "bandwidth": str(tx_args.bandwidth),
-            "subcarrier_spacing": tx_waveform_config["subcarrier_spacing"],
-            "duplexing": tx_waveform_config["duplexing"],
-            "multiplexing": tx_waveform_config["multiplexing"],
-            "multiple_access": tx_waveform_config["multiple_access"],
-            "modulation": tx_waveform_config["modulation"],
-            "MCS": tx_waveform_config["MCS"],
-            "code_rate": tx_waveform_config["code_rate"],
-        }
-        if "IEEE" in tx_waveform_config["standard"]:
-            signal_detail["MAC_frame_type"] = tx_waveform_config["IEEE_MAC_frame_type"]
+            label = label + "_" + signal_detail["standard"]
 
         signal_emitter = {
             "seid": tx_args.seid,  # Unique ID of the emitter
@@ -96,14 +85,9 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config):
             "gain_tx": str(tx_args.gain),
             "clock_reference": tx_args.clock_reference,
         }
-        # Filter out empty parameters (temporary, this step will be done after adding the parameter map)
-        signal_detail_filtered = {}
-        for i, value in signal_detail.items():
-            if len(value):
-                signal_detail_filtered[i] = value
 
         txs_info["Tx_" + str(idx)] = {
-            "signal:detail": signal_detail_filtered,
+            "signal:detail": signal_detail,
             "signal:emitter": signal_emitter,
         }
 
@@ -119,7 +103,7 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config):
         "clock_reference": rx_args.clock_reference,
         "bandwidth": str(rx_args.max_RF_bandwidth),
     }
-    # Add an annotation
+    # add annotations field to SigMF metadata
     meta.add_annotation(
         0,  # Sample Start
         rx_args.num_rx_samps,  # Sample count

@@ -25,7 +25,7 @@ def read_matlab_waveform_data(path, file):
 
 
 path = "../waveform-files/matlab/"
-file = "RadarWaveform_Sample1"
+file = "RadarWaveform_BW_1428k"
 waveform_format_type = "matlab"
 tx_data_complex = read_matlab_waveform_data(path, file)
 print(len(tx_data_complex))

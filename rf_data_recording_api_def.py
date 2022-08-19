@@ -1,18 +1,20 @@
-##! Data Recording API
 #
-# Copyright 2022 NI Dresden
+# Copyright 2022 National Instruments Corporation
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: MIT
+#
+"""
+RF Data Recording API Main Class
+"""
+# Description:
+#   This file is the main class of RF data recording API, where most of processing is executed.
 #
 # Pre-requests: Install UHD with Python API enabled
 #
+
 import os
-import queue
 import yaml
 import signal
-
-# to read csv file of matlab waveform created using IEEE reference generator
-import csv
 
 # from timeit import default_timer as timer
 from pathlib import Path
@@ -25,10 +27,6 @@ import math
 from re import X
 import xml.etree.cElementTree as ET
 
-# to read tdms file
-from nptdms import TdmsFile
-
-# from nptdms import tdms
 import time
 
 # importing the threading module
@@ -57,39 +55,6 @@ class RFDataRecorderAPI:
     modulation_schemes = {"1": "BPSK", "2": "QPSK", "4": "16QAM", "6": "64QAM", "8": "256QAM"}
     RFmode = ["Tx", "Rx"]
     API_operation_modes = ["Tx-only", "Rx-only", "Tx-Rx"]
-
-    # Load Waveform Config dictionary
-    def initialize_waveform_config(default_waveform_config_file):
-        with open(
-            os.path.join(os.path.dirname(__file__), default_waveform_config_file), "r"
-        ) as file:
-            default_waveform_config = yaml.load(file, Loader=yaml.Loader)
-
-        return default_waveform_config
-
-    # string to boolean
-    def str2bool(v):
-        if isinstance(v, bool):
-            return v
-        if v.lower() in ("yes", "true", "t", "y", "1"):
-            return True
-        elif v.lower() in ("no", "false", "f", "n", "0"):
-            return False
-        else:
-            raise Exception("ERROR: Boolean value expected.")
-
-    # Change numerical string with k, M, or G to float number
-    def freq_string_to_float(x):
-        if "k" in x:
-            x_str = x.replace("k", "000")
-        elif "M" in x:
-            x_str = x.replace("M", "000000")
-        elif "G" in x:
-            x_str = x.replace("G", "000000000")
-        else:
-            x_str = x
-
-        return float(x_str)
 
     # Define TX Class for RF Data Reecording API Config Parameters
     class TxRFDataRecorderConfig:
@@ -275,7 +240,6 @@ class RFDataRecorderAPI:
             return variations_product
 
         # get hW info of TX Stations
-
         num_tx_usrps = int(general_config["num_tx_usrps"])
         if num_tx_usrps > 0:
             # if Tx station is USRP
@@ -300,283 +264,6 @@ class RFDataRecorderAPI:
 
         return variations_map
 
-    ## Read tdms waveform data config from rfws file
-    def read_tdms_waveform_config(path, file, default_waveform_config_file):
-        folder_path = (Path(__file__).parent / path).resolve()
-        # The tdms waveform config file is saved with the same name of waveform but it has .rfws extenstion
-        file_path = str(folder_path) + "/" + file + ".rfws"
-
-        # reading the rfws file
-        xmlDoc = ET.parse(file_path)
-        root = xmlDoc.getroot()
-
-        # XPath expressiion searching all elements recursively starting from root './/*'
-        # that have an attribute 'name' with the value e.i. 'Bandwidth (Hz)'
-        # returns a list, either iterate over the list or select list element zero [0] if you expect only one hit
-        # more sophisticated expressions are possible
-        waveform_config = RFDataRecorderAPI.initialize_waveform_config(default_waveform_config_file)
-
-        # get standard
-        factory = root.findall(".//*[@name='factory']")
-        standard = factory[0].text
-        waveform_config["standard"] = standard
-
-        # Get parameters of NR standard
-        if "NR" in standard:
-
-            # get bandwidth
-            bwElements = root.findall(".//*[@name='Bandwidth (Hz)']")
-            bw = bwElements[0].text
-            waveform_config["bandwidth"] = RFDataRecorderAPI.freq_string_to_float(bw)
-
-            # get frequency range
-            freqRanges = root.findall(".//*[@name='Frequency Range']")
-            FR = freqRanges[0].text
-            waveform_config["frequency_range"] = FR
-
-            # get link direction
-            link_directions = root.findall(".//*[@name='Link Direction']")
-            link_direction = link_directions[0].text
-            waveform_config["link_direction"] = link_direction
-
-            # get number of frames
-            n_frames = root.findall(".//*[@name='Number of Frames']")
-            n_frames = n_frames[0].text
-            waveform_config["n_frames"] = n_frames
-
-            if waveform_config["link_direction"] == "Downlink":
-                # check if test model is enabled
-                dl_ch_config_modes = root.findall(".//*[@name='DL Ch Configuration Mode']")
-                dl_ch_config_mode = dl_ch_config_modes[0].text
-                if dl_ch_config_mode == "Test Model":
-                    # get DL test model
-                    dl_test_models = root.findall(".//*[@name='DL Test Model']")
-                    dl_test_model = dl_test_models[0].text
-                    waveform_config["test_model"] = "3GPP " + standard + "-" + dl_test_model
-
-                    # get modulation type
-                    mod = root.findall(".//*[@name='DL Test Model Modulation Type']")
-                    # for PDSCH, select first catch, for PUSCH select second catch
-                    mod = mod[0].text
-                    waveform_config["modulation"] = mod
-
-                    # get DL duplex
-                    dl_duplex = root.findall(".//*[@name='DL Test Model Duplex Scheme']")
-                    dl_duplex = dl_duplex[0].text
-                    waveform_config["duplexing"] = dl_duplex
-
-                elif dl_ch_config_mode == "User Defined":
-                    # get DL test model
-                    waveform_config["test_model"] = dl_ch_config_mode
-
-                    # get modulation type
-                    mod = root.findall(".//*[@name='Modulation Type']")
-                    # for PDSCH, select first catch, for PUSCH select second catch
-                    mod = mod[0].text
-                    waveform_config["modulation"] = mod
-
-                    # get DL duplex
-                    waveform_config["duplexing"] = dl_ch_config_mode
-            elif waveform_config["link_direction"] == "Uplink":
-                # get DL test model, no test model for Uplink
-                waveform_config["test_model"] = "User Defined"
-
-                # get modulation type
-                mod = root.findall(".//*[@name='Modulation Type']")
-                # for PDSCH, select first catch, for PUSCH select second catch
-                mod = mod[1].text
-                waveform_config["modulation"] = mod
-
-                # get DL duplex
-                waveform_config["duplexing"] = "User Defined"
-            else:
-                raise Exception("ERROR: Unkown or not supported link direction")
-
-            # get subcarrier spacing
-            scs = root.findall(".//*[@name='Subcarrier Spacing (Hz)']")
-            scs = scs[0].text
-            waveform_config["subcarrier_spacing"] = scs
-
-            # get CC index
-            cc_index = root.findall(".//*[@name='CarrierCCIndex']")
-            cc_index = cc_index[0].text
-            waveform_config["carrier_CC_index"] = cc_index
-
-            # get ssb info
-            ssb_config_set = root.findall(".//*[@name='Configuration Set']")
-            ssb_config_set = ssb_config_set[0].text
-            waveform_config["ssb_config_set"] = ssb_config_set
-
-            # get ssb periodicity
-            ssb_periodicity = root.findall(".//*[@name='Periodicity']")
-            ssb_periodicity = ssb_periodicity[0].text
-            waveform_config["ssb_periodicity"] = ssb_periodicity
-
-            # multiplexing
-            waveform_config["multiplexing"] = "OFDM"
-            # multiple access
-            waveform_config["multiple_access"] = ""
-
-            # get rate
-            tx_data_complex, waveform_IQ_rate = RFDataRecorderAPI.read_tdms_waveform_data(
-                path, file
-            )
-            waveform_config["rate"] = waveform_IQ_rate
-
-        elif "LTE" in standard:
-
-            def get_lte_parameter_config(key, str_idx):
-                y = key.find("_" + str_idx)
-                req_key = key[y + 3 :]
-                return req_key
-
-            # get bandwidth
-            bwElements = root.findall(".//*[@name='Bandwidth']")
-            bw_str = bwElements[0].text
-            # the output likes this: "afGenLte_bw10MHz"
-            bw = get_lte_parameter_config(bw_str, "bw")
-            bw_wo_unit = bw[:-2]
-            waveform_config["bandwidth"] = RFDataRecorderAPI.freq_string_to_float(bw_wo_unit)
-
-            # get link direction
-            link_directions = root.findall(".//*[@name='LinkDirection']")
-            link_direction_str = link_directions[0].text
-            link_direction = get_lte_parameter_config(link_direction_str, "ld")
-            waveform_config["link_direction"] = link_direction
-
-            # get number of frames
-            waveform_config["n_frames"] = "1"
-
-            # get test model
-            test_models = root.findall(".//*[@name='TestModel']")
-            test_model_str = test_models[0].text
-            test_model = get_lte_parameter_config(test_model_str, "tm")
-            waveform_config["test_model"] = "3GPP " + standard + "-" + test_model
-
-            # get subcarrier spacing
-            waveform_config["subcarrier_spacing"] = "15kHz"
-
-            # multiplexing
-            waveform_config["multiplexing"] = "OFDM"
-            # multiple access
-            waveform_config["multiple_access"] = ""
-
-            # get rate
-            tx_data_complex, waveform_IQ_rate = RFDataRecorderAPI.read_tdms_waveform_data(
-                path, file
-            )
-            waveform_config["rate"] = waveform_IQ_rate
-
-        return waveform_config
-
-    ## Read waveform data config in matlab format for IEEE waveform generator
-    def read_matlab_ieee_waveform_config(path, file, default_waveform_config_file):
-        folder_path = (Path(__file__).parent / path / str(file)).resolve()
-        file_path = str(folder_path) + "/cfg.csv"
-
-        with open(file_path, "r") as file_p:
-            csv_dicts = csv.DictReader(filter(lambda row: row[0] != "#", file_p), delimiter=";")
-            # only one row of values is expected
-            for row in csv_dicts:
-                cfg_dict = row
-
-        if cfg_dict["mods"] in RFDataRecorderAPI.modulation_schemes.keys():
-            cfg_dict["mods"] = RFDataRecorderAPI.modulation_schemes[cfg_dict["mods"]]
-        else:
-            raise Exception("ERROR: Unsupported modulation scheme")
-
-        # create harmonized dictionary
-        waveform_config = RFDataRecorderAPI.initialize_waveform_config(default_waveform_config_file)
-        waveform_config["standard"] = file
-        waveform_config["multiplexing"] = "OFDM"
-        waveform_config["bandwidth"] = float(cfg_dict["BW_str"]) * 1e6
-        # get rate  -->  in wifi sampling rate = bandwidth
-        waveform_config["rate"] = waveform_config["bandwidth"]
-        waveform_config["MCS"] = cfg_dict["mcs"]
-        waveform_config["code_rate"] = cfg_dict["crate"]
-        waveform_config["modulation"] = cfg_dict["mods"]
-        waveform_config["IEEE_MAC_frame_type"] = cfg_dict["format"]
-        waveform_config["IEEE_PSDU_length_bytes"] = cfg_dict["PSDU_length"]
-
-        return waveform_config
-
-    def read_matlab_waveform_config(path, file, default_waveform_config_file):
-        folder_path = (Path(__file__).parent / path).resolve()
-        # The mat waveform config file is saved with the same name of waveform but in csv
-        file_path = str(folder_path) + "/" + file + ".csv"
-        with open(file_path, "r") as file_p:
-            csvreader = csv.reader(filter(lambda row: row[0] != "#", file_p))
-            cfg_dict = {}
-            for row in csvreader:
-                cfg_dict[row[0]] = row[1]
-        # create harmonized dictionary
-        waveform_config = RFDataRecorderAPI.initialize_waveform_config(default_waveform_config_file)
-        waveform_config["standard"] = cfg_dict["standard"]
-        waveform_config["bandwidth"] = RFDataRecorderAPI.freq_string_to_float(cfg_dict["bandwidth"])
-        waveform_config["rate"] = RFDataRecorderAPI.freq_string_to_float(cfg_dict["rate"])
-        waveform_config["n_frames"] = cfg_dict["n_frames"]
-
-        return waveform_config
-
-    # read waveform config
-    def read_waveform_config(self, tx_data_recording_api_config, default_waveform_config_file):
-        waveform_path = tx_data_recording_api_config.waveform_path
-        waveform_file_name = tx_data_recording_api_config.waveform_file_name
-        if tx_data_recording_api_config.waveform_format == "tdms":
-            tx_data_recording_api_config.waveform_config = (
-                RFDataRecorderAPI.read_tdms_waveform_config(
-                    waveform_path,
-                    waveform_file_name,
-                    default_waveform_config_file,
-                )
-            )
-        elif tx_data_recording_api_config.waveform_format == "matlab_ieee":
-            tx_data_recording_api_config.waveform_config = (
-                RFDataRecorderAPI.read_matlab_ieee_waveform_config(
-                    waveform_path,
-                    waveform_file_name,
-                    default_waveform_config_file,
-                )
-            )
-        elif tx_data_recording_api_config.waveform_format == "matlab":
-            tx_data_recording_api_config.waveform_config = (
-                RFDataRecorderAPI.read_matlab_waveform_config(
-                    waveform_path,
-                    waveform_file_name,
-                    default_waveform_config_file,
-                )
-            )
-        else:
-            waveform_config = RFDataRecorderAPI.initialize_waveform_config(
-                default_waveform_config_file
-            )
-            waveform_config["Standard"] = "unknown"
-            tx_data_recording_api_config.waveform_config = waveform_config
-
-        return tx_data_recording_api_config
-
-    ## Read waveform data in TDMS format
-    def read_tdms_waveform_data(path, file):
-        # Open the file
-        tdms_file = TdmsFile.read(str(path) + str(file) + ".tdms")
-        # get all channels
-        group = tdms_file["waveforms"]
-        # get channel dat
-        channel = ""
-        if "Channel 0" in group:
-            channel = group["Channel 0"]
-        elif "segment0/channel0" in group:
-            channel = group["segment0/channel0"]
-        if not channel:
-            raise Exception("ERROR: Unkown channel name of a given TDMS Waveform")
-
-        wavform_IQ_rate = channel.properties["NI_RF_IQRate"]
-
-        tx_data_float = channel[:]
-        tx_data_complex = tx_data_float[::2] + 1j * tx_data_float[1::2]
-
-        return tx_data_complex, wavform_IQ_rate
-
     ## Update TX rate based on user selection:
     # "waveform_config": Set TX rate and bandwith based on waveform config
     # "user_defined": use the given value by the user in the config file: config_rf_data-recording_api
@@ -589,7 +276,7 @@ class RFDataRecorderAPI:
                     tx_data_recording_api_config.waveform_config["bandwidth"]
                 )
                 tx_data_recording_api_config.rate = tx_data_recording_api_config.waveform_config[
-                    "rate"
+                    "sampling_rate"
                 ]
             txs_data_recording_api_config[tx_idx] = tx_data_recording_api_config
 
@@ -724,7 +411,7 @@ class RFDataRecorderAPI:
         warnings.filterwarnings("ignore")
         for tx_idx, tx_data_recording_api_config in enumerate(txs_data_recording_api_config):
             iteration_config[
-                RFDataRecorderAPI.RFmode[0] + str(tx_idx + 1) + "_rate"
+                RFDataRecorderAPI.RFmode[0] + str(tx_idx + 1) + "_sampling_rate"
             ] = tx_data_recording_api_config.rate
             iteration_config[
                 RFDataRecorderAPI.RFmode[0] + str(tx_idx + 1) + "_bandwidth"
@@ -732,7 +419,7 @@ class RFDataRecorderAPI:
 
         for rx_idx, rx_data_recording_api_config in enumerate(rxs_data_recording_api_config):
             iteration_config[
-                RFDataRecorderAPI.RFmode[1] + str(rx_idx + 1) + "_rate"
+                RFDataRecorderAPI.RFmode[1] + str(rx_idx + 1) + "_sampling_rate"
             ] = rx_data_recording_api_config.rate
             iteration_config[
                 RFDataRecorderAPI.RFmode[1] + str(rx_idx + 1) + "_bandwidth"

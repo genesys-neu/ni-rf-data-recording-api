@@ -1,11 +1,18 @@
-##! TX Waveform Playback
 #
-# Copyright 2022 NI Dresden
+# Copyright 2022 National Instruments Corporation
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: MIT
+#
+"""
+TX Waveform Playback
+"""
+# Description:
+#   Use for TX waveform playback. Given wavform can be in TDMS or MATLAB format
+#
+# Parameters:
+#   Given from the top-level script based on the API configuration file
 #
 # Pre-requests: Install UHD with Python API enabled
-# Current Supported waveform format is TDMS
 #
 import sys
 import signal
@@ -14,8 +21,11 @@ import argparse
 import numpy as np
 import uhd
 from nptdms import TdmsFile
-import sync_settings
 import scipy.io
+
+# import other functions
+import read_waveform_data_interface
+import sync_settings
 
 # string to boolean
 def str2bool(v):
@@ -27,51 +37,6 @@ def str2bool(v):
         return False
     else:
         raise argparse.ArgumentTypeError("Boolean value expected.")
-
-
-## Read waveform data in TDSM format
-def read_tdms_waveform_data(path, file):
-
-    # Open the file
-    tdms_file = TdmsFile.read(str(path) + str(file) + ".tdms")
-    # get all channels
-    group = tdms_file["waveforms"]
-    # get channel data
-    channel = ""
-    if "Channel 0" in group:
-        channel = group["Channel 0"]
-    elif "segment0/channel0" in group:
-        channel = group["segment0/channel0"]
-    if not channel:
-        raise Exception("ERROR: Unkown channel name of a given TDMS Waveform")
-
-    wavform_IQ_rate = channel.properties["NI_RF_IQRate"]
-
-    tx_data_float = channel[:]
-    tx_data_complex = tx_data_float[::2] + 1j * tx_data_float[1::2]
-    return tx_data_complex, wavform_IQ_rate
-
-
-## Read waveform data in matlab format for IEEE waveform generator
-def read_matlab_ieee_waveform_data(path, file):
-    # Open the file
-    mat_data = scipy.io.loadmat(str(path) + str(file) + "/sbb_str.mat")
-    # get data
-    data = mat_data["sbb_str"]
-    tx_data_complex = data[0][0][0]
-
-    return tx_data_complex
-
-
-## Read waveform data in matlab format - arbitrary mode
-def read_matlab_waveform_data(path, file):
-    # Open the file
-    mat_data = scipy.io.loadmat(str(path) + str(file) + ".mat")
-    # get data
-    data = mat_data["waveform"]
-    tx_data_complex = data.flatten()
-
-    return tx_data_complex
 
 
 def rf_replay_data_transmitter(args, api_operation_mode):
@@ -207,17 +172,19 @@ def rf_replay_data_transmitter(args, api_operation_mode):
 
     # Read waveform based on waveform format
     if args.waveform_format == "tdms":  # args.file.endswith(".tdms"):
-        tx_data_complex, waveform_IQ_rate = read_tdms_waveform_data(
+        tx_data_complex, waveform_IQ_rate = read_waveform_data_interface.read_waveform_data_tdms(
             args.waveform_path, args.waveform_file_name
         )
         if args.rate != waveform_IQ_rate:
             print("Note:The IQ Rate based on TDMS Waveform property should be: ", waveform_IQ_rate)
     elif args.waveform_format == "matlab_ieee":
-        tx_data_complex = read_matlab_ieee_waveform_data(
+        tx_data_complex = read_waveform_data_interface.read_waveform_data_matlab_ieee(
             args.waveform_path, args.waveform_file_name
         )
     elif args.waveform_format == "matlab":
-        tx_data_complex = read_matlab_waveform_data(args.waveform_path, args.waveform_file_name)
+        tx_data_complex = read_waveform_data_interface.read_waveform_data_matlab(
+            args.waveform_path, args.waveform_file_name
+        )
     else:
         raise Exception("ERROR: Unkown or not supported tx waveform format.")
 

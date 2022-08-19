@@ -1,16 +1,25 @@
-##! Data Recording API
 #
-# Copyright 2022 NI Dresden
+# Copyright 2022 National Instruments Corporation
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: MIT
 #
-# Read RF Data Collection API YAML configuration file
+"""
+RF Data Recording API Configuration Interface
+"""
+# Description:
+#   The configuration interface reads the configuration file and creates the variation map by doing a cross product over all possible values. Each TX and RX has own list of parameters. Some TX parameters are common for all Tx USRPs, and they are listed under common transmitters config section. The resulting variation map has four sections:
+# 	    - General configuration
+# 	    - TX USRP configuration
+# 	    - Common Tx USRPs configuration
+# 	    - RX USRP configuration
+#
 import os
 import yaml
 import json
 import pandas as pd
 import rf_data_recording_api_def
 import functools
+import data_format_conversion_lib
 
 # Read config file
 def read_config_files(rf_data_acq_config_file: str):
@@ -233,9 +242,11 @@ def generate_rf_data_recording_configs(rf_data_acq_config_file: str):
     """
     # Read RF Data collection API YAML config file
     rf_data_acq_config, extension = read_config_files(rf_data_acq_config_file)
-    
-    enable_console_logging = rf_data_recording_api_def.RFDataRecorderAPI.str2bool(rf_data_acq_config["general_config"]["enable_console_logging"])
-    
+
+    enable_console_logging = data_format_conversion_lib.str2bool(
+        rf_data_acq_config["general_config"]["enable_console_logging"]
+    )
+
     # Print RF Data Collection Config as it is given in the config file
     if enable_console_logging:
         print("RF Data Collection Configuration based on the Config File: ")
@@ -268,4 +279,4 @@ if __name__ == "__main__":
 
     rf_data_acq_config_file = "config_rf_data_recording_api.yaml"
 
-    variations_map2 = generate_rf_data_recording_configs(rf_data_acq_config_file )
+    variations_map2 = generate_rf_data_recording_configs(rf_data_acq_config_file)
