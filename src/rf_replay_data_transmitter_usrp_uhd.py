@@ -27,7 +27,7 @@ from nptdms import TdmsFile
 import scipy.io
 
 # import other functions
-import read_waveform_data_interface
+from lib import read_waveform_data_interface
 
 stop_tx_signal_called = False
 
@@ -106,7 +106,7 @@ def parse_args():
     parser.add_argument(
         "-p",
         "--path",
-        default=("waveform-files/tdms/"),
+        default=("waveforms/nr/"),
         type=str,
         help="path to waveform file",
     )
@@ -124,7 +124,7 @@ def parse_args():
         type=str,
         help="possible values: tdms, matlab, matlab_ieee",
     )
-    parser.add_argument("-f", "--freq", default=3e9, type=float, help="RF center frequency in Hz")
+    parser.add_argument("-f", "--freq", default=3.6e9, type=float, help="RF center frequency in Hz")
     parser.add_argument("-loo", "--lo_offset", default=20e6, type=float, help="LO offset in Hz")
     parser.add_argument(
         "-enable_loo",

@@ -23,10 +23,10 @@ import argparse
 from termcolor import colored
 
 # import related functions
-import rf_data_recording_api_def
-import sync_settings
-import read_waveform_config_interface
-import data_format_conversion_lib
+from lib import rf_data_recording_api_def
+from lib import sync_settings
+from lib import read_waveform_config_interface
+from lib import data_format_conversion_lib
 
 
 def main(rf_data_acq_config_file):
@@ -207,19 +207,19 @@ if __name__ == "__main__":
 
     if enable_cli_args:
         # parse arguments
-        parser = argparse.ArgumentParser(description="NI RF Data Collection API")
+        parser = argparse.ArgumentParser(description="NI RF Data Recording API")
         parser.add_argument(
-            "--main_config",
+            "--config",
             type=str,
-            default="config_rf_data_recording_api.yaml",
-            help="RF data collection API config file",
+            default="config/config_rf_data_recording_api.json",
+            help="RF data recording API config file",
         )
         args = parser.parse_args()
 
-        main_config = args.main_config
+        rf_data_acq_config_file = args.config
     else:
         # use default config file
-        main_config = "config_rf_data_recording_api.yaml"
+        rf_data_acq_config_file = "config/config_rf_data_recording_api.json"
 
     # start main program
-    main(main_config)
+    main(rf_data_acq_config_file)

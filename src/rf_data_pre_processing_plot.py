@@ -1,34 +1,34 @@
-##! Data Pre-Processing API
-# NI & NEU
 #
-# Pre-requests:
+# Copyright 2022 National Instruments Corporation
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: MIT
 #
+## Description:
+#   Used to plot time domain and freqeuncy domain of recorded IQ data
+#
+# Parameters:
+#   dataset_folder: specify path to folder of recorded data
+#   dataset_filename_base: specify base filename
+#
+#  Load SigMF data set and plot it based on Config in Meta-data
 
+import os
 import numpy as np
-
 import scipy.signal as scipysig
-
 # import matplotlib as mpl
 import matplotlib.pyplot as plt
-
 from sigmf import SigMFFile, sigmffile
 
-# To save to specific path
-import os
+#----------------------------------------------------------------
+# Configuration
+# 1- specify folder
+dataset_folder = "/home/agaber/workarea/recorded-data"
+# 2- specify base filename
+dataset_filename_base = "rx_data_record_2022_08_23-13_31_47_810"
+#---------------------------------------------------------------
 
 # initalize local variables
 plot_enabled = True
-
-# specify folder
-#dataset_folder = "/home/vkotzsch/lti-6g-sw-project/recorded-data"
-dataset_folder = "/home/agaber/workarea/recorded-data"
-
-
-# specify base filename
-dataset_filename_base = "rx_data_record_2022_05_23-17_06_36_899"
-
 # specify file name for meta data
 metadata_filename = os.path.join(dataset_folder, dataset_filename_base)
 
@@ -56,15 +56,8 @@ for idx, annotation in enumerate(annotations):
     # Get frequency edges of annotation (default to edges of capture)
     freq_start = annotation.get(SigMFFile.FLO_KEY)
     freq_stop = annotation.get(SigMFFile.FHI_KEY)
-
-    # = annotation.get("signal:Tx0:detail")
     
     data_type = "complex64" #signal_detail["data_type"]
-
-
-# specify filename for data
-# dataset_filename = os.path.join(dataset_folder, dataset_filename_base + ".sigmf-data")
-# dataset = np.fromfile(dataset_filename, dtype=data_type)
 
 # load data set
 dataset = metadata.read_samples().view(data_type).flatten()
@@ -88,7 +81,6 @@ if plot_enabled == True:
     )
     plt.semilogy(f, Pxx_den)
     plt.title("Frequency domain signal (Spectrum)")
-    # plt.ylim([1e-8, 1e-3]);
     plt.xlabel("frequency [Hz]")
     plt.ylabel("PSD")
     plt.grid()

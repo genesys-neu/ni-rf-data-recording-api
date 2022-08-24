@@ -20,11 +20,13 @@ import matplotlib.pyplot as plt
 import scipy.signal as scipysig
 from sigmf import SigMFFile, sigmffile
 
-## Parameters:
-# specify folder
+#----------------------------------------------------------------
+# Configuration
+# 1- specify folder
 dataset_folder = "/home/agaber/workarea/recorded-data"
-# specify base filename
-dataset_filename_base = "rx_data_record_2022_08_12-14_16_38_749"
+# 2- specify base filename
+dataset_filename_base = "rx_data_record_2022_08_23-13_31_47_810"
+#---------------------------------------------------------------
 
 # specify file name for meta data
 metadata_filename = os.path.join(dataset_folder, dataset_filename_base)
