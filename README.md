@@ -17,7 +17,7 @@ The RF Data Recording API has been built based on [UHD](https://github.com/Ettus
     - [Table of Contents](#table-of-contents)
     - [Introduction](#introduction)
     - [API Features](#api-features)
-    - [System Requirements](#system-sequirements)
+    - [System Requirements](#system-requirements)
         - [Software](#software)
         - [Hardware](#hardware)
     - [Reference Architecture](#reference-architecture)
@@ -28,7 +28,7 @@ The RF Data Recording API has been built based on [UHD](https://github.com/Ettus
         - [Wireless Link Parameter Map Dictionary](#wireless-link-parameter-map-dictionary)
         - [API Library](#api-library)
     - [System Setup](#system-setup)
-    - [Run NI RF Data Recording API](#run-ni-rf-data-recording-api)
+    - [How to Run NI RF Data Recording API](#how-to-run-ni-rf-data-recording-api)
 		- [Running RF Data Recording API based on Configuration File](#running-rf-data-recording-api-based-on-configuration-file)
 		- [RF Replay Data Transmitter](#rf-replay-data-transmitter)
 		- [RF Rx Data Recorder](#rf-rx-data-recorder)
@@ -230,7 +230,7 @@ Follow the Getting Started Guide instructions [docs/Getting Started Guide of NI 
 
 ---
 
-## Run NI RF Data Recording API
+## How to Run NI RF Data Recording API
 After system setup, open the terminal and clone the repository. Then, switch to `src` folder.
 
 ---
