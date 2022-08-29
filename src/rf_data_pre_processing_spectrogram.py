@@ -23,9 +23,9 @@ from sigmf import SigMFFile, sigmffile
 #----------------------------------------------------------------
 # Configuration
 # 1- specify folder
-dataset_folder = "/home/agaber/workarea/recorded-data"
+dataset_folder = "/home/user/workarea/recorded-data"
 # 2- specify base filename
-dataset_filename_base = "rx_data_record_2022_08_23-13_31_47_810"
+dataset_filename_base = "rx_data_record_2022_08_25-15_53_59_469"
 #---------------------------------------------------------------
 
 # specify file name for meta data

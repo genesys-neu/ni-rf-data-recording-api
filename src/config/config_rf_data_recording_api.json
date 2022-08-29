@@ -53,7 +53,7 @@
     "tx_duc_chan: duc channel to use, type = int "
     ],
     "general_config": {
-      "rx_recorded_data_path": "/home/agaber/workarea/recorded-data",
+      "rx_recorded_data_path": "/home/user/workarea/recorded-data",
       "rx_recorded_data_saving_format": "SigMF",
       "nrecords": 10,
       "txs_execution": "parallel",

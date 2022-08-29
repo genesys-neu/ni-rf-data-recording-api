@@ -52,7 +52,7 @@ def parse_args():
     parser.add_argument(
         "-o",
         "--rx_recorded_data_path",
-        default=(Path(__file__).parent / "/home/agaber/workarea/recorded-data").resolve(),
+        default=(Path(__file__).parent / "/home/user/workarea/recorded-data").resolve(),
         type=str,
     )
     parser.add_argument("-f", "--freq", default=2e9, type=float, help="RF center frequency in Hz")
