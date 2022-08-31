@@ -327,7 +327,7 @@ Assume three transmitters transmit the following signals (default configuration 
 
 The figure below shows the spectrogram of received 5G NR, LTE, and Radar signals. The Rx sampling rate is 92.16 MHz.
  
- ![spectrogram](../resources/Spectrogram_rx_NR_LTE_Radar.png  "Spectrogram 5G NR, LTE, Radar")
+ ![spectrogram](resources/Spectrogram_rx_NR_LTE_Radar.png  "Spectrogram 5G NR, LTE, Radar")
 
  **Note**:
  - The `src/rf_data_pre_processing_plot.py` can be used also to read the SigMF metadata and plot time domain and spectrum of recorded IQ data.
