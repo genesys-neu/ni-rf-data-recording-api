@@ -1,0 +1,177 @@
+#
+# Copyright 2022 National Instruments Corporation
+#
+# SPDX-License-Identifier: MIT
+#
+# Wireless Link Parameter Map
+# Components:
+# Transmitter: list of waveform configuration based on standard
+#             Parameters pair is given via this parameter map dictionary (Parameter name in Waveform creator vs that in the API ~ SigMF meta-data)
+#             Having a separate dictionary ease of adoption in case of:
+#             - Adding new parameters
+#             - Use different waveform creator that has Different naming scheme
+#             - Define your own customized standard or new wireless system
+#             - All changes are limited to parameter map dictionary
+# =====================================================================================
+# ======== list of parameter pairs between waveform config and API~ SigMF Meta-Data ===
+# =====================================================================================
+
+transmitter:
+  # 5G NR subfield
+  nr:
+    # standard
+    - sigmf_parameter_name: "standard"
+      description: "Standard such as LTE, NR, ... etc"
+      nr_rfmx_rfws_parameter_name: "factory"
+    # Frequency Range
+    - sigmf_parameter_name: "frequency_range"
+      description: "Frequency Range"
+      nr_rfmx_rfws_parameter_name: "Frequency Range"
+    # bandwidth
+    - sigmf_parameter_name: "bandwidth"
+      description: "5G NR bandwidth"
+      nr_rfmx_rfws_parameter_name: "Bandwidth (Hz)"
+    # Link direction
+    - sigmf_parameter_name: "link_direction"
+      description: "Link direction"
+      nr_rfmx_rfws_parameter_name: "Link Direction"
+    # Frame structure
+    - sigmf_parameter_name: "frame_structure"
+      description: "5G NR duplexing scheme FDD, TDD, user defined"
+      nr_rfmx_rfws_parameter_name: ""
+    # Subcarrier spacing in Hz
+    - sigmf_parameter_name: "subcarrier_spacing"
+      description: "Subcarrier spacing in Hz"
+      nr_rfmx_rfws_parameter_name: Subcarrier Spacing (Hz)
+    # SSB configuration
+    - sigmf_parameter_name: "ssb_config_set"
+      description: "SSB Configuration set"
+      nr_rfmx_rfws_parameter_name: "Configuration Set"
+    # SSB periodicity
+    - sigmf_parameter_name: "ssb_periodicity"
+      description: "SSB Periodicity"
+      nr_rfmx_rfws_parameter_name: "Periodicity"
+    # Sampling rate in Hz
+    - sigmf_parameter_name: "sampling_rate"
+      description: "Sampling rate in Hz"
+      lte_rfmx_rfws_parameter_name: "sample_rate_hz"
+    # Carrier CC Index
+    - sigmf_parameter_name: "carrier_CC_index"
+      description: "Carrier CC Index"
+      lte_rfmx_rfwss_parameter_name: "CarrierCCIndex"
+    # Test Model
+    - sigmf_parameter_name: "test_model"
+      description: "Test Model"
+      nr_rfmx_rfws_parameter_name: "TestModel"
+    # pdsch Modulation
+    - sigmf_parameter_name: "pdsch:modulation"
+      description: "PDSCH modulation"
+      nr_rfmx_rfws_parameter_name: ""
+    # pusch Modulation
+    - sigmf_parameter_name: "pusch:modulation"
+      description: "PUSCH modulation"
+      nr_rfmx_rfws_parameter_name: ""
+  # LTE subfield
+  lte:
+    # standard
+    - sigmf_parameter_name: "standard"
+      description: "Standard such as LTE, NR, ... etc"
+      nr_rfmx_rfws_parameter_name: "factory"
+    # bandwidth
+    - sigmf_parameter_name: "bandwidth"
+      description: "LTE bandwidth"
+      lte_rfmx_rfws_parameter_name: "Bandwidth"
+    # Frame structure
+    - sigmf_parameter_name: "frame_structure"
+      description: "LTE frame structure"
+      lte_rfmx_rfws_parameter_name: "factory"
+    # Link direction
+    - sigmf_parameter_name: "link_direction"
+      description: "Link direction"
+      lte_rfmx_rfws_parameter_name: "LinkDirection"
+    # test model
+    - sigmf_parameter_name: "test_model"
+      description: "Test Model"
+      lte_rfmx_rfws_parameter_name: "TestModel"
+    # Sampling rate in Hz
+    - sigmf_parameter_name: "sampling_rate"
+      description: "Sampling rate in Hz"
+      lte_rfmx_rfws_parameter_name: ""
+    # Subcarrier spacing in Hz
+    - sigmf_parameter_name: "subcarrier_spacing"
+      description: "Subcarrier spacing in Hz"
+      lte_rfmx_rfws_parameter_name: ""
+    # PDSCH: modulation
+    - sigmf_parameter_name: "pdsch:modulation"
+      description: "PDSCH: modulation"
+      lte_rfmx_rfws_parameter_name: 'PDSCHCodeWord1ModulationType'
+    # PUSCH: modulation
+    - sigmf_parameter_name: "pusch:modulation"
+      description: "PUSCH: modulation"
+      lte_rfmx_rfws_parameter_name: 'User Defined Modulation Type'
+  # Radar  
+  radar:
+    # standard
+    - sigmf_parameter_name: "standard"
+      description: "Standard such as LTE, NR, ... etc"
+      radar_parameter_name: "standard"
+    # spreading 
+    - sigmf_parameter_name: "spreading"
+      description: "Spreading method FMCW, CW"
+      radar_parameter_name: "spreading"
+    # Sampling rate in Hz
+    - sigmf_parameter_name: "sampling_rate"
+      description: "Sampling rate in Hz"
+      radar_parameter_name: "sampling_rate"
+    # bandwidth
+    - sigmf_parameter_name: "bandwidth"
+      description: "bandwidth in Hz"
+      radar_parameter_name: "bandwidth"
+    # time duration
+    - sigmf_parameter_name: "time_duration"
+      description: "Time duration in seconds"
+      radar_parameter_name: "time_duration"
+  # 802.11 IEEE Waveform Generator: waveform data config in matlab format  
+  802.11_ieee_gen_matlab:
+    # standard 
+    - sigmf_parameter_name: "standard"
+      description: "Standard"
+      802.11_ieee_gen_matlab_parameter_name: 'standard'
+    # modulation
+    - sigmf_parameter_name: "modulation"
+      description: "modulation"
+      802.11_ieee_gen_matlab_parameter_name: 'mods'
+    # modulation
+    - sigmf_parameter_name: "MCS"
+      description: "modulation and coding scheme"
+      802.11_ieee_gen_matlab_parameter_name: 'mcs'
+    # code rate
+    - sigmf_parameter_name: "code_rate"
+      description: "Code rate"
+      802.11_ieee_gen_matlab_parameter_name: 'crate'
+    # Scrampling Seed
+    - sigmf_parameter_name: "scrampling_seed"
+      description: "Scrampling Seed"
+      802.11_ieee_gen_matlab_parameter_name: 'scram_seed'
+      # Number of Symbols
+    - sigmf_parameter_name: "num_symbols"
+      description: "Number of Symbols"
+      802.11_ieee_gen_matlab_parameter_name: 'N_sym'
+    # bandwidth
+    - sigmf_parameter_name: "bandwidth"
+      description: "bandwidth in Hz"
+      802.11_ieee_gen_matlab_parameter_name: "BW_str"
+    # Sampling rate in Hz
+    - sigmf_parameter_name: "sampling_rate"
+      description: "Sampling rate in Hz"
+      802.11_ieee_gen_matlab_parameter_name: "BW_str"
+    # MAC Frame Type
+    - sigmf_parameter_name: "MAC_frame_format"
+      description: "MAC Frame format"
+      802.11_ieee_gen_matlab_parameter_name: "format"
+    # MAC Frame Type
+    - sigmf_parameter_name: "PSDU_length_bytes"
+      description: "PSDU length in bytes"
+      802.11_ieee_gen_matlab_parameter_name: "PSDU_length"
+ 
+
