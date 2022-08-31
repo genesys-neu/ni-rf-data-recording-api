@@ -1,8 +1,8 @@
-![NI Logo](docs/figures/NI_Logo_RGB_NI_Logo_TM_Green.png "NI Logo" =5%x5%)
+![NI Logo](docs/figures/NI_Logo_RGB_NI_Logo_TM_Green.png "NI Logo")
 
 # NI RF Data Recording API v1.0.0
 
-Welcome to RF Data Recording API! The RF Data Recording API is the free and open-source API to record Real-World Data and save it in [Signal Metadata Format (SigMF) format](https://github.com/gnuradio/SigMF). SigMF specifies a way to describe sets of recorded digital signal samples with metadata written in [JSON](http://www.json.org/). 
+Welcome to RF Data Recording API! The RF Data Recording API is the free and open-source API to record Real-World Data and save it in [Signal Metadata Format (SigMF) format](https://github.com/gnuradio/SigMF). SigMF is an open-source standard that specifies a way to describe sets of recorded digital signal samples with metadata written in [JSON](http://www.json.org/) (portability, and readability). 
 
 The RF Data Recording API has been built based on [UHD](https://github.com/EttusResearch/uhd). UHD is the free & open-source software driver and API for the [Universal Software Radio Peripheral (USRP™) SDR](https://www.ettus.com/products/) platform.
 
@@ -22,7 +22,7 @@ The RF Data Recording API has been built based on [UHD](https://github.com/Ettus
         - [Hardware](#hardware)
     - [Reference Architecture](#reference-architecture)
     - [API Components](#api-components)
-        - [Main Functions for API Execution](#main-functions-for-api-execution)
+        - [Main Scripts for API Execution](#main-scripts-for-api-execution)
         - [Waveforms](#waveforms)
         - [Configuration Files](#configuration-files)
         - [Wireless Link Parameter Map Dictionary](#wireless-link-parameter-map-dictionary)
@@ -51,12 +51,12 @@ As a result, RF Datasets play pivotal role in training and testing AI/ML models 
 
 It is quite difficult to generalize these AI/ML models and compare them, and to adopt these data sets by the broader research community. In addition, generating real-world data sets is also required for AI/ML algorithms training to be robustness in practical environments. 
 
-The RF Data Recording API is designed by [NI](https://www.ni.com/) in collaboration with [Northeastern University](https://coe.northeastern.edu/) to generate real-world datasets and save it in SigMF format. The SigMF metadata is human readable. It provides a sufficient scenario description. This will simplify the management of dataset libraries and the adoption by other researchers.
+The RF Data Recording API is designed by [NI](https://www.ni.com/) in collaboration with [Northeastern University](https://coe.northeastern.edu/) to generate real-world datasets and save it in SigMF format. The SigMF metadata is human readable and easy to parse (JSON-based metadata files). It provides a sufficient scenario description. This will simplify the management of dataset libraries and the adoption by other researchers.
 
 ---
 
 ## API Features
-- Interface NI’s USRP / UHD platform and Python software platforms.
+- Interface NI’s USRP SDR platform via UHD driver and Python software platforms.
 - Facilitate hassle-free setup of NI’s SDR platform for experimentation and datasets collection.
 - Highly configurable as it requires a single configuration file for setting the desired values of parameters of multiple connected SDRs for the required data recording campaign.
 - [JSON](http://www.json.org/) Or [YAML](https://yaml.org/) based configuration of data recording campaign. 
@@ -65,7 +65,7 @@ The RF Data Recording API is designed by [NI](https://www.ni.com/) in collaborat
 - Continuous waveform playback for each Tx with individual waveforms in [TDMS](https://www.ni.com/en-ca/support/documentation/supplemental/06/the-ni-tdms-file-format.html) or MATLAB format (e.g.  5G NR, LTE, Radar, WiFi). 
 - Configurable number of data recordings per configuration point.
 - Instant conversion of recorded IQ data to [SigMF format](https://github.com/gnuradio/SigMF) proposed by OS group as standard for RF AI/ML datasets.
-- SigMF metadata includes individual information of each active Tx.
+- SigMF metadata includes individual information of each active Tx and RF configuration.
 - Several operation modes to use single or multiple host machines.
 
 ---
@@ -77,7 +77,7 @@ Ubuntu 20.04 is used in our test environment. However, you can build UHD on diff
 
 ### Hardware
 To use the NI RF Data Recording API, you need at least one NI RF USRP device (for Tx or Rx only operation mode). The API has been tested only on [NI USRP X310](https://www.ettus.com/all-products/x310-kit/) ([X300/X310 Getting Started Guides](https://kb.ettus.com/X300/X310_Getting_Started_Guides)). The devices should be connected to single or different host computers based on the API operation mode and the investigated application. The following figure shows the setup of three Tx stations and one Rx Station.   
-![Hardware](docs/figures/rf_data_recording_setup.png "Hardware Configuration" =55%x55%)
+![Hardware](docs/figures/rf_data_recording_setup.png "Hardware Configuration")
 
 The following table presents the required hardware for this configuration (cabled setup).
 | Item    					| Number	| 
@@ -90,7 +90,7 @@ The following table presents the required hardware for this configuration (cable
 ***Note**: The USRP X310 can be connect to the host machine using different options. Look to [Network Connectivity Guide](https://files.ettus.com/manual/page_usrp_x3x0.html).
 - Host PC Linux server: Recommended with [10Gig Eth card (SFP+)](https://www.ettus.com/all-products/10gige-1m/).
 - SMA cable: Female/female cable that is included with the USRP RIO device.
-- USRP RIO device: USRP-X310, USRP-2940/2942/2943/2944/2950/2952/2953/2954 Software Defined Radio Reconfigurable Devices with 120 MHz or 160 MHz bandwidth.
+- USRP RIO device: USRP-X310, USRP-2940/2942/2943/2944/2950/2952/2953/2954 Software Defined Radio Reconfigurable Devices with 120 MHz or 160 MHz bandwidth and with UHD FPGA images.
 - Attenuator with 30 dB attenuation and male/female SMA connectors that are included with the USRP RIO device.
 
 Ensure your host has enough free disk space and RAM. 
@@ -103,20 +103,20 @@ Ensure your host has enough free disk space and RAM.
 ---
 
 ## Reference Architecture
-By using a few clicks, the RF Data Recording API can generate real-world RF datasets using NI SDR platform at different configurations. Its Flexible architecture allows for different recording use cases. Such as any system, the RF Data Recording API has the inputs, the processing unit, and the outputs. Those are:
+By using a few clicks, the RF Data Recording API can generate real-world RF datasets using NI SDR platform at different configurations. Its flexible architecture allows for different recording use cases. Such as any system, the RF Data Recording API has the inputs, the processing unit, and the outputs. Those are:
 - **Inputs**: They are three:
-    - Configuration files in JSON or YAML format
+    - Configuration file in JSON or YAML format
     - Wireless Link Parameter Map Dictionary (YAML file)
     - Pre-generated waveforms (NR, LTE, Radar, WiFi)
 - **Processing unit**: It has two parts:
     - SW: The RF data Recording API code on top of UHD Python API. 
     - HW: Linux Server and NI USRPs
 - **Output**: The recorded RF dataset in SigMF format. For each record, there are two files:
-    - SigMF Data: Binary file includes collected data
+    - SigMF Data: Binary file includes collected raw data
     - SigMF Meta-Data (JSON format)
 
 The following figure shows the reference architecture of NI RF Data Recording API.
-![ RF Data Recording API Reference Architecture](docs/figures/rf_data_recording_reference_architecture.png "RF Data Recording API Reference Architecture" =80%x80%)
+![ RF Data Recording API Reference Architecture](docs/figures/rf_data_recording_reference_architecture.png "RF Data Recording API Reference Architecture")
 
 ---
 
@@ -125,18 +125,18 @@ The main components of the source project are described in the following:
 
 ---
 
-### Main Functions for API Execution
- The main functions to execute the API are:
-- **RF Data Recording API**:  The main Python function for Tx, Rx, or Tx & Rx RF modes is `src/main_rf_data_recording_api.py`. It is configured via configuration files stored in [src/config](src/config).
+### Main Scripts for API Execution
+ The main scripts to execute the API are:
+- **RF Data Recording API**:  The main Python script for Tx, Rx, or Tx & Rx RF modes is `src/main_rf_data_recording_api.py`. It is configured via configuration files stored in [src/config](src/config).
 
-To run the API in Tx or Rx RF mode only and configure it from the terminal, the following two functions can be used:
+To run the API in Tx or Rx RF mode only and configure it from the terminal, the following two scripts can be used:
 - **RF Replay Data Transmitter**: `src/rf_replay_data_transmitter_usrp_uhd.py`
 - **RF Rx Data Recorder**: `src/rf_data_recorder_usrp_uhd.py`
 
 ---
 
 ### Waveforms
-The waveforms folder [src/waveforms](src/waveforms) has several waveforms collected based on the related wireless standard in four subfolders for 5G NR, LTE, Radar, and WiFi. The waveforms formats are:
+The waveforms folder [src/waveforms](src/waveforms) has several waveforms collected based on the related wireless standard in four subfolders for 5G NR, LTE, Radar, and WiFi. The formats of waveforms are:
 - **[tdms](https://www.ni.com/en-ca/support/documentation/supplemental/06/the-ni-tdms-file-format.html)**: Several 5G NR and LTE standard compliant waveforms have been generated in advance using [NI RFmx Waveform generator](https://www.ni.com/de-de/shop/software/products/rfmx-nr.html)
 - **matlab_ieee**:  The IEEE waveform generator is used to generate a waveform in MATLAB format.
 - **matlab**: The Radar waveforms created by Northeastern University in MATLAB format.
@@ -163,22 +163,22 @@ The RF Data Recording API provides configuration files in [JSON](http://www.json
 Each configuration file has the following sections:
 - **Possible values**: Description for every parameter (ONLY for JSON configuration file).
 - **General configuration**: List the basic parameters such as the path of recorded data, the number of records, description for the test case, … etc.
-- **Transmitters config**: List of transmitters where every transmitter has a list of parameters that you can sweep over. The parameters are the RF configuration such as frequency, gain, sampling rate, antenna port, … etc, and selected waveform (waveform: path, name, and format). The sampling rate can be configured by the user or read from the related waveform configuration file. Three types of variations have been defined:
+- **Transmitters configuration**: List of transmitters where every transmitter has a list of parameters that you can sweep over. The parameters are the RF configuration such as frequency, gain, sampling rate, antenna port, … etc, and selected waveform (waveform: path, name, and format). The sampling rate can be configured by the user or read from the related waveform configuration file. Three types of variations have been defined:
     - **Range**: The user needs to specify the start, stop, and step (i.e. in JSON):
-`“range_Param":{"SeqType": „range", "Values": ["start", "stop", "step“]}`
+`“Range_Param":{"SeqType": „range", "Values": ["start", "stop", "step“]}`
     - **List**: The user can list a set of parameters to sweep over (i.e. in JSON):
 `“List_Param":{"SeqType": „list", "Values": ["x1", "x2", "x3", … , "xn"]}`
     - **Single**: The user can provide a single value of the parameter (i.e. in JSON):
 `"Single_Param”:{"SeqType": „single", "Values":”waveform_path”}`
 - **Common Tx Stations configuration**: A list of parameters that are related to transmitters for clock reference configuration and the waveform replay data configuration to have a continuous transmission.
-- **Receivers config**: List of receivers where every Receiver has a list of parameters that you can sweep over. Those parameters are the RF configuration such as frequency, gain, sampling rate, antenna port, clock reference, … etc, and duration of record. The sampling rate can be configured by the user or given from the Tx configuration. If there are multiple transmitters with different sampling rates, the maximum value will be used. Three types of variations have been defined as it is mentioned above: “Range”, “List”, and “Single”.
+- **Receivers configuration**: List of receivers where every Receiver has a list of parameters that you can sweep over. Those parameters are the RF configuration such as frequency, gain, sampling rate, antenna port, clock reference, … etc, and duration of record. The sampling rate can be configured by the user or given from the Tx configuration. If there are multiple transmitters with different sampling rates, the maximum value will be used. Three types of variations have been defined as it is mentioned above: “Range”, “List”, and “Single”.
 
-**Note**: If there are multiple transmitters, the API can be configured to execute them either in parallel or sequential while if there are multiple receivers, the default is to execute them in parallel. 
+**Note**: If there are multiple transmitters, the API can be configured to execute them either in parallel or in sequential while if there are multiple receivers, the default is to execute them in parallel. 
 
 The following figure shows an exemplary of YAML/JSON RF data recording API configuration file.
-![ Features ](docs/figures/exemplary_api_config_yaml_json.png  "Exemplary YAML/JSON Data Recording Configuration File" =65%x65%)
+![ Features ](docs/figures/exemplary_api_config_yaml_json.png  "Exemplary YAML/JSON Data Recording Configuration File")
  
-Several configuration files have been created as a template for all operation modes: Tx and Rx mode, Tx only mode or Rx only mode, and multi transmitters and receivers. 
+Several configuration files have been created as a template for all operation modes: Tx and Rx mode, Tx or Rx only mode, and multi transmitters and receivers. 
 - Mutli-Tx and Single Rx (JSON): [src/config/config_rf_data_recording_api.json](src/config/config_rf_data_recording_api.json)
 - Mutli-Tx and Single Rx (YAML): [src/config/config_rf_data_recording_api.yaml](src/config/config_rf_data_recording_api.yaml)
 - Mutli-Tx and Multi-Rx (JSON): [src/config/config_rf_data_recording_api_4TX_2RX_test.json](src/config/config_rf_data_recording_api_4TX_2RX_test.json)
@@ -194,9 +194,9 @@ Since every waveform generator can create waveforms and related configuration wi
 
 The following figure shows an exemplary of Wireless Link Parameter Map Dictionary.
 
-![ Wireless Link Parameter Map Dictionary](docs/figures/wireless_link_parameter_map.png  "Exemplary Wireless Link Parameter Map Dictionary" =40%x40%)
+![ Wireless Link Parameter Map Dictionary](docs/figures/wireless_link_parameter_map.png  "Exemplary Wireless Link Parameter Map Dictionary")
 
-**Note**: The Wireless link parameter map is not used to get parameters from RFWS waveform config file due to the dependency between parameters; it requires hierarchical parameter extraction.
+**Note**: The Wireless link parameter map dictionary is not used to get parameters from RFWS waveform config file due to the dependency between parameters; it requires hierarchical parameter extraction.
 
 ---
 
@@ -247,7 +247,17 @@ The user can provide the configuration file to the API from the terminal:
 ```
 python3.9 main_rf_data_recording_api.py –-config config/config_rf_data_recording_api.yaml
 ```
+On the console, the API prints the varaition map and the configuration vector per each iteration. User can disable it via `enable_console_logging` parameter under `general_config` section in the configuration file. In addition, it prints the hardware info, number of Rx samples and the elapsed time of getting Rx samples and writing data and metadata files per each record. At the end of execution, the API prints the total size of Rx data on memory.
+The following figure shows an exemplary of API console.
+
+![API Console](docs/figures/console.png  "API Console")
+
 Several configuration files have been created as a template for all operation modes. Look to Section of [Configuration Files](#configuration-files).
+
+Assume the user would like to transmit or receive data using several host machines. Use the Tx or Rx only configuration file as a template and create a configuration file with related parameters for each station. 
+The API needs to be executed on each machine independently. The user can use also:
+- For Tx only mode using a single station: The [RF Replay Data Transmitter](#rf-replay-data-transmitter)
+- For Rx only mode using a single station: The [RF Rx Data Recorder](#rf-rx-data-recorder)
 
 ---
 
@@ -269,7 +279,7 @@ Assume you would like to record the IQ data and save it in SigMF format to this 
 python3.9 rf_data_recorder_usrp_uhd.py --nrecords 1 --args="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6" --freq 2e9 --rate 30.72e6 --duration 10e-3 --channels 0 --gain 30 --rx_recorded_data_path /home/user/workarea/recorded-data
 ```
 
-Since the Rx is running independently from Tx and this Rx Data Recorder function is not configured via the configuration file, the user needs to update the metadata in this function manually. Go to the section of write data to SigMF files in the code to update metadata.
+Since the Rx is running independently from Tx and this Rx Data Recorder script is not configured via the configuration file, the user needs to update the metadata in this script manually. Go to the section of write data to SigMF files in the code to update metadata.
 
 ---
 
@@ -286,38 +296,38 @@ The figure below shows the relationship between different frequencies in the con
 
 Note: $f_{LO-offset,Tx}$ can be given with negative sign. So, the $f_{LO,Tx} = f_{c,target}- |f_{LO-offset,Tx}|$.
 
-![LO Configuration](../docs/figures/LO_configuration.png  "LO Configuration description" =60%x60%)
+![LO Configuration](../docs/figures/LO_configuration.png  "LO Configuration description")
  
 The frequency of LO Offset should be within the following two boundaries:
 - Larger than half of the signal bandwidth: $f_{LO-offset,Tx}>BW/2$
-- Less than half of the deviation between the RF analog bandwidth (USRP daughterboard BW) and signal bandwidth: $f_{LO-offset,Tx}< (f_{RF-BW}-BW/2)$
+- Less than half of the deviation between the RF analog bandwidth (USRP daughterboard BW) and signal bandwidth: $f_{LO-offset,Tx}< (f_{RF-BW}-BW)/2$
 
 The figure below shows the boundaries of LO offset.
 
-![LO Configuration](../docs/figures/LO_configuration_boundaries.png "LO configuration boundaries" =45%x45%)
+![LO Configuration](../docs/figures/LO_configuration_boundaries.png "LO configuration boundaries")
 
 ---
 
 ### Results
 The figure below shows an example of recorded datasets in SigMF format. The figure shows also how recorded datasets can be used in data set management and then in AI/ML model training and validation.  
 
-![Results](docs/figures/example_sigmf_recordings.png  "Results" =60%x60%)
+![Results](docs/figures/example_sigmf_recordings.png  "Results")
 
 ---
 
 ### RF Data Pre-Processing
-We created a simple example to read the SigMF metadata and visualize the recorded IQ data. The following function `src/rf_data_pre_processing_spectrogram.py` can be used to plot the spectrogram of recorded data. It requires two parameters:
+We created a simple example to read the SigMF metadata and visualize the recorded IQ data. The following script `src/rf_data_pre_processing_spectrogram.py` can be used to plot the spectrogram of recorded data. It requires two parameters:
 - Path to dataset folder
 - Dataset base filename (without SigMF file extension)
 
 Assume three transmitters transmit the following signals (default configuration file `config_rf_data_recording_api.json`):
 - 5G NR FR1 DL FDD wavefrom with 10 MHz bandwidth created based on 3GPP Release 15 [testmodel 3.1](https://www.etsi.org/deliver/etsi_ts/138100_138199/13814101/15.00.00_60/ts_13814101v150000p.pdf), Section 4.9.2.2.5, and 3.6 GHz carrier target frequency. 
-- LTE DL FDD wavefrom with 10 MHz bandwidth created based on 3GPP Release 15 EUTRA2 [testmodel 2](https://www.etsi.org/deliver/etsi_ts/136100_136199/136141/08.03.00_60/ts_136141v080300p.pdf), Section 6.1.1.3, and 3.61 GHz carrier target frequency. 
-- Radar waveform with FMCW spreading, 1.428 MHz bandiwth, 10 MHz sampling rate, and 3.62 GHz carrier target frequency. The lo_offset is enabled, where the freqeuncy of LO offset is 10 MHz.
+- LTE DL FDD wavefrom with 10 MHz bandwidth created based on 3GPP Release 8 EUTRA2 [testmodel 2](https://www.etsi.org/deliver/etsi_ts/136100_136199/136141/08.03.00_60/ts_136141v080300p.pdf), Section 6.1.1.3, and 3.61 GHz carrier target frequency. 
+- Radar waveform with 1.428 MHz bandiwth, 10 MHz sampling rate, and 3.62 GHz carrier target frequency. The lo_offset is enabled, where the freqeuncy of LO offset is 10 MHz.
 
 The figure below shows the spectrogram of received 5G NR, LTE, and Radar signals. The Rx sampling rate is 92.16 MHz.
  
- ![spectrogram](../resources/Spectrogram_rx_NR_LTE_Radar.png  "Spectrogram 5G NR, LTE, Radar" =40%x40%)
+ ![spectrogram](../resources/Spectrogram_rx_NR_LTE_Radar.png  "Spectrogram 5G NR, LTE, Radar")
 
  **Note**:
  - The `src/rf_data_pre_processing_plot.py` can be used also to read the SigMF metadata and plot time domain and spectrum of recorded IQ data.
@@ -334,11 +344,11 @@ The following tree shows the RF Data Recording API repository structure:
   │  ├─ Getting started guide to setup the system.pdf.
   │  └─ figures
   ├─ resources  - # For all static resources in the project. For example, images, i.e. spectrogram
-  ├─ src/config - # Templates for all API Configurations
+  ├─ src/config - # Templates for all API Configurations and wireless link parameter map dictionary
   ├─ src/lib    - # RF Data Recording API library
   ├─ src/tests  - # Contains all tests (test API interfaces, plot spectrogram of Tx waveform, read SigMF metadata)
   ├─ src/waveforms  - # Contains all waveforms for 5G NR, LTE, Radar and WiFi
-  │  ├─ main_rf_data_recording_api.py   - # Main Function to execute the API in all RF modes, configured via configuration files.
+  │  ├─ main_rf_data_recording_api.py   - # Main Script to execute the API in all RF modes, configured via configuration files.
   │  ├─ rf_replay_data_transmitter_usrp_uhd.py  - # For Tx only, configured via terminal
   │  ├─ rf_data_recorder_usrp_uhd.py    - # For Rx only, configured via terminal 
   │  ├─ rf_data_pre_processing_plot.py  - # Read SigMF metadata and plot time domain and spectrum of recorded IQ data
@@ -357,7 +367,7 @@ The users and developers can contribute by adding more features or optimize the 
 - Create a Pull Request. Your Pull Request should have the following info:
     - **Summary**: Briefly summarize your changes and the motivation behind them in one or two sentences.
     - **Detailed Description**: Provide information about the nature of your changes.
-    - **Affected Components**: List the core components of the system that are affected by your changes here.
+    - **Affected Components**: List the core components of the system that are affected by your changes.
     - **Additional Testing/Validation**: Please specify whether there were additional (manual) tests done. Please also specify the configurations/systems used to run these tests.
     - **Checklist**: 
         - [ ] Revert Scripts without functional changes.
@@ -366,6 +376,7 @@ The users and developers can contribute by adding more features or optimize the 
         - [ ] Remove all debug code.
         - [ ] Functional changes are tested.
 - Your request needs to be approved by NI
+- If your Pull Request is accepted, it can be merged then to the main branch.
 
 ---
 

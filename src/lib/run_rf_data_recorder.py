@@ -76,7 +76,7 @@ def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
 
     rx_data_nbytes = 0.0
     for i in range(rx_args.nrecords):
-
+        print("")
         # Fetch data from usrp device
         start_time = time.time()
         rx_data = usrp.recv_num_samps(
@@ -90,7 +90,7 @@ def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
         print(
             "Received ",
             colored(rx_data.size, "green"),
-            " samples from Rx data from snapshot number #",
+            " samples - record number #",
             colored(i, "green"),
         )
         rx_data_nbytes = rx_data_nbytes + rx_data.nbytes
@@ -111,13 +111,13 @@ def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
             )
         else:
             # Report error.
-            raise Exception("ERROR: selected writing rx recorded data format is not supported")
+            raise Exception("ERROR: selected writing Rx recorded data format is not supported")
 
         end_time = time.time()
         time_elapsed = end_time - start_time
         time_elapsed_ms = int(time_elapsed * 1000)
         print(
-            "Elapsed time of getting rx samples and writing data and meta data files:",
+            "Elapsed time of getting Rx samples and writing data and meta data files:",
             colored(time_elapsed_ms, "yellow"),
             "ms",
         )

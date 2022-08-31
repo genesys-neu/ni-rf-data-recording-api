@@ -130,7 +130,6 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config):
     meta.tofile(dataset_meta_file_path)  # extension is optional
 
     print(dataset_meta_file_path)
-    print("")
 
 
 # Get tx waveform config from file name
