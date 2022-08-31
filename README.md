@@ -116,7 +116,7 @@ By using a few clicks, the RF Data Recording API can generate real-world RF data
     - SigMF Meta-Data (JSON format)
 
 The following figure shows the reference architecture of NI RF Data Recording API.
-![ RF Data Recording API Reference Architecture](docs/figures/rf_data_recording_reference_architecture.png "RF Data Recording API Reference Architecture")
+![RF Data Recording API Reference Architecture](docs/figures/rf_data_recording_reference_architecture.png "RF Data Recording API Reference Architecture")
 
 ---
 
@@ -176,7 +176,8 @@ Each configuration file has the following sections:
 **Note**: If there are multiple transmitters, the API can be configured to execute them either in parallel or in sequential while if there are multiple receivers, the default is to execute them in parallel. 
 
 The following figure shows an exemplary of YAML/JSON RF data recording API configuration file.
-![ Features ](docs/figures/exemplary_api_config_yaml_json.png  "Exemplary YAML/JSON Data Recording Configuration File")
+
+![Features](docs/figures/exemplary_api_config_yaml_json.png  "Exemplary YAML/JSON Data Recording Configuration File")
  
 Several configuration files have been created as a template for all operation modes: Tx and Rx mode, Tx or Rx only mode, and multi transmitters and receivers. 
 - Mutli-Tx and Single Rx (JSON): [src/config/config_rf_data_recording_api.json](src/config/config_rf_data_recording_api.json)
@@ -194,7 +195,7 @@ Since every waveform generator can create waveforms and related configuration wi
 
 The following figure shows an exemplary of Wireless Link Parameter Map Dictionary.
 
-![ Wireless Link Parameter Map Dictionary](docs/figures/wireless_link_parameter_map.png  "Exemplary Wireless Link Parameter Map Dictionary")
+![Wireless Link Parameter Map Dictionary](docs/figures/wireless_link_parameter_map.png  "Exemplary Wireless Link Parameter Map Dictionary")
 
 **Note**: The Wireless link parameter map dictionary is not used to get parameters from RFWS waveform config file due to the dependency between parameters; it requires hierarchical parameter extraction.
 
@@ -296,7 +297,7 @@ The figure below shows the relationship between different frequencies in the con
 
 Note: $f_{LO-offset,Tx}$ can be given with negative sign. So, the $f_{LO,Tx} = f_{c,target}- |f_{LO-offset,Tx}|$.
 
-![LO Configuration](../docs/figures/LO_configuration.png  "LO Configuration description")
+![LO Configuration](docs/figures/LO_configuration.png  "LO Configuration description")
  
 The frequency of LO Offset should be within the following two boundaries:
 - Larger than half of the signal bandwidth: $f_{LO-offset,Tx}>BW/2$
@@ -304,7 +305,7 @@ The frequency of LO Offset should be within the following two boundaries:
 
 The figure below shows the boundaries of LO offset.
 
-![LO Configuration](../docs/figures/LO_configuration_boundaries.png "LO configuration boundaries")
+![LO Configuration](docs/figures/LO_configuration_boundaries.png "LO configuration boundaries")
 
 ---
 
@@ -327,7 +328,7 @@ Assume three transmitters transmit the following signals (default configuration 
 
 The figure below shows the spectrogram of received 5G NR, LTE, and Radar signals. The Rx sampling rate is 92.16 MHz.
  
- ![spectrogram](../resources/Spectrogram_rx_NR_LTE_Radar.png  "Spectrogram 5G NR, LTE, Radar")
+ ![spectrogram](resources/Spectrogram_rx_NR_LTE_Radar.png  "Spectrogram 5G NR, LTE, Radar")
 
  **Note**:
  - The `src/rf_data_pre_processing_plot.py` can be used also to read the SigMF metadata and plot time domain and spectrum of recorded IQ data.
