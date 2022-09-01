@@ -1,9 +1,9 @@
 #/bin/bash
 
 # Set the MTU size of all Eth ports connected to USRPs to 9000 to get maximum sampling rate
-ifconfig enp5s0 mtu 9000 up
-ifconfig enp3s0 mtu 9000 up
-ifconfig enp10s0f1 mtu 9000 up
+# ifconfig enp5s0 mtu 9000 up
+# ifconfig enp3s0 mtu 9000 up
+# ifconfig enp10s0f1 mtu 9000 up
 
 # resize the buffer to be more efficient. Use max buffer size provided by the system
 sysctl -w net.core.rmem_max=24912805
