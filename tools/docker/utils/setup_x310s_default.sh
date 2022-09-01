@@ -97,7 +97,9 @@ uhd_find_devices
 if [ $doImgDL -eq 1 ]
 then
     echo "--image_dl : downloading the new FPGA images.."
-
+    echo "******************************"
+    echo "IMPORTANT: after updating the FPGA image, each device needs to be POWERED OFF and POWERED ON again for the new image to be loaded."
+    echo "******************************"
     uhd_images_downloader
 
     # now let's load the new FPGA images on each device in order to be compatible with the driver
@@ -126,9 +128,25 @@ if [ $doProbe -eq 1 ]
 then
     echo "--probe : probing devices.."
     
-    # IMPORTANT: IF THE IMAGE HAS BEEN UPDATED, WE HAVE TO POWER OFF AND POWER ON THE DEVICE IN ORDER FOR THE NEW IMAGE TO BE CORRECTLY LOADED
     # after the power cycle, we can probe the devices and test that there are no errors with the following commands
-    uhd_usrp_probe --args addr=192.168.50.2
-    uhd_usrp_probe --args addr=192.168.60.2
+    addr_node=2
+    for dev in $devs
+    do
+        specs=$(echo $dev | tr ":" "\n")
+        spec_arr=($specs)
+        db_ip=$(echo ${spec_arr[1]} | sed "s/.$/${addr_node}/")         # substitute the number of daughterboard node in the IP address
+        uhd_usrp_probe --args addr=$db_ip
+    done
 fi
 
+# resize the buffer to be more efficient. Use max buffer size provided by the system
+sysctl -w net.core.rmem_max=24912805
+sysctl -w net.core.wmem_max=24912805
+
+for dev in $devs
+do
+    specs=$(echo $dev | tr ":" "\n")
+    spec_arr=($specs)
+    echo "ifconfig ${spec_arr[0]} mtu 9000 up"
+    ifconfig ${spec_arr[0]} mtu 9000 up
+done
