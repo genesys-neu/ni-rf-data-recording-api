@@ -1,4 +1,4 @@
-# Install dependencies using Docker
+# Install dependencies and run the API using Docker
 ## Build Docker image
 Use the following command to build the docker container with all the necessary dependencies to run the RF Data Recording API:
 ```
