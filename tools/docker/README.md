@@ -36,4 +36,4 @@ OPTIONS includes:
 This command will also take care of expanding the network buffer size and set the MTU size of all Eth ports connected to USRPs to get maximum sampling rate.
 
 ## Access the API source code
-Finally, we can run the main recording script or reference the API source code from the directory `/src` 
+Finally, we can run the main recording script or reference the API source code from the directory `/src`. For more details on how to run the code, please refer to the main [README](../../README.md) and the [documentation](../../docs/Getting_Started_Guide_of_NI_RF_Data_Recording_API.pdf).
