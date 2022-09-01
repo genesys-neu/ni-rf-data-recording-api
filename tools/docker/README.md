@@ -19,7 +19,7 @@ sudo docker run -ti --rm --network host --privileged -v $RFDATAFACTORYPATH/tools
 ```
 
 ## Setup SDR devices
-Once logged into the container, turn on the devices and assign the IP address to each USRP device that are intended to be operated during the experiments. To do so, use the provided shell script [`utils/setup_x310s_default.sh`](utils/setup_x310s_default.sh):
+Once logged in the container, turn on the devices and assign the IP address to each USRP device that are intended to be operated during the experiments. To do so, navigate to `/utils` within the container and launch the provided shell script [`utils/setup_x310s_default.sh`](utils/setup_x310s_default.sh) to initialize all the available devices by providing the necessary details. Usage of this script is described here:
 ```
 Usage: bash setup_x310s_default.sh --device "interface1:ipaddr1[:driver1],interface2:ipaddr2[:driver2],..." [OPTIONS]
 
@@ -27,10 +27,13 @@ Each device must be initialized by providing the following info:
   - interface: name of ethernet interface where the SDR is connected;
   - ip address: IP address to be assigned to the eth port. Note that this code assumes eth port ip ending in xxx.xxx.xxx.1 and the daughterboard ip ending in xxx.xxx.xxx.2;
   - driver: type of driver to be installed to FPGA (default is HG). This value is only required with --image_dl option enabled.
- Example: "enp3s0:192.168.50.1,enp5s0:192.168.60.1,enp10s0f1:192.168.40.1"
+ Example: "bash setup_x310s_default.sh --device enp3s0:192.168.50.1,enp5s0:192.168.60.1,enp10s0f1:192.168.40.1 --probe"
 
 OPTIONS includes:
    -i | --image_dl - download the FPGA images compatible with current UHD driver. Use in case of image version mismatch error.
    -p | --probe - probe devices and print devices info.
 ```
 This command will also take care of expanding the network buffer size and set the MTU size of all Eth ports connected to USRPs to get maximum sampling rate.
+
+## Access the API source code
+Finally, we can run the main recording script or reference the API source code from the directory `/src` 
