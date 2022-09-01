@@ -116,6 +116,7 @@ By using a few clicks, the RF Data Recording API can generate real-world RF data
     - SigMF Meta-Data (JSON format)
 
 The following figure shows the reference architecture of NI RF Data Recording API.
+
 ![RF Data Recording API Reference Architecture](docs/figures/rf_data_recording_reference_architecture.png "RF Data Recording API Reference Architecture")
 
 ---
@@ -137,9 +138,12 @@ To run the API in Tx or Rx RF mode only and configure it from the terminal, the 
 
 ### Waveforms
 The waveforms folder [src/waveforms](src/waveforms) has several waveforms collected based on the related wireless standard in four subfolders for 5G NR, LTE, Radar, and WiFi. The formats of waveforms are:
-- **[tdms](https://www.ni.com/en-ca/support/documentation/supplemental/06/the-ni-tdms-file-format.html)**: Several 5G NR and LTE standard compliant waveforms have been generated in advance using [NI RFmx Waveform generator](https://www.ni.com/de-de/shop/software/products/rfmx-nr.html)
+- **[tdms](https://www.ni.com/en-ca/support/documentation/supplemental/06/the-ni-tdms-file-format.html)**: Several 5G NR and LTE standard compliant waveforms have been generated in advance using [NI RFmx Waveform Creator](https://www.ni.com/en-ca/shop/wireless-design-test/application-software-for-wireless-design-test-category/what-is-rfmx.html).
 - **matlab_ieee**:  The IEEE waveform generator is used to generate a waveform in MATLAB format.
 - **matlab**: The Radar waveforms created by Northeastern University in MATLAB format.
+
+**Note**: The [RFmx Waveform Creator](https://www.ni.com/en-ca/shop/wireless-design-test/application-software-for-wireless-design-test-category/what-is-rfmx/quickly-create-and-generate-standard-compliant-waveforms.html) is used to generate the given 5G NR/LTE standard complient waveforms to be used with the NI RF Data Recording API only. With [RFmx](https://www.ni.com/en-ca/shop/wireless-design-test/application-software-for-wireless-design-test-category/what-is-rfmx.html), you can perform and debug measurements quickly and easily with interactive software front panels, create and playback open, unlocked waveforms, and speed up automated testing with the performance-optimized API. If you would like to create different waveforms, you could purchase RFmx License for the interesting standard ([download page](https://www.ni.com/en-ca/support/downloads/software-products/download.rfmx-waveform-creator.html#460637)).
+
 
 Each waveform should have two files:
 - Waveform Binary Data File

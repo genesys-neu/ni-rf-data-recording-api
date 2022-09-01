@@ -68,7 +68,7 @@ transmitters_config:
         # Example: "NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1(.tdms)",
         # ........ "IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame (folder name), waveform in ssb_str.mat".
         SeqType: "list"
-        Values: ["NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1"]
+        Values: ["NR_FR1_DL_FDD_SISO_BW-10MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM2"]
       waveform_path:    # Path to tx waveform file or folder, type = str.
         SeqType: "single"
         Values: "waveforms/nr/"
