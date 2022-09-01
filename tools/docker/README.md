@@ -8,10 +8,12 @@ sudo docker build -t mauro/ni-api-rf-datarecorder .
 Start docker container with all the necessary flags:
 * `--network host` : allow access the physical network interfaces
 * `--privileged` : allow to escalate user privileges
-* `-v *host-dir*:*vm-dir*` : add the necessary volume mappings
+* `-v <host-dir>:<vm-dir>` : add the necessary volume mappings from host to virtual machine.
 
 Note that in order to mount a host directory into the volume, is it necessary to provide the absolute path to the `-v` argument. We can run the following commands from the repository root folder to run the container and give it access to the utility script folder mounted under `/utils` and the API source code under `/src`:
 ```
+git clone https://github.com/genesys-neu/ni-rf-data-recording-api
+cd ni-rf-data-recording-api/
 RFDATAFACTORYPATH=`pwd`
 sudo docker run -ti --rm --network host --privileged -v $RFDATAFACTORYPATH/tools/docker/utils:/utils -v $RFDATAFACTORYPATH/src:/src mauro/ni-api-rf-datarecorder
 ```
