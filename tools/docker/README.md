@@ -1,7 +1,8 @@
 # Install dependencies and run the API using Docker
 ## Build Docker image
-Use the following command to build the docker container with all the necessary dependencies to run the RF Data Recording API:
+From `tools/docker` directory, use the following command to build the docker container with all the necessary dependencies to run the RF Data Recording API:
 ```
+cd ni-rf-data-recording-api/tools/docker
 sudo docker build -t mauro/ni-api-rf-datarecorder .
 ```
 ## Launch the container
@@ -12,8 +13,7 @@ Start docker container with all the necessary flags:
 
 Note that in order to mount a host directory into the volume, is it necessary to provide the absolute path to the `-v` argument. We can run the following commands from the repository root folder to run the container and give it access to the utility script folder mounted under `/utils` and the API source code under `/src`:
 ```
-git clone https://github.com/genesys-neu/ni-rf-data-recording-api
-cd ni-rf-data-recording-api/
+cd ../../
 RFDATAFACTORYPATH=`pwd`
 sudo docker run -ti --rm --network host --privileged -v $RFDATAFACTORYPATH/tools/docker/utils:/utils -v $RFDATAFACTORYPATH/src:/src mauro/ni-api-rf-datarecorder
 ```
