@@ -1,8 +1,12 @@
 # ---------------------------------------------------------------------,
-# Wavefrom Configuration
+# Waveform Configuration
 # ---------------------------------------------------------------------,
 standard: "radar"
 spreading: "FMCW"
 bandwidth: 2.0e+6
 sampling_rate: 20.0e+6
 time_duration: 9.901e-3
+pulse_modulation_type: P0N#1
+pulse_width: 0.5e-6
+pulses_per_burst: 10
+pulse_repetition_rate_per_sec: 1010

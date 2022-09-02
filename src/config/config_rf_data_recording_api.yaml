@@ -56,20 +56,20 @@ transmitters_config:
       rate:       # rate of radio block, type = float.
         SeqType: "list"
         Values: [30.72e+6]
-      rate_source:  # waveform_config: The rate will be read from the waveform config file.
-      # ............ user_defined: The given rate by the user in this config file will be used.
-        SeqType: "single"
-        Values: "waveform_config"
       bandwidth:    # TX analog front-end filter bandwidth in Hz, type = float.
         # .......... If rate_source --> waveform_config: It will be read from the waveform config file.
         # .......... If rate_source --> user_defined: The given bandwidth by the user in this config file will be used.
         SeqType: "list"
         Values: [20.0e+6]
+      rate_source:  # waveform_config: The rate will be read from the waveform config file.
+      # ............ user_defined: The given rate by the user in this config file will be used.
+        SeqType: "single"
+        Values: "waveform_config"
       waveform_file_name: # TX waveform file name without extension, type = str
         # Example: "NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1(.tdms)",
         # ........ "IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame (folder name), waveform in ssb_str.mat".
         SeqType: "list"
-        Values: ["NR_FR1_DL_FDD_SISO_BW-10MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM2"]
+        Values: ["NR_FR1_DL_TDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1"]
       waveform_path:    # Path to tx waveform file or folder, type = str.
         SeqType: "single"
         Values: "waveforms/nr/"
@@ -100,15 +100,15 @@ transmitters_config:
       rate:       # rate of radio block, type = float.
         SeqType: "list"
         Values: [15.36e+6]
-      rate_source:  # waveform_config: The rate will be read from the waveform config file.
-      # ............ user_defined: The given rate by the user in this config file will be used.
-        SeqType: "single"
-        Values: "waveform_config"
       bandwidth:    # TX analog front-end filter bandwidth in Hz, type = float.
       # .......... If rate_source --> waveform_config: It will be read from the waveform config file.
       # .......... If rate_source --> user_defined: The given bandwidth by the user in this config file will be used.
         SeqType: "list"
         Values: [10.0e+6]
+      rate_source:  # waveform_config: The rate will be read from the waveform config file.
+      # ............ user_defined: The given rate by the user in this config file will be used.
+        SeqType: "single"
+        Values: "waveform_config"
       waveform_file_name: # TX waveform file name without extension, type = str
       # Example: "NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1(.tdms)",
       # ........ "IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame (folder name), waveform in ssb_str.mat".
@@ -143,21 +143,21 @@ transmitters_config:
         Values: "True"
       rate:       # rate of radio block, type = float.
         SeqType: "list"
-        Values: [10.0e+6]
-      rate_source:  # waveform_config: The rate will be read from the waveform config file.
-      # ............ user_defined: The given rate by the user in this config file will be used.
-        SeqType: "single"
-        Values: "waveform_config"
+        Values: [20.0e+6]
       bandwidth:    # TX analog front-end filter bandwidth in Hz, type = float.
       # .......... If rate_source --> waveform_config: It will be read from the waveform config file.
       # .......... If rate_source --> user_defined: The given bandwidth by the user in this config file will be used.
         SeqType: "list"
-        Values: [1.432e+6]
+        Values: [2e+6]
+      rate_source:  # waveform_config: The rate will be read from the waveform config file.
+      # ............ user_defined: The given rate by the user in this config file will be used.
+        SeqType: "single"
+        Values: "waveform_config"
       waveform_file_name: # TX waveform file name without extension, type = str
       # Example: "NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1(.tdms)",
       # ........ "IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame (folder name), waveform in ssb_str.mat".
         SeqType: "list"
-        Values: ["RadarWaveform_BW_1428k"]
+        Values: ["RadarWaveform_BW_2M"]
       waveform_path:    # Path to tx waveform file or folder, type = str.
         SeqType: "single"
         Values: "waveforms/radar/"
@@ -205,14 +205,14 @@ receivers_config:
       rate:         # rate of radio block, type = float.
         SeqType: "list"
         Values: [92.16e+6]
+      bandwidth:  # For future use
+        SeqType: "list"
+        Values: [92.16e+6]
       rate_source:  # waveform_config: The rate will be read from the waveform config file.
       # ............................in case of multi TX, the maximum rate will be used.
       # ............ user_defined: The given rate by the user in this config file will be used.
         SeqType: "single"
         Values: "user_defined"
-      bandwidth:  # For future use
-        SeqType: "list"
-        Values: [92.16e+6]
       gain:       # Gain for the RF chain in dB, type = float.
         SeqType: "list"
         Values: [10]
