@@ -1,6 +1,6 @@
 # Install dependencies and run the API using Docker
 ## Build Docker image
-From `tools/docker` directory, use the following command to build the docker container with all the necessary dependencies to run the RF Data Recording API:
+Use the following command to build the docker container with all the necessary dependencies to run the RF Data Recording API (NOTE: this will take some time):
 ```
 cd ni-rf-data-recording-api/tools/docker
 sudo docker build -t mauro/ni-api-rf-datarecorder .
