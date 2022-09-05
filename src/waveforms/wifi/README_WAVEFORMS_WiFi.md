@@ -1,0 +1,4 @@
+# Waveform Creator
+The [IEEE Waveform Reference Generator](https://mentor.ieee.org/802.11/documents?is_dcn=517&is_year=2011) has been used to create the given waveform in MATLAB format.
+
+The [RFmx Waveform Creator](https://www.ni.com/en-ca/shop/wireless-design-test/application-software-for-wireless-design-test-category/what-is-rfmx/quickly-create-and-generate-standard-compliant-waveforms.html) can be used to generate IEEE standard compliant waveforms. With [RFmx](https://www.ni.com/en-ca/shop/wireless-design-test/application-software-for-wireless-design-test-category/what-is-rfmx.html), you can perform and debug measurements quickly and easily with interactive software front panels, create and playback open, unlocked waveforms with RFmx Waveform Creator, and speed up automated testing with the performance-optimized API.

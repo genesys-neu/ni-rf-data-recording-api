@@ -55,15 +55,15 @@ def check_config_dict(config_dict):
 
 # Calculate the range
 def drange(start, stop, step):
+    if stop < start:
+        raise Exception(f"ERROR: Wronge range config, stop:'{stop}' less than start: '{start}' ")
+    elif step < 0:
+        raise Exception(f"ERROR: Wronge range config, step: '{step}' should be larger than zero.")
+    
     r = start
-    i = 0
     while r <= stop:
         yield r
         r += step
-        i = i + 1
-        if i == 10:
-            break
-
 
 # Change parameter from range to list
 def change_parameter_range_to_list(parameter_config):

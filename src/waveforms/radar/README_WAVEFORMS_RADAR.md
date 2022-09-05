@@ -1,0 +1,2 @@
+# Waveform Creator
+The sample Radar waveform is created using the [Simulated Radar Waveform Generator](https://github.com/usnistgov/SimulatedRadarWaveformGenerator) (online available MATLAB code). It is a software tool that generates simulated Radar signals and creates RF datasets for developing and testing machine/deep learning detection algorithms.

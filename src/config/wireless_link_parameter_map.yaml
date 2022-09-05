@@ -115,10 +115,6 @@ transmitter:
     - sigmf_parameter_name: "standard"
       description: "Standard such as LTE, NR, ... etc"
       radar_parameter_name: "standard"
-    # spreading 
-    - sigmf_parameter_name: "spreading"
-      description: "Spreading method FMCW, CW"
-      radar_parameter_name: "spreading"
     # Sampling rate in Hz
     - sigmf_parameter_name: "sampling_rate"
       description: "Sampling rate in Hz"
@@ -131,6 +127,23 @@ transmitter:
     - sigmf_parameter_name: "time_duration"
       description: "Time duration in seconds"
       radar_parameter_name: "time_duration"
+    # Pulse modulation type
+    - sigmf_parameter_name: "pulse_modulation_type"
+      description: "pulse modulation type"
+      radar_parameter_name: "pulse_modulation_type"
+    # Pulse Width
+    - sigmf_parameter_name: "pulse_width"
+      description: "pulse width"
+      radar_parameter_name: "pulse_width" 
+    # Number of pulses per burst
+    - sigmf_parameter_name: "pulses_per_burst"
+      description: "Number of pulses per burst"
+      radar_parameter_name: "pulses_per_burst" 
+    # Pulse repetition rate per second
+    - sigmf_parameter_name: "pulse_repetition_rate_per_sec"
+      description: "Pulse repetition rate per second"
+      radar_parameter_name: "pulse_repetition_rate_per_sec"  
+
   # 802.11 IEEE Waveform Generator: waveform data config in matlab format  
   802.11_ieee_gen_matlab:
     # standard 
