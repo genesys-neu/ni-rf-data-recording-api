@@ -27,7 +27,7 @@ Each device must be initialized by providing the following info:
   - interface: name of ethernet interface where the SDR is connected;
   - ip address: IP address to be assigned to the Eth port. Note that this code assumes the Eth port IP ending in xxx.xxx.xxx.1 and the USRP IP ending in xxx.xxx.xxx.2;
   - uhd_fpga_image: type of UHD image to be installed to FPGA (default is HG). This value is only required with --image_dl option enabled.
- Example: "bash setup_x310s_default.sh --device enp3s0:192.168.50.1,enp5s0:192.168.60.1,enp10s0f1:192.168.40.1 --probe"
+ Example: "bash setup_x310s_default.sh --device enp7s0f0:192.168.40.1,enp7s0f1:192.168.50.1,enp7s0f2:192.168.60.1 --probe"
 
 OPTIONS includes:
    -i | --image_dl - download the FPGA images compatible with current UHD driver. Use in case of image version mismatch error.
