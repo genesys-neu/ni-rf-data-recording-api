@@ -6,7 +6,7 @@
 #   This bash script is used to initialize one or more TX/RX SDR devices to be utilized with NI RF Data Recording API.
 #
 #  Usage: 
-#	bash setup_x310s_default.sh --device \"interface1:ipaddr1[:uhd_fpga_image],interface2:ipaddr2[:uhd_fpga_image],...\" [OPTIONS]"
+#	bash setup_x310s_default.sh --device \"interface1:ipaddr1[:uhd_fpga_image1],interface2:ipaddr2[:uhd_fpga_image2],...\" [OPTIONS]"
 #
 #	--device: Specify the parameters for each device being initialized
 #		Each device must be initialized by providing the following info:
@@ -71,7 +71,7 @@ do
       ;;
 
       -h | --help | * )
-         echo "Usage: bash setup_x310s_default.sh --device \"interface1:ipaddr1[:driver1],interface2:ipaddr2[:driver2],...\" [OPTIONS]"
+         echo "Usage: bash setup_x310s_default.sh --device \"interface1:ipaddr1[:uhd_fpga_image1],interface2:ipaddr2[:uhd_fpga_image2],...\" [OPTIONS]"
          echo ""
 	 echo "Each device must be initialized by providing the following info:"
          echo "  - interface: name of ethernet interface where the SDR is connected;"
@@ -139,12 +139,12 @@ then
         spec_arr=($specs)
 	num_spec=${#spec_arr[@]}
 	usrp_ip=$(echo ${spec_arr[1]} | sed "s/.$/${addr_node}/") # setup ip xxx.xxx.xxx.2
-	driver_type="HG"
+	uhd_fpga_image_type="HG"
 	if [[ $num_spec -gt 2 ]]
 	then
-	    driver_type=${spec_arr[2]}
+	    uhd_fpga_image_type=${spec_arr[2]}
 	fi
-        uhd_image_loader --args="type=x300,addr=${usrp_ip},fpga=${driver_type}"	# load the new image on the board
+        uhd_image_loader --args="type=x300,addr=${usrp_ip},fpga=${uhd_fpga_image_type}"	# load the new image on the board
     done
 fi
 
