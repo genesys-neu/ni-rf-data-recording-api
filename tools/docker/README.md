@@ -21,19 +21,33 @@ sudo docker run -ti --rm --network host --privileged -v $RFDATAFACTORYPATH/tools
 ## Setup SDR Devices
 Once logged in to the container, turn on the devices and assign the IP address to each USRP device that are intended to be operated during the experiments. To do so, navigate to `/utils` within the container and launch the provided shell script [`utils/setup_x310s_default.sh`](utils/setup_x310s_default.sh) to initialize all the available devices by providing the necessary details. Usage of this script is described here:
 ```
-Usage: bash setup_x310s_default.sh --device "interface1:ipaddr1[:uhd_fpga_image],interface2:ipaddr2[:uhd_fpga_image],..." [OPTIONS]
+Usage: bash setup_x310s_default.sh --device "interface1:ipaddr1[:uhd_fpga_image1],interface2:ipaddr2[:uhd_fpga_image2],..." [OPTIONS]
 
 Each device must be initialized by providing the following info:
   - interface: name of ethernet interface where the SDR is connected;
-  - ip address: IP address to be assigned to the Eth port. Note that this code assumes the Eth port IP ending in xxx.xxx.xxx.1 and the USRP IP ending in xxx.xxx.xxx.2;
+  - ip address: IP address to be assigned to the Eth port. Note: The code assumes the Eth port IP ending in xxx.xxx.xxx.1 and the USRP IP ending in xxx.xxx.xxx.2;
   - uhd_fpga_image: type of UHD image to be installed to FPGA (default is HG). This value is only required with --image_dl option enabled.
- Example: "bash setup_x310s_default.sh --device enp7s0f0:192.168.40.1,enp7s0f1:192.168.50.1,enp7s0f2:192.168.60.1 --probe"
+ Example: "enp7s0f0:192.168.40.1,enp7s0f1:192.168.50.1,enp7s0f2:192.168.60.1"
 
 OPTIONS includes:
    -i | --image_dl - download the FPGA images compatible with current UHD driver. Use in case of image version mismatch error.
+```
+**IMPORTANT: if the `-i | --image_dl` option is used, the USRP will need to be POWERED OFF and then POWERED ON again in order for the new FPGA driver to work properly.**
+
+After all devices have been initialized, the environment settings for the experiments can be set with the script [`utils/experiment_settings_x310s_default.sh`](utils/experiment_settings_x310s_default.sh). Usage of this script is similar to the previous one and is described here:
+```
+Usage: bash experiment_settings_x310s_default.sh --device "interface1:ipaddr1,interface2:ipaddr2,..." [OPTIONS]
+
+Each device must be initialized by providing the following info:
+  - interface: name of ethernet interface where the SDR is connected;
+  - ip address: IP address to be assigned to the Eth port. Note: The code assumes the Eth port IP ending in xxx.xxx.xxx.1 and the USRP IP ending in xxx.xxx.xxx.2;
+ Example: "enp7s0f0:192.168.40.1,enp7s0f1:192.168.50.1,enp7s0f2:192.168.60.1"
+
+OPTIONS includes:
    -p | --probe - probe devices and print devices info.
 ```
-This command will also take care of expanding the network buffer size and set the MTU size of all Eth ports connected to USRPs to get maximum sampling rate.
+
+This command will also take care of expanding the network buffer size and set the MTU size of all Eth ports connected to USRPs to get maximum sampling rate. Using the option `-p | --probe` will also output detailed informations for the initialized devices.
 
 ## Access RF Data Recording API Source Code
 Finally, you can run the main RF recording script or reference the API source code from the directory `/src`. For more details on how to run the code, please refer to the main [README](../../README.md).
