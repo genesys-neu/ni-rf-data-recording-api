@@ -20,6 +20,9 @@
 #
 # Pre-requests: Run within the Docker container after successful build.
 
+doProbe=0
+isDevs=0
+
 # Note: The following regex doesn't verify that the numbers in the IPv4 address are within 0-255, but restricts it up to 3 digits
 IPv4_regex="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" 
 dev_format_regex="([a-z0-9]+):${IPv4_regex}(:[A-Z][A-Z])?"
