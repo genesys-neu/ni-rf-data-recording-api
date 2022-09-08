@@ -18,13 +18,11 @@
 #
 #	OPTIONS includes:
 #	   -i | --image_dl - download the FPGA images that are compatible with the current UHD driver. Use in case of image version mismatch error."
-#	   -p | --probe - probe devices and print devices info."
 #
 # Pre-requests: Run within the Docker container after successful build.
 #
 
 doImgDL=0
-doProbe=0
 isDevs=0
 
 # IPv4_regex="((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}" 
@@ -66,10 +64,6 @@ do
          doImgDL=1	# trigger FPGA driver image download
       ;;
 
-      -p | --probe )
-	 doProbe=1	# probe devices after activation and print info
-      ;;
-
       -h | --help | * )
          echo "Usage: bash setup_x310s_default.sh --device \"interface1:ipaddr1[:uhd_fpga_image1],interface2:ipaddr2[:uhd_fpga_image2],...\" [OPTIONS]"
          echo ""
@@ -81,7 +75,6 @@ do
 	 echo ""
 	 echo "OPTIONS includes:"
          echo "   -i | --image_dl - download the FPGA images compatible with current UHD driver. Use in case of image version mismatch error."
-         echo "   -p | --probe - probe devices and print devices info."
 	 exit
       ;;
    esac
@@ -124,8 +117,10 @@ then
     echo "******************************"
     echo "IMPORTANT: after updating the FPGA image, each device needs to be POWERED OFF and POWERED ON again for the new image to be loaded."
     echo "******************************"
+    echo "Running image downloader..."
     uhd_images_downloader
-
+    
+    echo "Load new FPGA images on each device..."
     # now let's load the new FPGA images on each device in order to be compatible with the driver
     # uhd_image_loader --args="type=x300,addr=192.168.40.2,fpga=HG"
     # uhd_image_loader --args="type=x300,addr=192.168.50.2,fpga=HG"
@@ -144,32 +139,11 @@ then
 	then
 	    uhd_fpga_image_type=${spec_arr[2]}
 	fi
+	echo "uhd_image_loader --args=\"type=x300,addr=${usrp_ip},fpga=${uhd_fpga_image_type}\""
         uhd_image_loader --args="type=x300,addr=${usrp_ip},fpga=${uhd_fpga_image_type}"	# load the new image on the board
     done
+    echo "******************************"
+    echo "New FPGA images have been successfully written to the devices. "
+    echo "Please POWER OFF and then POWER ON again for the new image to be loaded.
+    echo "******************************"
 fi
-
-if [ $doProbe -eq 1 ]
-then
-    echo "--probe : probing devices.."
-    # after the power cycle, we can probe the devices and test that there are no errors with the following commands
-    addr_node=2
-    for dev in $devs
-    do
-        specs=$(echo $dev | tr ":" "\n")
-        spec_arr=($specs)
-        usrp_ip=$(echo ${spec_arr[1]} | sed "s/.$/${addr_node}/")  # substitute the number of USRP node in the IP address
-        uhd_usrp_probe --args addr=$usrp_ip
-    done
-fi
-
-# resize the buffer to be more efficient. Use max buffer size provided by the system
-sysctl -w net.core.rmem_max=24912805
-sysctl -w net.core.wmem_max=24912805
-
-for dev in $devs
-do
-    specs=$(echo $dev | tr ":" "\n")
-    spec_arr=($specs)
-    echo "ifconfig ${spec_arr[0]} mtu 9000 up"
-    ifconfig ${spec_arr[0]} mtu 9000 up
-done
