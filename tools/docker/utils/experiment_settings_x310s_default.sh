@@ -50,10 +50,10 @@ do
                 echo "ERROR: Device info in wrong format --> $dev"
                 echo "Run \"bash setup_x310s_default.sh --help\" for command usage."
                 exit
-	          fi
+	    fi
          done
 
-	       shift 		# Skip the value of this flag and shift to the next argument flag
+         shift 		# Skip the value of this flag and shift to the next argument flag
       ;;
 
       -p | --probe )
@@ -61,7 +61,7 @@ do
       ;;
 
       -h | --help | * )
-         echo "Usage: bash experiment_settings_x310s_default.sh --device \"interface1:ipaddr1,interface2:ipaddr2,...\" [OPTIONS]""
+         echo "Usage: bash experiment_settings_x310s_default.sh --device \"interface1:ipaddr1,interface2:ipaddr2,...\" [OPTIONS]"
          echo ""
 	 echo "Each device must be initialized by providing the following info:"
          echo "  - interface: name of ethernet interface where the SDR is connected;"
@@ -75,6 +75,12 @@ do
    esac
    shift
 done
+
+if [[ $isDevs -eq 0 ]]  # check if device parameters have been setup
+then
+    echo "ERROR: -d | --device option not specified. Run \"bash setup_x310s_default.sh --help\" for command usage."
+    exit
+fi
 
 # resize the buffer to be more efficient. Use max buffer size provided by the system
 sysctl -w net.core.rmem_max=24912805

@@ -143,7 +143,6 @@ then
         uhd_image_loader --args="type=x300,addr=${usrp_ip},fpga=${uhd_fpga_image_type}"	# load the new image on the board
     done
     echo "******************************"
-    echo "New FPGA images have been successfully written to the devices. "
-    echo "Please POWER OFF and then POWER ON again for the new image to be loaded.
+    echo "Please POWER OFF and then POWER ON again for the new FPGA images to be loaded."
     echo "******************************"
 fi
