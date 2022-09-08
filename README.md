@@ -2,7 +2,7 @@
 
 # NI RF Data Recording API v1.0.0
 
-Welcome to RF Data Recording API! The RF Data Recording API is the free and open-source API to record Real-World Data and save it in [Signal Metadata Format (SigMF) format](https://github.com/gnuradio/SigMF). SigMF is an open-source standard that specifies a way to describe sets of recorded digital signal samples with metadata written in [JSON](http://www.json.org/) (portability, and readability). 
+Welcome to RF Data Recording API! The RF Data Recording API is the free and open-source Python-based API to record Real-World Data and save it in [Signal Metadata Format (SigMF) format](https://github.com/gnuradio/SigMF). SigMF is an open-source standard that specifies a way to describe sets of recorded digital signal samples with metadata provided in [JSON](http://www.json.org/) files. The JSON file format is a human-readable and portable. 
 
 The RF Data Recording API has been built based on [UHD](https://github.com/EttusResearch/uhd). UHD is the free & open-source software driver and API for the [Universal Software Radio Peripheral (USRP™) SDR](https://www.ettus.com/products/) platform.
 
@@ -46,26 +46,26 @@ The RF Data Recording API has been built based on [UHD](https://github.com/Ettus
 ---
 
 ## Introduction
-Future wireless communications are expected to use more and more artificial intelligence and machine learning (AI/ML) principles. The AI/ML algorithms have to get trained to serve specific purposes. They require large data sets to get trained to a wide variety of potential scenarios and the performance depends on the quality and representability of the dataset. 
-
-As a result, RF Datasets play pivotal role in training and testing AI/ML models for different wireless applications. However, researchers use different channel models and ray-tracing applications that generate datasets for a specific scenario to test and validate their AI/ML models.
-
-It is quite difficult to generalize these AI/ML models and compare them, and to adopt these data sets by the broader research community. In addition, generating real-world data sets is also required for AI/ML algorithms training to be robustness in practical environments. 
-
-The RF Data Recording API is designed by [NI](https://www.ni.com/) in collaboration with [Northeastern University](https://coe.northeastern.edu/) to generate real-world datasets and save it in SigMF format. The SigMF metadata is human readable and easy to parse (JSON-based metadata files). It provides a sufficient scenario description. This will simplify the management of dataset libraries and the adoption by other researchers.
+Future wireless communication systems are expected to use more and more artificial intelligence and machine learning (AI/ML) principles. The AI/ML algorithms have to get trained to serve specific purposes. They require large data sets to get trained to a wide variety of potential scenarios and the performance depends on the quality and representability of the data sets.
+ 
+As a result, RF data sets play a pivotal role in training and testing AI/ML models for different wireless applications. However, different researchers use different channel models and ray-tracing applications that generate data sets for their specific scenarios to test and validate their AI/ML models. Typically, these data sets are stored in heterogeneous formats and with different kind and completeness of metadata (scenario descriptions). This is quite difficult to generalize and compare the AI/ML models and to adopt the data sets by the broader research community.
+ 
+Another important aspect is the augmentation of the AI/ML model training and validation with real-world date sets. This can ultimately improve the robustness of the trained AI/ML algorithms in practical environments since these data sets include additional effects like RF impairments and real-world channel properties which are not covered by simulation environments. 
+ 
+The RF Data Recording API is designed by [NI](https://www.ni.com/) in collaboration with [Northeastern University](https://coe.northeastern.edu/) to generate real-world data sets and save them in the open source SigMF format. It provides comprehensive scenario descriptions by means of the JSON-based SigMF metadata files, which are human readable and easy to parse. This will simplify the management of data set libraries and the adoption by other researchers.
 
 ---
 
 ## API Features
 - Interface NI’s USRP SDR platform via UHD driver and Python software platforms.
-- Facilitate hassle-free setup of NI’s SDR platform for experimentation and datasets collection.
+- Facilitate hassle-free setup of NI’s SDR platform for experimentation and data sets collection.
 - Highly configurable as it requires a single configuration file for setting the desired values of parameters of multiple connected SDRs for the required data recording campaign.
 - [JSON](http://www.json.org/) Or [YAML](https://yaml.org/) based configuration of data recording campaign. 
 - Scalable number of Tx and Rx stations with individual parameter configuration (e.g. frequency, bandwidths, Tx/Rx gains, Tx LO …).
 - Definition of parameter settings as single, list or range of values.
 - Continuous waveform playback for each Tx with individual waveforms in [TDMS](https://www.ni.com/en-ca/support/documentation/supplemental/06/the-ni-tdms-file-format.html) or MATLAB format (e.g.  5G NR, LTE, Radar, WiFi). 
 - Configurable number of data recordings per configuration point.
-- Instant conversion of recorded IQ data to [SigMF format](https://github.com/gnuradio/SigMF) proposed by OS group as standard for RF AI/ML datasets.
+- Instant conversion of recorded IQ data to [SigMF format](https://github.com/gnuradio/SigMF) proposed by OS group as standard for RF AI/ML data sets.
 - SigMF metadata includes individual information of each active Tx and RF configuration.
 - Several operation modes to use single or multiple host machines.
 
@@ -104,7 +104,7 @@ Ensure your host has enough free disk space and RAM.
 ---
 
 ## Reference Architecture
-By using a few clicks, the RF Data Recording API can generate real-world RF datasets using NI SDR platform at different configurations. Its flexible architecture allows for different recording use cases. Such as any system, the RF Data Recording API has the inputs, the processing unit, and the outputs. Those are:
+By using a few clicks, the RF Data Recording API can generate real-world RF data sets using NI SDR platform at different configurations. Its flexible architecture allows for different recording use cases. Such as any system, the RF Data Recording API has the inputs, the processing unit, and the outputs. Those are:
 - **Inputs**: They are three:
     - Configuration file in JSON or YAML format
     - Wireless Link Parameter Map Dictionary (YAML file)
@@ -112,7 +112,7 @@ By using a few clicks, the RF Data Recording API can generate real-world RF data
 - **Processing unit**: It has two parts:
     - SW: The RF data Recording API code on top of UHD Python API. 
     - HW: Linux Server and NI USRPs
-- **Output**: The recorded RF dataset in SigMF format. For each record, there are two files:
+- **Output**: The recorded RF data sets in SigMF format. For each record, there are two files:
     - SigMF Data: Binary file includes collected raw data
     - SigMF Meta-Data (JSON format)
 
@@ -141,7 +141,7 @@ To run the API in Tx or Rx RF mode only and configure it from the terminal, the 
 The waveforms folder [src/waveforms](src/waveforms) has several waveforms collected based on the related wireless standard in four subfolders for 5G NR, LTE, Radar, and WiFi. The formats of waveforms are in *[tdms](https://www.ni.com/en-ca/support/documentation/supplemental/06/the-ni-tdms-file-format.html)*, *matlab_ieee*, and *matlab* such as the following:
 - **5G NR and LTE waveforms in _[tdms](https://www.ni.com/en-ca/support/documentation/supplemental/06/the-ni-tdms-file-format.html)_**: Several 5G NR and LTE standard compliant waveforms have been generated in advance using [NI RFmx Waveform Creator](https://www.ni.com/en-ca/shop/wireless-design-test/application-software-for-wireless-design-test-category/what-is-rfmx.html). The [RFmx Waveform Creator](https://www.ni.com/en-ca/shop/wireless-design-test/application-software-for-wireless-design-test-category/what-is-rfmx/quickly-create-and-generate-standard-compliant-waveforms.html) is used to generate the given 5G NR/LTE standard compliant waveforms to be used with the NI RF Data Recording API only. With [RFmx](https://www.ni.com/en-ca/shop/wireless-design-test/application-software-for-wireless-design-test-category/what-is-rfmx.html), you can perform and debug measurements quickly and easily with interactive software front panels, create and playback open, unlocked waveforms, and speed up automated testing with the performance-optimized API. If you would like to create different waveforms, you could purchase RFmx License for the interesting standard ([download page](https://www.ni.com/en-ca/support/downloads/software-products/download.rfmx-waveform-creator.html#460637)).
 - **WiFi Waveform in _matlab_ieee_**:  The IEEE waveform generator is used to generate a waveform in MATLAB format.
-- **Radar Waveform in _matlab_**: The sample Radar waveform is created using the [Simulated Radar Waveform Generator](https://github.com/usnistgov/SimulatedRadarWaveformGenerator) (online available MATLAB code). It is a software tool that generates simulated Radar signals and creates RF datasets for developing and testing machine/deep learning detection algorithms.
+- **Radar Waveform in _matlab_**: The sample Radar waveform is created using the [Simulated Radar Waveform Generator](https://github.com/usnistgov/SimulatedRadarWaveformGenerator) (online available MATLAB code). It is a software tool that generates simulated Radar signals and creates RF data sets for developing and testing machine/deep learning detection algorithms.
 
 Each waveform should have two files:
 - Waveform Binary Data File
@@ -216,7 +216,7 @@ The RF Data Recording API library has several main components:
         - Python function: `src/lib/run_rf_replay_data_transmitter.py`
     - **Receivers**: The Rx sessions are generated and started simultaneously with transmitters. Data recording will start when the first Tx starts data transmission. The Rx data recording is executed for N records and for the given duration. 
         - Python function: `src/lib/run_rf_data_recorder.py`
-- **Write Dataset to SigMF format**:  For each data recording, data formatting and saving in SigMF format is done. The recorded dataset is saved in two files: binary file for IQ data and a JSON file for the meta-data. 
+- **Write Data set to SigMF format**:  For each data recording, data formatting and saving in SigMF format is done. The recorded data set is saved in two files: binary file for IQ data and a JSON file for the meta-data. 
     - Python function: `write_rx_recorded_data_in_sigmf.py`
 
 ---
@@ -312,7 +312,7 @@ The figure below shows the boundaries of LO offset.
 ---
 
 ### Results
-The figure below shows an example of recorded datasets in SigMF format. The figure shows also how recorded datasets can be used in data set management and then in AI/ML model training and validation.  
+The figure below shows an example of recorded data sets in SigMF format. The figure shows also how recorded data sets can be used in data set management and then in AI/ML model training and validation.  
 
 ![Results](docs/figures/example_sigmf_recordings.png  "Results")
 
@@ -320,8 +320,8 @@ The figure below shows an example of recorded datasets in SigMF format. The figu
 
 ### RF Data Pre-Processing
 We created a simple example to read the SigMF metadata and visualize the recorded IQ data. The following script `src/rf_data_pre_processing_spectrogram.py` can be used to plot the spectrogram of recorded data. It requires two parameters:
-- Path to dataset folder
-- Dataset base filename (without SigMF file extension)
+- Path to data set folder
+- Data set base filename (without SigMF file extension)
 
 Assume three transmitters transmit the following signals (default configuration file `config_rf_data_recording_api.json`):
 - 5G NR FR1 DL FDD wavefrom with 10 MHz bandwidth created based on 3GPP Release 15 [testmodel 3.1](https://www.etsi.org/deliver/etsi_ts/138100_138199/13814101/15.00.00_60/ts_13814101v150000p.pdf), Section 4.9.2.2.5, and 3.6 GHz carrier target frequency. 
