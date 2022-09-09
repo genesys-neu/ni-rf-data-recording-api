@@ -12,14 +12,27 @@ Start docker container with all necessary flags:
 * `-v <host-dir>:<vm-dir>` : Add the necessary volume mappings from host to virtual machine.
 
 Note that in order to mount a host directory into the volume, it is necessary to provide the absolute path to the `-v` argument. We can run the following commands from the repository root folder to run the container and give it access to the utility script folder mounted under `/utils` and the API source code under `/src`:
+- First, switch to the repository root folder: 
 ```
 cd ../../
+```
+- Then, run the docker container:
+```
 RFDATAFACTORYPATH=`pwd`
 sudo docker run -ti --rm --network host --privileged -v $RFDATAFACTORYPATH/tools/docker/utils:/utils -v $RFDATAFACTORYPATH/src:/src user/ni-rf-data-recorder-api
 ```
+Note: You need to switch to the repository root folder, i.e. ni-rf-data-recording-api, to run the container if you exit it. 
 
-## Setup SDR Devices
-Once logged in to the container, turn on the devices and assign the IP address to each USRP device that are intended to be operated during the experiments. To do so, navigate to `/utils` within the container and launch the provided shell script [`utils/setup_x310s_default.sh`](utils/setup_x310s_default.sh) to initialize all the available devices by providing the necessary details. Usage of this script is described here:
+## Change the USRP's IP address
+You may need to change the USRP's IP address for several reasons:
+- to satisfy your particular network configuration
+- to use multiple USRP-X Series devices on the same host computer
+-	to set a known IP address into USRP (in case you forgot)
+
+To change the USRP's IP address, you must know the current address of the USRP. You can setup the network properly using the [`utils/experiment_settings_x310s_default.sh`] described below. To change the USRP's IP, please look to Section "Change the USRP's IP address" in [Getting Started Guide](../../docs/Getting_Started_Guide_of_NI_RF_Data_Recording_API.pdf).
+
+## Setup Network and Update UHD FPGA Images of SDR Devices
+Once logged in to the container, turn on the devices and assign the IP address to each interface connected to USRP device that are intended to be operated during the experiments. To do so, navigate to `/utils` within the container and launch the provided shell script [`utils/setup_x310s_default.sh`](utils/setup_x310s_default.sh) to initialize all the available devices by providing the necessary details. Usage of this script is described here:
 ```
 Usage: bash setup_x310s_default.sh --device "interface1:ipaddr1[:uhd_fpga_image1],interface2:ipaddr2[:uhd_fpga_image2],..." [OPTIONS]
 
@@ -32,7 +45,7 @@ Each device must be initialized by providing the following info:
 OPTIONS includes:
    -i | --image_dl - download the FPGA images compatible with current UHD driver. Use in case of image version mismatch error.
 ```
-**IMPORTANT: if the `-i | --image_dl` option is used, the USRP will need to be POWERED OFF and then POWERED ON again in order for the new FPGA driver to work properly.**
+**IMPORTANT: If the `-i | --image_dl` option is used to update UHD FPGA image, the USRP needs to be POWERED OFF and then POWERED ON again to use the new FPGA.**
 
 After all devices have been initialized, the environment settings for the experiments can be set with the script [`utils/experiment_settings_x310s_default.sh`](utils/experiment_settings_x310s_default.sh). Usage of this script is similar to the previous one and is described here:
 ```
@@ -52,5 +65,5 @@ This command will also take care of expanding the network buffer size and set th
 ## Access RF Data Recording API Source Code
 Finally, you can run the main RF recording script or reference the API source code from the directory `/src`. For more details on how to run the code, please refer to the main [README](../../README.md).
 
-## Not Successful Build 
+## For Not Successful Build 
 If the build is not successful due to any reason, follow the [Getting Started Guide](../../docs/Getting_Started_Guide_of_NI_RF_Data_Recording_API.pdf) to build and install UHD python API manually.
