@@ -107,7 +107,18 @@ do
 done
 
 # display initialized UHD devices
-uhd_find_devices
+# USRP IP: xxx.xxx.xxx.2
+addr_node=2
+for dev in $devs
+do
+    specs=$(echo $dev | tr ":" "\n")
+    spec_arr=($specs)
+num_spec=${#spec_arr[@]}
+usrp_ip=$(echo ${spec_arr[1]} | sed "s/.$/${addr_node}/") # setup ip xxx.xxx.xxx.2
+
+echo "uhd_find_devices --args=\"type=x300,addr=${usrp_ip}\""
+    uhd_find_devices --args="type=x300,addr=${usrp_ip}"
+done
 
 # NOTE: The following steps need to be executed only when we need to update the firmware on the SDRs
 # To download the FPGA images compatible with the current UHD driver on the system
