@@ -14,7 +14,7 @@
 #		- ip address: IP address to be assigned to the Eth port.
 #		Note: The code assumes the Eth port IP ending in xxx.xxx.xxx.1 and the USRP IP ending in xxx.xxx.xxx.2;
 # 		- uhd_fpga_image: type of UHD image to be installed to FPGA (default is HG). This value is only required with --image_dl option enabled.
-#		Example: "bash setup_x310s_default.sh --device enp7s0f0:192.168.40.1,enp7s0f1:192.168.50.1,enp7s0f2:192.168.60.1 --probe"
+#		Example: "bash setup_x310s_default.sh --device enp7s0f0:192.168.40.1,enp7s0f1:192.168.50.1,enp7s0f2:192.168.60.1"
 #
 #	OPTIONS includes:
 #	   -i | --image_dl - download the FPGA images that are compatible with the current UHD driver. Use in case of image version mismatch error."
@@ -87,8 +87,8 @@ then
     exit
 fi
 
-# assign static IPs to the USRPs
-# NOTE: Usually the USRP IP ends with xxx.xxx.xxx.2 and on the host we should configure the ethernet port using the same address but ending with xxx.xxx.xxx.1
+# assign static IPs to Ethernet interfaces to use the USRPs
+# NOTE: Usually the USRP IP ends with xxx.xxx.xxx.2 and on the host we should configure the Ethernet port using the same address but ending with xxx.xxx.xxx.1
 # EXAMPLE
 # device 1
 # ifconfig enp7s0f0 192.168.40.1
@@ -115,7 +115,7 @@ if [ $doImgDL -eq 1 ]
 then
     echo "--image_dl : downloading the new FPGA images.."
     echo "******************************"
-    echo "IMPORTANT: after updating the FPGA image, each device needs to be POWERED OFF and POWERED ON again for the new image to be loaded."
+    echo "IMPORTANT: After updating the FPGA image, each device needs to be POWERED OFF and POWERED ON again for the new image to be loaded."
     echo "******************************"
     echo "Running image downloader..."
     uhd_images_downloader
