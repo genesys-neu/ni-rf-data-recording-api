@@ -13,10 +13,12 @@
 #		  - interface: name of ethernet interface where the SDR is connected;
 #		  - ip address: IP address to be assigned to the Eth port.
 #		  Note: The code assumes the Eth port IP ending in xxx.xxx.xxx.1 and the USRP IP ending in xxx.xxx.xxx.2;
-#		  Example: "bash experiment_settings_x310s_default.sh --device enp7s0f0:192.168.40.1,enp7s0f1:192.168.50.1,enp7s0f2:192.168.60.1 --probe"
 #
 #	OPTIONS includes:
 #	   -p | --probe - probe devices and print devices info."
+#
+#	Example: 
+# 	"bash experiment_settings_x310s_default.sh --device enp7s0f0:192.168.40.1,enp7s0f1:192.168.50.1,enp7s0f2:192.168.60.1 --probe"
 #
 # Pre-requests: Run within the Docker container after successful build.
 
@@ -64,7 +66,7 @@ do
          echo "Usage: bash experiment_settings_x310s_default.sh --device \"interface1:ipaddr1,interface2:ipaddr2,...\" [OPTIONS]"
          echo ""
 	 echo "Each device must be initialized by providing the following info:"
-         echo "  - interface: name of ethernet interface where the SDR is connected;"
+         echo "  - interface: name of Ethernet interface where the SDR is connected;"
          echo "  - ip address: IP address to be assigned to the Eth port. Note: The code assumes the Eth port IP ending in xxx.xxx.xxx.1 and the USRP IP ending in xxx.xxx.xxx.2;"
          echo " Example: \"enp7s0f0:192.168.40.1,enp7s0f1:192.168.50.1,enp7s0f2:192.168.60.1\""
 	 echo ""
