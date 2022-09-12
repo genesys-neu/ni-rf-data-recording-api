@@ -2,7 +2,9 @@
 
 # NI RF Data Recording API v1.0.0
 
-Welcome to RF Data Recording API! The RF Data Recording API is the free and open-source Python-based API to record Real-World Data and save it in [Signal Metadata Format (SigMF) format](https://github.com/gnuradio/SigMF). SigMF is an open-source standard that specifies a way to describe sets of recorded digital signal samples with metadata provided in [JSON](http://www.json.org/) files. The JSON file format is a human-readable and portable. 
+Welcome to RF Data Recording API! The RF Data Recording API is the free and open-source Python-based API to record Real-World RF data sets in an easy and automated way.
+
+The recorded data sets are saved in [Signal Metadata Format (SigMF) format](https://github.com/gnuradio/SigMF). SigMF is an open-source standard that specifies a way to describe sets of recorded digital signal samples with metadata (data properties & scenario descriptions) provided in [JSON](http://www.json.org/) files, which are human-readable and easily portable into various software environments. This allows to use the recorded data sets for various research and application areas including research on AI/ML for 6G wireless communications.  
 
 The RF Data Recording API has been built based on [UHD](https://github.com/EttusResearch/uhd). UHD is the free & open-source software driver and API for the [Universal Software Radio Peripheral (USRP™) SDR](https://www.ettus.com/products/) platform.
 
@@ -46,13 +48,13 @@ The RF Data Recording API has been built based on [UHD](https://github.com/Ettus
 ---
 
 ## Introduction
-Future wireless communication systems are expected to use more and more artificial intelligence and machine learning (AI/ML) principles. The AI/ML algorithms have to get trained to serve specific purposes. They require large data sets to get trained to a wide variety of potential scenarios and the performance depends on the quality and representability of the data sets.
- 
-As a result, RF data sets play a pivotal role in training and testing AI/ML models for different wireless applications. However, different researchers use different channel models and ray-tracing applications that generate data sets for their specific scenarios to test and validate their AI/ML models. Typically, these data sets are stored in heterogeneous formats and with different kind and completeness of metadata (scenario descriptions). This is quite difficult to generalize and compare the AI/ML models and to adopt the data sets by the broader research community.
- 
-Another important aspect is the augmentation of the AI/ML model training and validation with real-world date sets. This can ultimately improve the robustness of the trained AI/ML algorithms in practical environments since these data sets include additional effects like RF impairments and real-world channel properties which are not covered by simulation environments. 
- 
-The RF Data Recording API is designed by [NI](https://www.ni.com/) in collaboration with [Northeastern University](https://coe.northeastern.edu/) to generate real-world data sets and save them in the open source SigMF format. It provides comprehensive scenario descriptions by means of the JSON-based SigMF metadata files, which are human readable and easy to parse. This will simplify the management of data set libraries and the adoption by other researchers.
+Future wireless communication systems (e.g., 6G cellular communication systems) are expected to use more and more artificial intelligence and machine learning (AI/ML) principles. The underlying AI/ML algorithms have to get trained to serve specific purposes. They require large data sets to get trained to a wide variety of potential scenarios and the performance depends on the quality and representability of the data sets.
+
+As a result, RF data sets play a pivotal role in training and testing AI/ML models for different wireless applications. However, different researchers use different channel models and ray-tracing applications that generate data sets for their specific scenarios to test and validate their AI/ML models. Typically, these data sets are stored in heterogeneous formats and with different kind and completeness of metadata (scenario descriptions). This makes it quite difficult to generalize and to compare the AI/ML models and to adopt the data sets by the broader research community.
+
+Another important aspect is the augmentation of the AI/ML model training and validation with real-world RF date sets. This can ultimately improve the robustness of the trained AI/ML algorithms in practical environments since these data sets include additional effects like RF impairments and real-world channel properties which are not covered by simulation environments.
+
+Despite being in the early phase of research for 6G, AI & ML appears to be becoming one of the defining technologies for future wireless networks. The RF Data Recording API is designed by [NI](https://www.ni.com/) in collaboration with [Northeastern University](https://coe.northeastern.edu/) to generate real-world data sets which could be critical in determining how the algorithms perform in the real world. It provides comprehensive scenario descriptions by means of the JSON-based SigMF metadata files, which are human readable and easy to parse. This will simplify the management of data set libraries and the adoption by other researchers.
 
 ---
 
@@ -222,14 +224,16 @@ The RF Data Recording API library has several main components:
 ---
 
 ## System Setup
-Follow the Getting Started Guide instructions [docs/Getting Started Guide of NI RF Data Recording API.pdf](docs/Getting_Started_Guide_of_NI_RF_Data_Recording_API.pdf) to setup the hardware and software of the system. It includes:
-- Build and Install UHD Python API
-    - UHD Installation Test
-    - UHD Python API – Test
-- Increase Performance of Interface
+To setup the hardware of the system, follow the Getting Started Guide instructions in [docs/Getting Started Guide of NI RF Data Recording API.pdf](docs/Getting_Started_Guide_of_NI_RF_Data_Recording_API.pdf). The setup of the software includes the following:
 - Install RF Data Recording API Support Packages
+- Build and Install UHD Python API
 - Setup Networking
-- Setup Hardware
+- Increase Performance of Interface
+
+To setup the software of the system, the user has two options:
+- ***Build and Install UHD Python API Using Docker Container***: The docker container can be created to install all dependencies and run the API using docker. Follow the given instructions in
+[build/docker/README](build/docker/README.md).
+- ***Build and Install UHD Python API Manually***:  Follow the Getting Started Guide instructions in [docs/Getting Started Guide of NI RF Data Recording API.pdf](docs/Getting_Started_Guide_of_NI_RF_Data_Recording_API.pdf). The description of UHD installation test, UHD Python API test, change USRP IP, update UHD FPGA images is also provided.
 
 ---
 
