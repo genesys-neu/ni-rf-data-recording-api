@@ -21,24 +21,25 @@ cd ../../
 RFDATAFACTORYPATH=`pwd`
 sudo docker run -ti --rm --network host --privileged -v $RFDATAFACTORYPATH/build/docker/utils:/utils -v $RFDATAFACTORYPATH/src:/src user/ni-rf-data-recorder-api
 ```
-Note: You need to switch to the repository root folder, i.e. ni-rf-data-recording-api, to run the container if you exit it. 
+Note: If you exit the docker container, you need to switch to the repository root folder, i.e. ni-rf-data-recording-api, to run the container. 
 
 ## Change the USRP's IP address
 You may need to change the USRP's IP address for several reasons:
-- to satisfy your particular network configuration
-- to use multiple USRP-X Series devices on the same host computer
--	to set a known IP address into USRP (in case you forgot)
+- to satisfy your particular network configuration,
+- to use multiple USRP-X Series devices on the same host computer,
+- to set a known IP address into USRP (in case you forgot).
 
 To change the USRP's IP address, you must know the current address of the USRP. You can setup the network properly using the [`utils/experiment_settings_x310s_default.sh`] described below. To change the USRP's IP, please look to Section "Change the USRP's IP address" in [Getting Started Guide](../../docs/Getting_Started_Guide_of_NI_RF_Data_Recording_API.pdf).
 
 ## Setup Network and Update UHD FPGA Images of SDR Devices
-Once logged in to the container, turn on the devices and assign the IP address to each interface connected to USRP device that are intended to be operated during the experiments. To do so, navigate to `/utils` within the container and launch the provided shell script [`utils/setup_x310s_default.sh`](utils/setup_x310s_default.sh) to initialize all the available devices by providing the necessary details. Usage of this script is described here:
+Once logged in to the container, turn on the devices if they are not yet on. To update UHD FPGA images and assign the IP address to each interface connected to USRP device that are intended to be operated during the experiments, you need to do the following:
+- Navigate to `/utils` within the container and launch the provided shell script [`utils/setup_x310s_default.sh`](utils/setup_x310s_default.sh) to initialize all the available devices by providing the necessary details. Usage of this script is described here:
 ```
 Usage: bash setup_x310s_default.sh --device "interface1:ipaddr1[:uhd_fpga_image1],interface2:ipaddr2[:uhd_fpga_image2],..." [OPTIONS]
 
 Each device must be initialized by providing the following info:
-  - interface: name of ethernet interface where the SDR is connected;
-  - ip address: IP address to be assigned to the Eth port. Note: The code assumes the Eth port IP ending in xxx.xxx.xxx.1 and the USRP IP ending in xxx.xxx.xxx.2;
+  - interface: name of Ethernet interface where the SDR is connected;
+  - ip address: IP address to be assigned to the Ethernet port. Note: The code assumes the Etherent port IP ending in xxx.xxx.xxx.1 and the USRP IP ending in xxx.xxx.xxx.2;
   - uhd_fpga_image: type of UHD image to be installed to FPGA (default is HG). This value is only required with --image_dl option enabled.
  Example: "enp7s0f0:192.168.40.1,enp7s0f1:192.168.50.1,enp7s0f2:192.168.60.1"
 
