@@ -2,7 +2,7 @@
 ## Build Docker Image
 Use the following command to build the Docker Container with all the necessary dependencies to run the RF Data Recording API (NOTE: Building UHD from source code will take some time):
 ```
-cd ni-rf-data-recording-api/tools/docker
+cd ni-rf-data-recording-api/build/docker
 sudo docker build -t user/ni-rf-data-recorder-api .
 ```
 ## Launch Docker Container
@@ -19,7 +19,7 @@ cd ../../
 - Then, run the docker container:
 ```
 RFDATAFACTORYPATH=`pwd`
-sudo docker run -ti --rm --network host --privileged -v $RFDATAFACTORYPATH/tools/docker/utils:/utils -v $RFDATAFACTORYPATH/src:/src user/ni-rf-data-recorder-api
+sudo docker run -ti --rm --network host --privileged -v $RFDATAFACTORYPATH/build/docker/utils:/utils -v $RFDATAFACTORYPATH/src:/src user/ni-rf-data-recorder-api
 ```
 Note: You need to switch to the repository root folder, i.e. ni-rf-data-recording-api, to run the container if you exit it. 
 
