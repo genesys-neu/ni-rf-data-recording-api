@@ -6,7 +6,7 @@ Welcome to RF Data Recording API! The RF Data Recording API is the free and open
 
 The recorded data sets are saved in [Signal Metadata Format (SigMF) format](https://github.com/gnuradio/SigMF). SigMF is an open-source standard that specifies a way to describe sets of recorded digital signal samples with metadata (data properties & scenario descriptions) provided in [JSON](http://www.json.org/) files, which are human-readable and easily portable into various software environments. This allows to use the recorded data sets for various research and application areas including research on AI/ML for 6G wireless communications.  
 
-The RF Data Recording API has been built based on [UHD](https://github.com/EttusResearch/uhd. UHD is the free & open-source software driver and API for the [Universal Software Radio Peripheral (USRP™) SDR](https://www.ettus.com/products/) platform.
+The RF Data Recording API has been built based on [UHD](https://github.com/EttusResearch/uhd). UHD is the free & open-source software driver and API for the [Universal Software Radio Peripheral (USRP™) SDR](https://www.ettus.com/products/) platform.
 
 ---
 
@@ -224,7 +224,7 @@ The RF Data Recording API library has several main components:
 ---
 
 ## System Setup
-To setup the hardware of the system, follow the Getting Started Guide instructions [docs/Getting Started Guide of NI RF Data Recording API.pdf](docs/Getting_Started_Guide_of_NI_RF_Data_Recording_API.pdf). The setup of the software includes the following:
+To setup the hardware of the system, follow the Getting Started Guide instructions in [docs/Getting Started Guide of NI RF Data Recording API.pdf](docs/Getting_Started_Guide_of_NI_RF_Data_Recording_API.pdf). The setup of the software includes the following:
 - Install RF Data Recording API Support Packages
 - Build and Install UHD Python API
 - Setup Networking
@@ -233,7 +233,7 @@ To setup the hardware of the system, follow the Getting Started Guide instructio
 To setup the software of the system, the user has two options:
 - ***Build and Install UHD Python API Using Docker Container***: The docker container can be created to install all dependencies and run the API using docker. Follow the given instructions in
 [build/docker/README](build/docker/README.md).
-- ***Build and Install UHD Python API Manually***:  Follow the Getting Started Guide instructions [docs/Getting Started Guide of NI RF Data Recording API.pdf](docs/Getting_Started_Guide_of_NI_RF_Data_Recording_API.pdf). The description of UHD installation test, UHD Python API test, change USRP IP, update UHD FPGA images is also provided.
+- ***Build and Install UHD Python API Manually***:  Follow the Getting Started Guide instructions in [docs/Getting Started Guide of NI RF Data Recording API.pdf](docs/Getting_Started_Guide_of_NI_RF_Data_Recording_API.pdf). The description of UHD installation test, UHD Python API test, change USRP IP, update UHD FPGA images is also provided.
 
 ---
 
