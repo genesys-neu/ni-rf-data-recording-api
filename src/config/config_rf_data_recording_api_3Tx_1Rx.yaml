@@ -30,9 +30,10 @@ general_config:
   # Author name, handle, email, and/or other ID like Amateur Call Sign. 
   author: Abdo Gaber
   # A text description of the SigMF Recording.
-  description: "API Rx Only Test"
+  description: "CBRS use case"
   # User Comment
   comment: "Using NI RF Data Collection API"
+
 # ============================================
 # =============== Transmitters   =============
 # ============================================
@@ -87,7 +88,7 @@ transmitters_config:
     type: "x300"  # USRP type, for example: x300, type=str.
     IPaddress: "192.168.50.2" # IP address of USRP, type=str.
     Parameters:
-      freq:       # RF target center frequency in Hz, type = float.
+      freq:       #  RF target center frequency in Hz, type = float.
         SeqType: "range"
         Values: [3.62e+9,3.62e+9,100.0e+6]
       lo_offset:  # LO offset in Hz, type=float.
@@ -192,3 +193,41 @@ common_transmitters_config:
 # ================== Receivers   =============
 # ============================================
 receivers_config:
+  -
+    RFmode: "Rx"    # Tx or Rx, type=str.
+    # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
+    type: "x300"    # USRP type, for example: x300, type=str.
+    IPaddress: "192.168.100.2" # IP address of USRP, type=str.
+    Parameters:
+      freq:         # RF target center frequency in Hz, type = float.
+        SeqType: "range"
+        Values: [3.62e+9,3.62e+9,100.0e+6]
+      rate:         # rate of radio block, type = float.
+        SeqType: "list"
+        Values: [92.16e+6]
+      bandwidth:  # For future use
+        SeqType: "list"
+        Values: [92.16e+6]
+      rate_source:  # waveform_config: The rate will be read from the waveform config file.
+      # ............................in case of multi TX, the maximum rate will be used.
+      # ............ user_defined: The given rate by the user in this config file will be used.
+        SeqType: "single"
+        Values: "user_defined"
+      gain:       # Gain for the RF chain in dB, type = float.
+        SeqType: "list"
+        Values: [10]
+      channels:   # Rx Channel selection (X310: 0,1).
+        SeqType: "list"
+        Values: [0]
+      antenna:    # RX antenna selection (TX/RX, RX2), type = str.
+        SeqType: "list"
+        Values: ["TX/RX"]
+      clock_reference:  # Rx sync reference source (internal, external, gpsdo), type = str.
+        SeqType: "list"
+        Values: ["internal"]
+      duration:   # Rx Time duration of IQ data acquisition, type=float.
+        SeqType: "list"
+        Values: [10.0e-3]
+      channel_attenuation: # Expected channel attenuation in dB, type = float.
+        SeqType: "single"
+        Values: 33.0

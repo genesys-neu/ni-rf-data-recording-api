@@ -24,7 +24,7 @@ from sigmf import SigMFFile, sigmffile
 # 1- specify folder
 dataset_folder = "/home/user/workarea/recorded-data"
 # 2- specify base filename
-dataset_filename_base = "rx_data_record_2022_08_23-13_31_47_810"
+dataset_filename_base = "rx_data_record_2022_09_16-19_36_01_217"
 #---------------------------------------------------------------
 
 # initalize local variables
@@ -79,7 +79,7 @@ if plot_enabled == True:
     f, Pxx_den = scipysig.periodogram(
         plot_signal, fs=sample_rate, nfft=None, window="hamming", scaling="spectrum"
     )
-    plt.semilogy(f, Pxx_den)
+    plt.plot(f, 10*np.log10(Pxx_den))
     plt.title("Frequency domain signal (Spectrum)")
     plt.xlabel("frequency [Hz]")
     plt.ylabel("PSD")

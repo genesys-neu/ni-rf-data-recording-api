@@ -57,6 +57,7 @@ def parse_args():
     )
     parser.add_argument("-f", "--freq", default=2e9, type=float, help="RF center frequency in Hz")
     parser.add_argument("-r", "--rate", default=30.72e6, type=float, help="rate of radio block")
+    parser.add_argument("-b", "--bandwidth", default=20e6, type=float, help="bandwidth of radio block")
     parser.add_argument(
         "-d", "--duration", default=10e-3, type=float, help="time duration of IQ data acquisition"
     )
@@ -136,6 +137,8 @@ def main():
     # Set TX/RX port as receive port
     for index in args.channels:
         usrp.set_rx_antenna(args.antenna, index)
+        # set the IF filter bandwidth   
+        usrp.set_rx_bandwidth(args.bandwidth, index)
 
     # run data recording loop over specified number of iterations
     print("Start fetching RX data from USRP...")
@@ -154,11 +157,26 @@ def main():
 
         # get USRP coerced values only once if we running the same config
         if i == 0:
-            args.coerced_rx_rate = usrp.get_rx_rate()
+            print(f"Requesting RX Freq: {(args.freq / 1e6)} MHz...")
             args.coerced_rx_freq = usrp.get_rx_freq()
+            print(f"Actual RX Freq: {args.coerced_rx_freq / 1e6}  MHz...")
+            print(f"** RX Carrier Frequency Offset: {args.coerced_rx_freq - args.freq}  Hz...")
+
+            print(f"Requesting RX Rate: {(args.rate / 1e6) } Msps...")
+            args.coerced_rx_rate = usrp.get_rx_rate()
+            print(f"Actual RX Rate: {(args.coerced_rx_rate / 1e6)} Msps...")
+            print(f"** RX Sampling Rate Offset: {args.coerced_rx_rate - args.rate}  Sample per second...")
+            
+            print(f"Requesting RX Gain: {args.gain} dB...")
             args.coerced_rx_gain = usrp.get_rx_gain()
-            args.coerced_rx_bandwidth = usrp.get_rx_bandwidth()
-            args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data
+            print(f"Actual RX Gain: {args.coerced_rx_gain} dB...")
+            
+            print(f"Requesting RX Bandwidth: {(args.bandwidth / 1e6)} MHz...")
+            args.coerced_rx_bandwidth = usrp.get_rx_bandwidth() 
+            print(f"Actual RX Bandwidth: {args.coerced_rx_bandwidth / 1e6} MHz...")
+            print("Note: Not all doughterboards support variable analog bandwidth")
+
+            args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data yet
 
         # Get time stamp
         time_stamp_micro_sec = datetime.now().strftime("%Y_%m_%d-%H_%M_%S_%f")

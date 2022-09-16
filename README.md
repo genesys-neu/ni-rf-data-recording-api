@@ -1,4 +1,4 @@
-![NI Logo](docs/figures/NI_Logo_RGB_NI_Logo_TM_Green.png "NI Logo")
+![NI Logo](docs/figures/NI_API_logo.png "NI Logo")
 
 # NI RF Data Recording API v1.0.0
 
@@ -157,6 +157,8 @@ Both files should have the same name and different format.
     - Waveform IQ data: `RadarWaveform_BW_2M.mat`
     - Waveform config file: `RadarWaveform_BW_2M.yaml`
 
+**Note**: The check of PAPR and signal amplitude of the given waveform is not supported by the API yet. The user needs to scale the waveform in advance. The maximum DAC input power is 0 dBFS for sinusoidal signals. The waveform needs to be scaled down for OFDM signals due to the PAPR. For example, the PAPR of 5G NR signal is around 12 dB. So, the DAC input power should be then not larger than -12 dBFs.
+
 ---
 
 ### Configuration Files
@@ -184,9 +186,11 @@ The following figure shows an exemplary of YAML/JSON RF data recording API confi
 ![Features](docs/figures/exemplary_api_config_yaml_json.png  "Exemplary YAML/JSON Data Recording Configuration File")
  
 Several configuration files have been created as a template for all operation modes: Tx and Rx mode, Tx or Rx only mode, and multi transmitters and receivers. 
-- Mutli-Tx and Single Rx (JSON): [src/config/config_rf_data_recording_api.json](src/config/config_rf_data_recording_api.json)
-- Mutli-Tx and Single Rx (YAML): [src/config/config_rf_data_recording_api.yaml](src/config/config_rf_data_recording_api.yaml)
-- Mutli-Tx and Multi-Rx (JSON): [src/config/config_rf_data_recording_api_4TX_2RX_test.json](src/config/config_rf_data_recording_api_4TX_2RX_test.json)
+- Mutli-Tx and Multi-Rx (JSON): [src/config/config_rf_data_recording_api_4TX_2RX.json](src/config/config_rf_data_recording_api_4TX_2RX.json)
+- Mutli-Tx and Single Rx (JSON): [src/config/config_rf_data_recording_api_3Tx_1Rx.json](src/config/config_rf_data_recording_api_3Tx_1Rx.json)
+- Mutli-Tx and Single Rx (YAML): [src/config/config_rf_data_recording_api_3Tx_1Rx.yaml](src/config/config_rf_data_recording_api_3Tx_1Rx.yaml)
+- Single-Tx and Single Rx (JSON): [src/config/config_rf_data_recording_api.json](src/config/config_rf_data_recording_api.json)
+- Single-Tx and Single Rx (YAML): [src/config/config_rf_data_recording_api.yaml](src/config/config_rf_data_recording_api.yaml)
 - Rx Only:  [src/config/config_rf_data_recording_api_rx_only.yaml](src/config/config_rf_data_recording_api_rx_only.yaml)
 - Tx Only: [src/config/config_rf_data_recording_api_tx_only.yaml](src/config/config_rf_data_recording_api_tx_only.yaml)
 
@@ -254,7 +258,7 @@ The user can provide the configuration file to the API from the terminal:
 ```
 python3.9 main_rf_data_recording_api.py –-config config/config_rf_data_recording_api.yaml
 ```
-On the console, the API prints the varaition map and the configuration vector per each iteration. User can disable it via `enable_console_logging` parameter under `general_config` section in the configuration file. In addition, it prints the hardware info, number of Rx samples and the elapsed time of getting Rx samples and writing data and metadata files per each record. At the end of execution, the API prints the total size of Rx data on memory.
+On the console, the API prints the varaition map and the configuration vector per each iteration. User can disable it via `enable_console_logging` parameter under `general_config` section in the configuration file. In addition, it prints the hardware info, number of Rx samples and the elapsed time of getting Rx samples and writing data and metadata files per each record. TThe data recordings might contain a slight frequency offset due to Tx and Rx carrier frequency coercion. The Tx and Rx carrier frequency offsets are printed on the console. The coerced Rx carrier frequency is logged in the meta data while the coerced Tx carrier frequency not yet. At the end of execution, the API prints the total size of Rx data on memory.
 The following figure shows an exemplary of API console.
 
 ![API Console](docs/figures/console.png  "API Console")
@@ -384,6 +388,8 @@ The users and developers can contribute by adding more features or optimize the 
         - [ ] Functional changes are tested.
 - Your request needs to be approved by NI
 - If your Pull Request is accepted, it can be merged then to the main branch.
+
+Note: Maintenance of this Git repository will be done on best effort basis.
 
 ---
 

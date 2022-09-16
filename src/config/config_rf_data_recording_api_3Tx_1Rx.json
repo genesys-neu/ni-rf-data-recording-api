@@ -79,6 +79,38 @@
           "gain":           {"SeqType": "list",     "Values": [20]},
           "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}
         }
+      },
+      {
+        "RFmode": "Tx","type": "x300","IPaddress": "192.168.50.2",
+        "Parameters": {
+          "freq":           {"SeqType": "range",    "Values": [3.62e9, 3.62e9,100e6]},
+          "lo_offset":      {"SeqType": "single",   "Values": 20.0e6},
+          "enable_lo_offset":{"SeqType": "single",  "Values": "False"},
+          "rate":           {"SeqType": "list",     "Values": [15.36e6]},
+          "bandwidth":      {"SeqType": "list",     "Values": [10e6]},
+          "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
+          "waveform_file_name": {"SeqType": "list", "Values": ["LTE_FDD_DL_10MHz_CC-1_E-UTRA_E-TM2"]},
+          "waveform_path":  {"SeqType": "single",   "Values": "waveforms/lte/"},
+          "waveform_format":{"SeqType": "single",   "Values": "tdms"},
+          "gain":           {"SeqType": "list",     "Values": [30]},
+          "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}
+        }
+      },
+      {
+        "RFmode": "Tx","type": "x300","IPaddress": "192.168.70.2",
+        "Parameters": {
+          "freq":           {"SeqType": "range",    "Values": [3.63e9, 3.63e9,100e6]},
+          "lo_offset":      {"SeqType": "single",   "Values": 10.0e6},
+          "enable_lo_offset":{"SeqType": "single",  "Values": "True"},
+          "rate":           {"SeqType": "list",     "Values": [20e6]},
+          "bandwidth":      {"SeqType": "list",     "Values": [2e6]},
+          "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
+          "waveform_file_name": {"SeqType": "list", "Values": ["RadarWaveform_BW_2M"]},
+          "waveform_path":  {"SeqType": "single",   "Values": "waveforms/radar/"},
+          "waveform_format":{"SeqType": "single",   "Values": "matlab"},
+          "gain":           {"SeqType": "list",     "Values": [30]},
+          "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}
+        }
       }
     ],
     "common_transmitters_config": {
@@ -92,9 +124,9 @@
       {
         "RFmode": "Rx", "type": "x300","IPaddress": "192.168.100.2",
         "Parameters": {
-            "freq":         {"SeqType": "range",    "Values": [3.6e9, 3.6e9,100e6]},
-            "rate":         {"SeqType": "list",     "Values": [30.72e6]},
-            "bandwidth":    {"SeqType": "list",     "Values": [20e6]},
+            "freq":         {"SeqType": "range",    "Values": [3.61e9, 3.61e9,100e6]},
+            "rate":         {"SeqType": "list",     "Values": [92.16e6]},
+            "bandwidth":    {"SeqType": "list",     "Values": [10e6]},
             "rate_source":  {"SeqType": "single",   "Values": "user_defined"},
             "gain":         {"SeqType": "list",     "Values": [20]},
             "channels":     {"SeqType": "list",     "Values": [0]},

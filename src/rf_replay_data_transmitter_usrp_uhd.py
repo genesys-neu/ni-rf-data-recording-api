@@ -247,23 +247,29 @@ def main():
         )
     else:
         radio_ctrl.set_tx_frequency(args.freq, args.radio_chan)
-    print(f"Actual TX Freq: {radio_ctrl.get_tx_frequency(args.radio_chan) / 1e6}  MHz...")
+    coerced_tx_freq = radio_ctrl.get_tx_frequency(args.radio_chan) 
+    print(f"Actual TX Freq: {coerced_tx_freq/ 1e6}  MHz...")
+    print(f"** TX Carrier Frequency Offset: {coerced_tx_freq - args.freq}  Hz...")
 
     # Set the sample rate
     print(f"Requesting TX Rate: {(args.rate / 1e6) } Msps...")
     duc_ctrl.set_input_rate(args.rate, args.duc_chan)
-    rate = duc_ctrl.get_input_rate(args.duc_chan)
-    print(f"Actual TX Rate: {(rate / 1e6)} Msps...")
+    coerced_tx_rate = duc_ctrl.get_input_rate(args.duc_chan)
+    print(f"Actual TX Rate: {(coerced_tx_rate / 1e6)} Msps...")
+    print(f"** TX Sampling Rate Offset: {coerced_tx_rate - args.rate}  Sample per second...")
 
     # Set the RF gain
     print(f"Requesting TX Gain: {args.gain} dB...")
     radio_ctrl.set_tx_gain(args.gain, args.radio_chan)
-    print(f"Actual TX Gain: {radio_ctrl.get_tx_gain(args.radio_chan)} dB...")
+    coerced_tx_gain = radio_ctrl.get_tx_gain(args.radio_chan)
+    print(f"Actual TX Gain: {coerced_tx_gain} dB...")
 
     # Set the analog front-end filter bandwidth
     print(f"Requesting TX Bandwidth: {(args.bandwidth / 1e6)} MHz...")
     radio_ctrl.set_tx_bandwidth(args.bandwidth, args.radio_chan)
-    print(f"Actual TX Bandwidth: {radio_ctrl.get_tx_bandwidth(args.radio_chan) / 1e6} MHz...")
+    coerced_tx_bandwidth = radio_ctrl.get_tx_bandwidth(args.radio_chan)
+    print(f"Actual TX Bandwidth: {coerced_tx_bandwidth / 1e6} MHz...")
+    print("Note: Not all doughterboards support variable analog bandwidth")
 
     # Set the antenna
     print(f"Requesting TX Antenna: {(args.antenna)}")

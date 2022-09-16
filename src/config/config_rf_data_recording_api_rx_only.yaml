@@ -37,6 +37,7 @@ general_config:
 # =============== Transmitters   =============
 # ============================================
 transmitters_config:
+#
 common_transmitters_config:
   tx_clock_reference:   # Tx sync reference source (internal, external, gpsdo), type = str.
     SeqType: "list"
@@ -120,7 +121,7 @@ receivers_config:
         Values: "user_defined"
       gain:       # Gain for the RF chain in dB, type = float.
         SeqType: "list"
-        Values: [10]
+        Values: [20]
       channels:   # Rx Channel selection (X310: 0,1).
         SeqType: "list"
         Values: [0]
