@@ -116,7 +116,7 @@ By using a few clicks, the RF Data Recording API can generate real-world RF data
     - HW: Linux Server and NI USRPs
 - **Output**: The recorded RF data sets in SigMF format. For each record, there are two files:
     - SigMF Data: Binary file includes collected raw data
-    - SigMF Meta-Data (JSON format)
+    - SigMF Metadata (JSON format)
 
 The following figure shows the reference architecture of NI RF Data Recording API.
 
@@ -157,7 +157,7 @@ Both files should have the same name and different format.
     - Waveform IQ data: `RadarWaveform_BW_2M.mat`
     - Waveform config file: `RadarWaveform_BW_2M.yaml`
 
-**Note**: The check of PAPR and signal amplitude of the given waveform is not supported by the API yet. The user needs to scale the waveform in advance. The maximum DAC input power is 0 dBFS for sinusoidal signals. The waveform needs to be scaled down for OFDM signals due to the PAPR. For example, the PAPR of 5G NR signal is around 12 dB. So, the DAC input power should be then not larger than -12 dBFs.
+**Note**: The check of PAPR and signal amplitude of the given waveform is not supported by the API yet. The user needs to scale the waveform in advance. The maximum DAC input power is 0 dBFS for sinusoidal signals. The waveform needs to be scaled down for OFDM signals due to the PAPR. For example, the PAPR of 5G NR signal is around 12 dB. So, the DAC input power should be then not larger than -12 dBFS.
 
 ---
 
@@ -199,7 +199,12 @@ Several configuration files have been created as a template for all operation mo
 ---
 
 ### Wireless Link Parameter Map Dictionary
-Since every waveform generator can create waveforms and related configuration with different naming scheme, the [src/config/wireless_link_parameter_map.yaml](src/config/wireless_link_parameter_map.yaml) is a dictionary to do the parameters pair between the waveform config and the SigMF metadata (e.g. RFWS parameter name vs. SigMF meta-data parameter name). It eases of adoption in case of adding new parameters, using different waveform creator with different naming scheme, or define your own customized waveform. To get those parameters in metadata, the required changes need to be done only in the parameter map dictionary. Some parameters are required for RF configuration also such as the sampling rate and bandwidth. 
+Since every waveform generator can create waveforms and related configuration with different naming scheme, the [src/config/wireless_link_parameter_map.yaml](src/config/wireless_link_parameter_map.yaml) is a dictionary to do the parameters pair between the waveform config and the SigMF metadata (e.g. RFWS parameter name vs. SigMF metadata parameter name). It eases of adoption in case of adding new parameters, using different waveform creator with different naming scheme, or define your own customized waveform. To get those parameters in metadata, the required changes need to be done only in the parameter map dictionary. It is worth mentioning that waveform config YAML file must contain the following fields to make it work with the data recording API:
+- standard
+- bandwidth
+- sampling_rate
+
+The sampling rate and bandwidth parameters are required for RF configuration and not just for metadata.
 
 The following figure shows an exemplary of Wireless Link Parameter Map Dictionary.
 
@@ -222,7 +227,7 @@ The RF Data Recording API library has several main components:
         - Python function: `src/lib/run_rf_replay_data_transmitter.py`
     - **Receivers**: The Rx sessions are generated and started simultaneously with transmitters. Data recording will start when the first Tx starts data transmission. The Rx data recording is executed for N records and for the given duration. 
         - Python function: `src/lib/run_rf_data_recorder.py`
-- **Write Data set to SigMF format**:  For each data recording, data formatting and saving in SigMF format is done. The recorded data set is saved in two files: binary file for IQ data and a JSON file for the meta-data. 
+- **Write Data set to SigMF format**:  For each data recording, data formatting and saving in SigMF format is done. The recorded data set is saved in two files: binary file for IQ data and a JSON file for the metadata. 
     - Python function: `write_rx_recorded_data_in_sigmf.py`
 
 ---
@@ -258,7 +263,7 @@ The user can provide the configuration file to the API from the terminal:
 ```
 python3.9 main_rf_data_recording_api.py –-config config/config_rf_data_recording_api.yaml
 ```
-On the console, the API prints the varaition map and the configuration vector per each iteration. User can disable it via `enable_console_logging` parameter under `general_config` section in the configuration file. In addition, it prints the hardware info, number of Rx samples and the elapsed time of getting Rx samples and writing data and metadata files per each record. TThe data recordings might contain a slight frequency offset due to Tx and Rx carrier frequency coercion. The Tx and Rx carrier frequency offsets are printed on the console. The coerced Rx carrier frequency is logged in the meta data while the coerced Tx carrier frequency not yet. At the end of execution, the API prints the total size of Rx data on memory.
+On the console, the API prints the varaition map and the configuration vector per each iteration. User can disable it via `enable_console_logging` parameter under `general_config` section in the configuration file. In addition, it prints the hardware info, number of Rx samples and the elapsed time of getting Rx samples and writing data and metadata files per each record. The data recordings might contain a slight frequency offset due to Tx and Rx carrier frequency coercion. The Tx and Rx carrier frequency offsets are printed on the console. The coerced Rx carrier frequency is logged in the meta data while the coerced Tx carrier frequency not yet. At the end of execution, the API prints the total size of Rx data on memory.
 The following figure shows an exemplary of API console.
 
 ![API Console](docs/figures/console.png  "API Console")
