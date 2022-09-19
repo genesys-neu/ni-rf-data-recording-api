@@ -68,8 +68,8 @@ def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
         usrp.set_rx_antenna(rx_args.antenna, index)
         # set the IF filter bandwidth  
         usrp.set_rx_bandwidth(rx_args.bandwidth, index)
-    # set RF Configure can capture zero sample for RF Settling time
-    rx_data = usrp.recv_num_samps(
+    # set RF Configure and capture zero sample for RF Settling time
+    usrp.recv_num_samps(
             0,
             rx_args.freq,
             rx_args.rate,

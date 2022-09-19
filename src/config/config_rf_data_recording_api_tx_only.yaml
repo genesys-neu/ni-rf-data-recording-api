@@ -77,7 +77,7 @@ transmitters_config:
         Values: "tdms"
       gain:     # Gain for the RF chain, type = float.
         SeqType: "list"
-        Values: [30]
+        Values: [20]
       antenna:  # TX antenna selection (TX/RX), type = str.
         SeqType: "list"
         Values: ["TX/RX"]
@@ -121,7 +121,7 @@ transmitters_config:
         Values: "tdms"
       gain:     # Gain for the RF chain, type = float.
         SeqType: "list"
-        Values: [30]
+        Values: [20]
       antenna:  # TX antenna selection (TX/RX), type = str.
         SeqType: "list"
         Values: ["TX/RX"]
@@ -147,7 +147,7 @@ transmitters_config:
       # .......... If rate_source --> waveform_config: It will be read from the waveform config file.
       # .......... If rate_source --> user_defined: The given bandwidth by the user in this config file will be used.
         SeqType: "list"
-        Values: [2e+6]
+        Values: [2.0e+6]
       rate_source:  # waveform_config: The rate will be read from the waveform config file.
       # ............ user_defined: The given rate by the user in this config file will be used.
         SeqType: "single"
@@ -165,7 +165,7 @@ transmitters_config:
         Values: "matlab"
       gain:     # Gain for the RF chain, type = float.
         SeqType: "list"
-        Values: [30]
+        Values: [20]
       antenna:  # TX antenna selection (TX/RX), type = str.
         SeqType: "list"
         Values: ["TX/RX"]

@@ -69,13 +69,13 @@ receivers_config:
     Parameters:
       freq:         # RF target center frequency in Hz, type = float.
         SeqType: "range"
-        Values: [3.62e+9,3.62e+9,100.0e+6]
+        Values: [3.6e+9,3.6e+9,100.0e+6]
       rate:         # rate of radio block, type = float.
         SeqType: "list"
         Values: [92.16e+6]
       bandwidth:  # For future use
         SeqType: "list"
-        Values: [92.16e+6]
+        Values: [100.0e+6]
       rate_source:  # waveform_config: The rate will be read from the waveform config file.
       # ............................in case of multi TX, the maximum rate will be used.
       # ............ user_defined: The given rate by the user in this config file will be used.
@@ -83,7 +83,7 @@ receivers_config:
         Values: "user_defined"
       gain:       # Gain for the RF chain in dB, type = float.
         SeqType: "list"
-        Values: [10]
+        Values: [20]
       channels:   # Rx Channel selection (X310: 0,1).
         SeqType: "list"
         Values: [0]
@@ -113,7 +113,7 @@ receivers_config:
         Values: [92.16e+6]
       bandwidth:  # For future use
         SeqType: "list"
-        Values: [92.16e+6]
+        Values: [100.0e+6]
       rate_source:  # waveform_config: The rate will be read from the waveform config file.
       # ............................in case of multi TX, the maximum rate will be used.
       # ............ user_defined: The given rate by the user in this config file will be used.

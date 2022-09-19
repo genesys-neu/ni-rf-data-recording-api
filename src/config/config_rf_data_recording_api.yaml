@@ -78,7 +78,7 @@ transmitters_config:
         Values: "tdms"
       gain:     # Gain for the RF chain, type = float.
         SeqType: "list"
-        Values: [30]
+        Values: [20]
       antenna:  # TX antenna selection (TX/RX), type = str.
         SeqType: "list"
         Values: ["TX/RX"]
@@ -127,7 +127,7 @@ receivers_config:
         Values: "user_defined"
       gain:       # Gain for the RF chain in dB, type = float.
         SeqType: "list"
-        Values: [10]
+        Values: [20]
       channels:   # Rx Channel selection (X310: 0,1).
         SeqType: "list"
         Values: [0]

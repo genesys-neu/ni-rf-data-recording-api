@@ -75,7 +75,7 @@
           "waveform_file_name": {"SeqType": "list", "Values": ["NR_FR1_DL_TDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1"]},
           "waveform_path":  {"SeqType": "single",   "Values": "waveforms/nr/"},
           "waveform_format":{"SeqType": "single",   "Values": "tdms"},
-          "gain":           {"SeqType": "list",     "Values": [30]},
+          "gain":           {"SeqType": "list",     "Values": [20]},
           "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}
         }
       },
@@ -91,7 +91,7 @@
           "waveform_file_name": {"SeqType": "list", "Values": ["LTE_FDD_DL_10MHz_CC-1_E-UTRA_E-TM2"]},
           "waveform_path":  {"SeqType": "single",   "Values": "waveforms/lte/"},
           "waveform_format":{"SeqType": "single",   "Values": "tdms"},
-          "gain":           {"SeqType": "list",     "Values": [30]},
+          "gain":           {"SeqType": "list",     "Values": [20]},
           "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}
         }
       },
@@ -107,7 +107,7 @@
           "waveform_file_name": {"SeqType": "list", "Values": ["RadarWaveform_BW_2M"]},
           "waveform_path":  {"SeqType": "single",   "Values": "waveforms/radar/"},
           "waveform_format":{"SeqType": "single",   "Values": "matlab"},
-          "gain":           {"SeqType": "list",     "Values": [30]},
+          "gain":           {"SeqType": "list",     "Values": [20]},
           "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}
         }
       },
@@ -123,7 +123,7 @@
           "waveform_file_name": {"SeqType": "list", "Values": ["IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame"]},
           "waveform_path":  {"SeqType": "single",   "Values": "waveforms/wifi/"},
           "waveform_format":{"SeqType": "single",   "Values": "matlab_ieee"},
-          "gain":           {"SeqType": "list",     "Values": [30]},
+          "gain":           {"SeqType": "list",     "Values": [20]},
           "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}
         }
       }
@@ -141,7 +141,7 @@
         "Parameters": {
             "freq":         {"SeqType": "range",    "Values": [3.62e9, 3.62e9,100e6]},
             "rate":         {"SeqType": "list",     "Values": [92.16e6]},
-            "bandwidth":    {"SeqType": "list",     "Values": [92.16e6]},
+            "bandwidth":    {"SeqType": "list",     "Values": [100e6]},
             "rate_source":  {"SeqType": "single",   "Values": "user_defined"},
             "gain":         {"SeqType": "list",     "Values": [20]},
             "channels":     {"SeqType": "list",     "Values": [0]},

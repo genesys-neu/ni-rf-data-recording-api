@@ -139,7 +139,15 @@ def main():
         usrp.set_rx_antenna(args.antenna, index)
         # set the IF filter bandwidth   
         usrp.set_rx_bandwidth(args.bandwidth, index)
-
+    # set RF Configure and capture zero sample for RF Settling time
+    usrp.recv_num_samps(
+            0,
+            args.freq,
+            args.rate,
+            args.channels,
+            args.gain,
+            streamer=rx_streamer,
+        )
     # run data recording loop over specified number of iterations
     print("Start fetching RX data from USRP...")
     for i in range(args.nrecords):
