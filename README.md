@@ -391,8 +391,8 @@ The users and developers can contribute by adding more features or optimize the 
         - [ ] Document your code.
         - [ ] Remove all debug code.
         - [ ] Functional changes are tested.
-- Your request needs to be approved by NI
-- If your Pull Request is accepted, it can be merged then to the main branch.
+- Your request needs to be approved by repository admin.
+- If your Pull Request is accepted, it will be merged then to the main branch.
 
 Note: Maintenance of this Git repository will be done on best effort basis.
 
