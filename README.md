@@ -157,7 +157,7 @@ Both files should have the same name and different format.
     - Waveform IQ data: `RadarWaveform_BW_2M.mat`
     - Waveform config file: `RadarWaveform_BW_2M.yaml`
 
-**Note**: The check of PAPR and signal amplitude of the given waveform is not supported by the API yet. The user needs to scale the waveform in advance. The maximum DAC input power is 0 dBFS for sinusoidal signals. The waveform needs to be scaled down for OFDM signals due to the PAPR. For example, the PAPR of 5G NR signal is around 12 dB. So, the DAC input power should be then not larger than -12 dBFS.
+**Note**: The check of PAPR and signal amplitude of the given waveform is not supported by the API yet. The user needs to scale the waveform in advance. The maximum DAC input power is 0 dBFS for sinusoidal signals. It means the maximum peak value of real and Imaginary parts of a complex sample should be between -1 and 1, otherwise a signal clipping will occur. The waveform needs to be scaled down for OFDM signals due to the PAPR. For example, the PAPR of 5G NR signal is around 12 dB. So, the DAC input power should be not larger than -12 dBFS.
 
 ---
 
