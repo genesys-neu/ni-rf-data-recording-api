@@ -1,4 +1,4 @@
-![NI Logo](docs/figures/NI_API_logo.png "NI Logo")
+![NI Logo](docs/figures/NI_NEU_API_logo.png "NI Logo")
 
 # NI RF Data Recording API v1.0.0
 
