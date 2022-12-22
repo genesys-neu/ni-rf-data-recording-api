@@ -32,12 +32,9 @@ import matplotlib.pyplot as plt
 
 ## Read waveform data in TDMS format
 def read_waveform_data_tdms(waveform_path, waveform_file_name):
-    # Open the file
-    dir_path = os.path.dirname(__file__)
-    src_path = os.path.split(dir_path)[0] 
 
     # The tdms waveform config file is saved with the same name of waveform but it has .rfws extenstion
-    path_to_file = os.path.join(src_path, waveform_path, waveform_file_name + ".tdms")
+    path_to_file = os.path.join(waveform_path, waveform_file_name + ".tdms")
     # check if file exists
     file_exists = exists(path_to_file)
     if file_exists:
@@ -66,10 +63,8 @@ def read_waveform_data_tdms(waveform_path, waveform_file_name):
 
 ## Read waveform data in matlab format for IEEE waveform generator
 def read_waveform_data_matlab_ieee(waveform_path, waveform_file_name):
-    # Open the file
-    dir_path = os.path.dirname(__file__)
-    src_path = os.path.split(dir_path)[0] 
-    waveform_file_path = os.path.join(src_path, waveform_path, waveform_file_name)
+    
+    waveform_file_path = os.path.join(waveform_path, waveform_file_name)
     mat_data = scipy.io.loadmat(str(waveform_file_path)+ "/sbb_str.mat")
     # get data
     data = mat_data["sbb_str"]
@@ -80,10 +75,8 @@ def read_waveform_data_matlab_ieee(waveform_path, waveform_file_name):
 
 ## Read waveform data in matlab format - arbitrary mode
 def read_waveform_data_matlab(waveform_path, waveform_file_name):
-    # Open the file
-    dir_path = os.path.dirname(__file__)
-    src_path = os.path.split(dir_path)[0] 
-    waveform_file_path = os.path.join(src_path, waveform_path, waveform_file_name)
+    
+    waveform_file_path = os.path.join(waveform_path, waveform_file_name)
     mat_data = scipy.io.loadmat(str(waveform_file_path)+".mat")
     # get data
     data = mat_data["waveform"]

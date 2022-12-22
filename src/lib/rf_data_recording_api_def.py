@@ -87,6 +87,18 @@ class RFDataRecorderAPI:
             self.waveform_file_name = iteration_config[tx_id + "_waveform_file_name"]
             # "path to TDMS/mat/... file, type = str ",
             self.waveform_path = iteration_config[tx_id + "_waveform_path"]
+            # waveform_path_type: type of waveform path:relative or absolute 
+            # absolute: Full path to waveform should be given to use waveforms from another directory
+            # relative: path related to waveform folder given with the API
+            self.waveform_path_type = iteration_config[tx_id + "_waveform_path_type"]
+            if self.waveform_path_type == "relative":
+                dir_path = os.path.dirname(__file__)
+                src_path = os.path.split(dir_path)[0] 
+                self.waveform_path = os.path.join(src_path, self.waveform_path)
+            elif self.waveform_path_type == "absolute":
+                pass
+            else:
+                raise Exception("Error: Unknow waveform path type", self.waveform_path_type)
             # "possible values: tdms, matlab_ieee, type = str ",
             self.waveform_format = iteration_config[tx_id + "_waveform_format"]
             # "clock reference source (internal, external, gpsdo, type = str",
@@ -144,10 +156,10 @@ class RFDataRecorderAPI:
             self.duration = iteration_config[rx_id + "_duration"]
             # "number of snapshots from RX IQ data acquisition"
             self.nrecords = general_config["nrecords"]
+            # captured data file name
+            self.captured_data_file_name = general_config["captured_data_file_name"]
             # "path to store captured rx data, type = str",
-            self.rx_recorded_data_path = (
-                Path(__file__).parent / general_config["rx_recorded_data_path"]
-            ).resolve()
+            self.rx_recorded_data_path = general_config["rx_recorded_data_path"]
             # rx recorded data saving format, type = str, possible values "SigMF"
             self.rx_recorded_data_saving_format = general_config["rx_recorded_data_saving_format"]
             # "Hardware type, i.e. for USRP: USRP mboard ID (X310, or ....)
@@ -467,7 +479,6 @@ class RFDataRecorderAPI:
                 target=run_rf_replay_data_transmitter.rf_replay_data_transmitter,
                 args=(
                     txs_data_recording_api_config[idx],
-                    api_operation_mode,
                 ),
             )
             process.start()
@@ -517,7 +528,7 @@ class RFDataRecorderAPI:
         enable_console_logging,
     ):
 
-        for idx, tx_data_recording_api_config in enumerate(txs_data_recording_api_config):
+        for tx_idx, tx_data_recording_api_config in enumerate(txs_data_recording_api_config):
             ##  Initlize sync settings
             sync_settings.init()
             if enable_console_logging:
@@ -533,8 +544,7 @@ class RFDataRecorderAPI:
             process = threading.Thread(
                 target=run_rf_replay_data_transmitter.rf_replay_data_transmitter,
                 args=(
-                    txs_data_recording_api_config[idx],
-                    api_operation_mode,
+                    txs_data_recording_api_config[tx_idx],
                 ),
             )
             process.start()
@@ -547,12 +557,17 @@ class RFDataRecorderAPI:
             # Stop Tx:
             # ------ As soon as the Rx data is recorded, the txs will stop data tranmission
             # ------ The flag "sync_settings.stop_tx_signal_called" is used for that
-            for idx, rx_data_recording_api_config in enumerate(rxs_data_recording_api_config):
+
+            # Read tx config of related Tx to be stored in meta-data 
+            # In case of squential tranmissions, store only the meta-data of active Tx.
+            txs_data_recording_api_config_i = [txs_data_recording_api_config[tx_idx]]
+            for rx_idx, rx_data_recording_api_config in enumerate(rxs_data_recording_api_config):
+                rx_data_recording_api_config = rxs_data_recording_api_config[rx_idx]
                 process = threading.Thread(
                     target=run_rf_data_recorder.rf_data_recorder,
                     args=(
-                        rxs_data_recording_api_config[idx],
-                        txs_data_recording_api_config,
+                        rx_data_recording_api_config,
+                        txs_data_recording_api_config_i,
                         general_config,
                         rx_data_nbytes_que,
                     ),

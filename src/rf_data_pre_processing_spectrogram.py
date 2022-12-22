@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MIT
 #
 """
-RF Data Pre-Processing API
+ RF Data Pre-Processing API
 """
 # Description:
 #   Used to plot the spectrogram of recorded IQ data
@@ -23,9 +23,9 @@ from sigmf import SigMFFile, sigmffile
 #----------------------------------------------------------------
 # Configuration
 # 1- specify folder
-dataset_folder = "/home/user/workarea/recorded-data"
+dataset_folder = "/home/user/workarea/recorded-data/"
 # 2- specify base filename
-dataset_filename_base = "rx_data_record_2022_09_16-16_17_07_620"
+dataset_filename_base = "rx_data_record_2022_12_12-14_43_31_684"
 #---------------------------------------------------------------
 
 # specify file name for meta data

@@ -41,11 +41,8 @@ def get_nr_waveform_parameters_from_rfws_format(
     # Note: The wireless_link_parameter_map is not used to get parameters from RFWS waveform config file
     # Due to the dependency between parameters; it requires hierarchical parameter extraction.
 
-    ## Get file path
-    dir_path = os.path.dirname(__file__)
-    src_path = os.path.split(dir_path)[0] 
     # The tdms waveform config file is saved with the same name of waveform but it has .rfws extension
-    waveform_file_path = os.path.join(src_path, waveform_path, waveform_file_name +".rfws")
+    waveform_file_path = os.path.join(waveform_path, waveform_file_name +".rfws")
 
     ## Load Waveform Config from rfws file
     xmlDoc = ET.parse(waveform_file_path)
@@ -176,11 +173,8 @@ def get_lte_waveform_parameters_from_rfws_format(
         req_key = key[y + 3 :]
         return req_key
 
-    ## Get file path
-    dir_path = os.path.dirname(__file__)
-    src_path = os.path.split(dir_path)[0] 
     # The tdms waveform config file is saved with the same name of waveform but it has .rfws extension
-    waveform_file_path = os.path.join(src_path, waveform_path, waveform_file_name +".rfws")
+    waveform_file_path = os.path.join(waveform_path, waveform_file_name +".rfws")
 
     ## Load Waveform Config from rfws file
     xmlDoc = ET.parse(waveform_file_path)
@@ -257,11 +251,9 @@ def get_lte_waveform_parameters_from_rfws_format(
 
 ## Read tdms waveform data config from rfws file
 def read_tdms_waveform_config(waveform_path, waveform_file_name, wireless_link_parameter_map):
-    ## Get file path
-    dir_path = os.path.dirname(__file__)
-    src_path = os.path.split(dir_path)[0] 
+
     # The tdms waveform config file is saved with the same name of waveform but it has .rfws extension
-    waveform_file_path = os.path.join(src_path, waveform_path, waveform_file_name +".rfws")
+    waveform_file_path = os.path.join(waveform_path, waveform_file_name +".rfws")
     # check if file exists
     file_exists = exists(waveform_file_path)
     if file_exists:
@@ -302,12 +294,10 @@ def read_matlab_waveform_config(
     The wireless link parameter map (YAML file) has the dictionary of used parameters and specify the mapping pairs.
     """
     # Read wavefrom configuration file in YAML format
-    dir_path = os.path.dirname(__file__)
-    src_path = os.path.split(dir_path)[0] 
     # Read waveform config in YAML format
     if format == "matlab":
         # The MATLAB waveform config file is saved with the same name of waveform but in yaml
-        path_to_file = os.path.join(src_path, waveform_path, waveform_file_name  + ".yaml")
+        path_to_file = os.path.join(waveform_path, waveform_file_name  + ".yaml")
 
         # check if file exists
         file_exists = exists(path_to_file)
@@ -318,7 +308,7 @@ def read_matlab_waveform_config(
             raise Exception("ERROR: Waveform Config file is not exist", path_to_file)
     # Read waveform config in CSV for waveforms created using IEEE generator in MATLAB
     elif format == "matlab_ieee":
-        path_to_file = os.path.join(src_path, waveform_path, waveform_file_name + "/cfg.csv")
+        path_to_file = os.path.join(waveform_path, waveform_file_name + "/cfg.csv")
 
         # check if file exists
         file_exists = exists(path_to_file)
@@ -354,6 +344,8 @@ def read_matlab_waveform_config(
     standard = waveform_config_src["standard"]
 
     # read waveform parameter map from yaml file
+    dir_path = os.path.dirname(__file__)
+    src_path = os.path.split(dir_path)[0]
     with open(
         os.path.join(src_path, "config", wireless_link_parameter_map_file), "r"
     ) as file:
@@ -392,6 +384,7 @@ def read_matlab_waveform_config(
 
 # read tx waveform config
 def read_tx_waveform_config(tx_data_recording_api_config, wireless_link_parameter_map):
+    
     # get waveform selection parameters
     waveform_path = tx_data_recording_api_config.waveform_path
     waveform_file_name = tx_data_recording_api_config.waveform_file_name

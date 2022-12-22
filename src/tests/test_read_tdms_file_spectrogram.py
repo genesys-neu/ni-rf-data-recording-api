@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 waveform_path = "waveforms/lte/"
 waveform_file_name = "LTE_FDD_DL_10MHz_CC-1_E-UTRA_E-TM2"
 
+waveform_path = os.path.join(src_path, waveform_path)
 tx_data_complex, waveform_IQ_rate = read_waveform_data_interface.read_waveform_data_tdms(
             waveform_path, waveform_file_name
         )

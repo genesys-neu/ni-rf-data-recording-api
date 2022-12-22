@@ -31,8 +31,10 @@ general_config:
   author: Abdo Gaber
   # A text description of the SigMF Recording.
   description: "CBRS use case"
+  # captured_data_file_name: user prefered name for rx captured data
+  captured_data_file_name: "rx-waveform-td-rec-"
   # User Comment
-  comment: "Using NI RF Data Collection API"
+  comment: "Using NI RF Data Recording API"
 
 # ============================================
 # =============== Transmitters   =============
@@ -73,6 +75,11 @@ transmitters_config:
       waveform_path:    # Path to tx waveform file or folder, type = str.
         SeqType: "single"
         Values: "waveforms/nr/"
+      waveform_path_type:    # Path type: relative or absolute 
+        #...absolute: Full path to waveform should be given to use waveforms from another directory,
+        #...relative: path related to waveform folder given with the API, i.e waveforms/nr/",
+        SeqType: "single"
+        Values: "relative"
       waveform_format:  # Possible values: tdms, matlab_ieee, or matlab, type = str.
         SeqType: "single"
         Values: "tdms"
@@ -117,6 +124,11 @@ transmitters_config:
       waveform_path:    # Path to tx waveform file or folder, type = str.
         SeqType: "single"
         Values: "waveforms/lte/"
+      waveform_path_type:    # Path type: relative or absolute 
+        #...absolute: Full path to waveform should be given to use waveforms from another directory,
+        #...relative: path related to waveform folder given with the API, i.e waveforms/nr/",
+        SeqType: "single"
+        Values: "relative"
       waveform_format:  # Possible values: tdms, matlab_ieee, or matlab, type = str.
         SeqType: "single"
         Values: "tdms"
@@ -161,6 +173,11 @@ transmitters_config:
       waveform_path:    # Path to tx waveform file or folder, type = str.
         SeqType: "single"
         Values: "waveforms/radar/"
+      waveform_path_type:    # Path type: relative or absolute 
+        #...absolute: Full path to waveform should be given to use waveforms from another directory,
+        #...relative: path related to waveform folder given with the API, i.e waveforms/nr/",
+        SeqType: "single"
+        Values: "relative"
       waveform_format:  # Possible values: tdms, matlab_ieee, or matlab, type = str.
         SeqType: "single"
         Values: "matlab"

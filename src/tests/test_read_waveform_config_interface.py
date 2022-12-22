@@ -32,17 +32,26 @@ if __name__ == "__main__":
             # ============= TX Config parameters =============
             # waveform file name
             # nr
-            #self.waveform_file_name = "NR_FR1_UL_All_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_enabled_PTRS"
+            self.waveform_file_name = "NR_FR1_UL_All_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_enabled_PTRS"
             # lTE
             #self.waveform_file_name = ("LTE_TDD_UL_RMC_A2321_4_2_10MHz_6_7")
             # Radar
-            self.waveform_file_name = "RadarWaveform_BW_1428k"
+            #self.waveform_file_name = "RadarWaveform_BW_2M"
             # Wifi
             #self.waveform_file_name = "IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame"
             # Path to waveform file
-            self.waveform_path = "waveforms/wifi/"
+            self.waveform_path_type = "relative"
+            self.waveform_path = "waveforms/nr/"
+            if self.waveform_path_type == "relative":
+                dir_path = os.path.dirname(__file__)
+                src_path = os.path.split(dir_path)[0] 
+                self.waveform_path = os.path.join(src_path, self.waveform_path)
+            elif self.waveform_path_type == "absolute":
+                pass
+            else:
+                raise Exception("Error: Unknow waveform path type", self.waveform_path_type)
             # "possible values: tdms, matlab_ieee, type = str ",
-            self.waveform_format = "matlab"
+            self.waveform_format = "tdms"
             # Define dictionary for tx wavform config
             waveform_config = {}
             self.waveform_config = waveform_config

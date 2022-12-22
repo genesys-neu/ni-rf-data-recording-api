@@ -24,7 +24,7 @@ from sigmf import SigMFFile, sigmffile
 # 1- specify folder
 dataset_folder = "/home/user/workarea/recorded-data"
 # 2- specify base filename
-dataset_filename_base = "rx_data_record_2022_09_16-19_36_01_217"
+dataset_filename_base = "rx-waveform-td-rec-0-2022_12_22-10_49_41_418"
 #---------------------------------------------------------------
 
 # initalize local variables

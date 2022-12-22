@@ -17,6 +17,7 @@
     "enable_console_logging: Enable or disable console logging --> True",
     "Author name, handle, email, and/or other ID like Amateur Call Sign",
     "description: user description for the test case",
+    "captured_data_file_name: user prefered name for rx captured data",
     "comment: user comment",  
     "DeviceName: Arbitrary device name, type=str",
     "RFmode:Tx or Rx, type=str",
@@ -37,6 +38,9 @@
     "NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1(.tdms)",
     "IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame (folder name), waveform in ssb_str.mat ",
     "waveform_path:path to tx waveform file or folder, type = str ",
+    "waveform_path_type: type of waveform path:relative or absolute",
+    "...absolute: Full path to waveform should be given to use waveforms from another directory",
+    "...relative: path related to waveform folder given with the API, i.e waveforms/nr/",
     "tx_waveform_format:possible values: tdms, matlab_ieee, or matlab, type = str ",
     "gain: gain for the RF chain, type = float",
     "antenna: TX antenna selection (TX/RX), type = str",
@@ -61,7 +65,8 @@
       "enable_console_logging": "True",
       "author": "Abdo Gaber",
       "description": "CBRS use case", 
-      "comment": "Using UHD Python API"
+      "captured_data_file_name": "rx-waveform-td-rec-", 
+      "comment": "Using NI RF Data Recording API"
     },
     "transmitters_config": [
       {
@@ -75,6 +80,7 @@
           "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
           "waveform_file_name": {"SeqType": "list", "Values": ["NR_FR1_DL_TDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1"]},
           "waveform_path":  {"SeqType": "single",   "Values": "waveforms/nr/"},
+          "waveform_path_type":  {"SeqType": "single",   "Values": "relative"},
           "waveform_format":{"SeqType": "single",   "Values": "tdms"},
           "gain":           {"SeqType": "list",     "Values": [20]},
           "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}
@@ -91,6 +97,7 @@
           "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
           "waveform_file_name": {"SeqType": "list", "Values": ["LTE_FDD_DL_10MHz_CC-1_E-UTRA_E-TM2"]},
           "waveform_path":  {"SeqType": "single",   "Values": "waveforms/lte/"},
+          "waveform_path_type":  {"SeqType": "single",   "Values": "relative"},
           "waveform_format":{"SeqType": "single",   "Values": "tdms"},
           "gain":           {"SeqType": "list",     "Values": [20]},
           "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}
@@ -107,6 +114,7 @@
           "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
           "waveform_file_name": {"SeqType": "list", "Values": ["RadarWaveform_BW_2M"]},
           "waveform_path":  {"SeqType": "single",   "Values": "waveforms/radar/"},
+          "waveform_path_type":  {"SeqType": "single",   "Values": "relative"},
           "waveform_format":{"SeqType": "single",   "Values": "matlab"},
           "gain":           {"SeqType": "list",     "Values": [20]},
           "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}

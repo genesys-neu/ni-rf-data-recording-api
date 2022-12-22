@@ -135,7 +135,7 @@ def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
         # Write data into files with the given format
         if rx_args.rx_recorded_data_saving_format == "SigMF":
             write_rx_recorded_data_in_sigmf.write_rx_recorded_data_in_sigmf(
-                rx_data, rx_args, txs_args, general_config
+                rx_data, rx_args, txs_args, general_config, i
             )
         else:
             # Report error.

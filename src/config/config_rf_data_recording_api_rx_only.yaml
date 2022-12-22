@@ -31,8 +31,10 @@ general_config:
   author: Abdo Gaber
   # A text description of the SigMF Recording.
   description: "API Rx Only Test"
+  # captured_data_file_name: user prefered name for rx captured data
+  captured_data_file_name: "rx-waveform-td-rec-"
   # User Comment
-  comment: "Using NI RF Data Collection API"
+  comment: "Using NI RF Data Recording API"
 # ============================================
 # =============== Transmitters   =============
 # ============================================

@@ -21,13 +21,13 @@ from sigmf.utils import get_data_type_str
 from datetime import datetime
 
 
-def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config):
+def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config, idx):
     # Write recorded data to file
     # Get time stamp
     time_stamp_micro_sec = datetime.now().strftime("%Y_%m_%d-%H_%M_%S_%f")
     time_stamp_milli_sec = time_stamp_micro_sec[:-3]
 
-    rx_data_file_name = "rx_data_record_" + time_stamp_milli_sec
+    rx_data_file_name = rx_args.captured_data_file_name + str(idx) + "-" + time_stamp_milli_sec
     dataset_filename = rx_data_file_name + ".sigmf-data"
     dataset_file_path = os.path.join(rx_args.rx_recorded_data_path, dataset_filename)
     print(dataset_file_path)
@@ -45,7 +45,9 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config):
             SigMFFile.RECORDER_KEY: "NI RF Data Recording API",
             SigMFFile.LICENSE_KEY: "URL to the license document",
             SigMFFile.HW_KEY: rx_args.hw_type,
-            SigMFFile.DATASET_KEY: dataset_filename,
+            # Disable DATASET key to mitigate the warning when read SIGMF data although it is given in the spec.
+            # It seems SIGMF still has bug here
+            #SigMFFile.DATASET_KEY: dataset_filename,
             SigMFFile.VERSION_KEY: sigmf.__version__,
         },
     )
@@ -75,7 +77,7 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config):
             label = label + "_" + signal_detail["standard"]
 
         signal_emitter = {
-            "seid": tx_args.seid,  # Unique ID of the emitter
+            "seid":tx_args.seid,  # Unique ID of the emitter
             "hw": tx_args.hw_type,
             "hw_subtype": tx_args.hw_subtype,
             "manufacturer": "NI",

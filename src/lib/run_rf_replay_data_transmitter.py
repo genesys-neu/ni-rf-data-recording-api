@@ -39,7 +39,7 @@ def str2bool(v):
         raise argparse.ArgumentTypeError("Boolean value expected.")
 
 
-def rf_replay_data_transmitter(args, api_operation_mode):
+def rf_replay_data_transmitter(args):
     """
     Run Tx waveform playback
     """
