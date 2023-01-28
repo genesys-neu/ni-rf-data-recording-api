@@ -1,0 +1,1 @@
+This folder is the default folder for storing Sigmf files recorded by APPs.

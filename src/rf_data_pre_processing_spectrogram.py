@@ -23,7 +23,7 @@ from sigmf import SigMFFile, sigmffile
 #----------------------------------------------------------------
 # Configuration
 # 1- specify folder
-dataset_folder = "/home/user/workarea/recorded-data/"
+dataset_folder = "recorded-data/"
 # 2- specify base filename
 dataset_filename_base = "rx_data_record_2022_12_12-14_43_31_684"
 #---------------------------------------------------------------

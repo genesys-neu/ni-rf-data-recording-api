@@ -22,7 +22,7 @@ from sigmf import SigMFFile, sigmffile
 #----------------------------------------------------------------
 # Configuration
 # 1- specify folder
-dataset_folder = "/home/user/workarea/recorded-data"
+dataset_folder = "recorded-data"
 # 2- specify base filename
 dataset_filename_base = "rx-waveform-td-rec-0-2022_12_22-10_49_41_418"
 #---------------------------------------------------------------
