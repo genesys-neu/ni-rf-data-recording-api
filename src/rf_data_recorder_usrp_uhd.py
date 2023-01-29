@@ -184,7 +184,7 @@ def main():
             print(f"Actual RX Bandwidth: {args.coerced_rx_bandwidth / 1e6} MHz...")
             print("Note: Not all doughterboards support variable analog bandwidth")
 
-            args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data yet
+            #args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data yet
 
         # Get time stamp
         time_stamp_micro_sec = datetime.now().strftime("%Y_%m_%d-%H_%M_%S_%f")

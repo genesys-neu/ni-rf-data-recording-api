@@ -128,7 +128,7 @@ def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
             print(f"Actual RX Bandwidth: {rx_args.coerced_rx_bandwidth / 1e6} MHz...")
             print("Note: Not all doughterboards support variable analog bandwidth")
 
-            rx_args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data yet
+            #rx_args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data yet
             
             
 
