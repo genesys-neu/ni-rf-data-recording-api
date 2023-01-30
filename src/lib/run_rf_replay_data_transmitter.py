@@ -73,13 +73,16 @@ def rf_replay_data_transmitter(args):
     replay_ctrl = uhd.rfnoc.ReplayBlockControl(graph.get_block(replay_ctrl_id))
 
     # Check for a DUC connected to the radio
-    duc_ctrl_id = uhd.rfnoc.BlockID(0, "DUC", args.duc_chan)
+    duc_ctrl_id = uhd.rfnoc.BlockID(0, "DUC", args.duc_id)
     duc_ctrl = uhd.rfnoc.DucBlockControl(graph.get_block(duc_ctrl_id))
 
     # Connect replay to radio
     uhd.rfnoc.connect_through_blocks(
         graph, replay_ctrl_id, args.replay_chan, radio_ctrl_id, args.radio_chan, False
     )
+
+    graph.connect(duc_ctrl_id, args.duc_chan, radio_ctrl_id, args.radio_chan, False)
+
 
     print(f"Using Radio Block: {radio_ctrl_id}, channel {args.radio_chan}")
     print(f"Using Replay Block: {replay_ctrl_id}, channel {args.replay_chan}")
