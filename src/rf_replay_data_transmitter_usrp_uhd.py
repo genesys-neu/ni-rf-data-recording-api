@@ -94,6 +94,9 @@ def parse_args():
         "--duc_chan", "-duc", default=0, type=int, help="duc channel to use"
     )
     parser.add_argument(
+        "--duc_id", "-dui", default=0, type=int, help="duc id to use"
+    )
+    parser.add_argument(
         "--nsamps",
         "-ns",
         default=0,
@@ -190,7 +193,7 @@ def main():
     replay_ctrl = uhd.rfnoc.ReplayBlockControl(graph.get_block(replay_ctrl_id))
 
     # Check for a DUC connected to the radio
-    duc_ctrl_id = uhd.rfnoc.BlockID(0, "DUC", args.duc_chan)
+    duc_ctrl_id = uhd.rfnoc.BlockID(0, "DUC", args.duc_id)
     duc_ctrl = uhd.rfnoc.DucBlockControl(graph.get_block(duc_ctrl_id))
 
     # Connect replay to radio
