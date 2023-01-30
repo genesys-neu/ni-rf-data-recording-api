@@ -111,6 +111,8 @@ class RFDataRecorderAPI:
             self.replay_id = iteration_config["tx_replay_id"]
             # "replay channel to use, type = int ",
             self.replay_chan = iteration_config["tx_replay_chan"]
+            # "duc id to use, type = int ",
+            self.duc_id = iteration_config["tx_duc_id"]
             # "duc channel to use, type = int ",
             self.duc_chan = iteration_config["tx_duc_chan"]
             # "Hardware type, i.e. for USRP: USRP mboard ID (X310, or ....)
