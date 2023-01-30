@@ -74,26 +74,24 @@ def parse_args():
         "--radio_id",
         "-rai",
         default=0,
-        nargs="+",
         type=int,
         help="radio block to use (e.g., 0 or 1).",
     )
     parser.add_argument(
-        "--radio_chan", "-rac", default=0, nargs="+", type=int, help="radio channel to use"
+        "--radio_chan", "-rac", default=0, type=int, help="radio channel to use"
     )
     parser.add_argument(
         "--replay_id",
         "-rpi",
         default=0,
-        nargs="+",
         type=int,
         help="replay block to use (e.g., 0 or 1)",
     )
     parser.add_argument(
-        "--replay_chan", "-rpc", default=0, nargs="+", type=int, help="replay channel to use"
+        "--replay_chan", "-rpc", default=0, type=int, help="replay channel to use"
     )
     parser.add_argument(
-        "--duc_chan", "-duc", default=0, nargs="+", type=int, help="duc channel to use"
+        "--duc_chan", "-duc", default=0, type=int, help="duc channel to use"
     )
     parser.add_argument(
         "--nsamps",
