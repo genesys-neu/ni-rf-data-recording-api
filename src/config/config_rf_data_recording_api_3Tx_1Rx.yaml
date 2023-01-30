@@ -206,6 +206,9 @@ common_transmitters_config:
   tx_duc_chan:    # duc channel to use, type = int.
     SeqType: "list"
     Values: [0]
+  tx_duc_id:    # duc id to use, type = int.
+    SeqType: "list"
+    Values: [0]
 # ============================================
 # ================== Receivers   =============
 # ============================================

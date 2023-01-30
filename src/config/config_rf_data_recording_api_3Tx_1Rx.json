@@ -54,7 +54,8 @@
     "tx_radio_chan: radio channel to use, type = int",
     "tx_replay_id:replay block to use (e.g., 0 or 1), type = int",
     "tx_replay_chan: replay channel to use, type = int ",
-    "tx_duc_chan: duc channel to use, type = int "
+    "tx_duc_chan: duc channel to use, type = int ",
+    "tx_duc_id: duc id to use, type = int "
     ],
     "general_config": {
       "rx_recorded_data_path": "recorded-data",
@@ -127,7 +128,8 @@
       "tx_radio_chan":      {"SeqType": "list",     "Values": [0]},
       "tx_replay_id":       {"SeqType": "list",     "Values": [0]},
       "tx_replay_chan":     {"SeqType": "list",     "Values": [0]},
-      "tx_duc_chan":        {"SeqType": "list",     "Values": [0]}},
+      "tx_duc_chan":        {"SeqType": "list",     "Values": [0]},
+      "tx_duc_id":        {"SeqType": "list",     "Values": [0]}},
     "receivers_config": [
       {
         "RFmode": "Rx", "type": "x300","IPaddress": "192.168.100.2",
