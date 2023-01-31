@@ -63,7 +63,7 @@ def parse_args():
     parser.add_argument(
         "-a",
         "--args",
-        default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6",
+        default="type=x4xx,addr=192.168.40.2,master_clock_rate=250e6",
         type=str,
         help="Device args to use when connecting to the USRP.",
     )
@@ -84,17 +84,18 @@ def parse_args():
         "--replay_id",
         "-rpi",
         default=0,
+        nargs="+", 
         type=int,
         help="replay block to use (e.g., 0 or 1)",
     )
     parser.add_argument(
-        "--replay_chan", "-rpc", default=0, type=int, help="replay channel to use"
+        "--replay_chan", "-rpc", default=0, nargs="+", type=int, help="replay channel to use"
     )
     parser.add_argument(
         "--duc_chan", "-duc", default=0, type=int, help="duc channel to use"
     )
     parser.add_argument(
-        "--duc_id", "-dui", default=0, type=int, help="duc id to use"
+        "--duc_id", "-dui", default=0, type=int, help="duc block id to use"
     )
     parser.add_argument(
         "--nsamps",
