@@ -14,6 +14,7 @@
 #   dataset_filename_base: specify base filename
 #
 import os
+import argparse
 import math
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,46 +24,68 @@ from sigmf import SigMFFile, sigmffile
 #----------------------------------------------------------------
 # Configuration
 # 1- specify folder
-dataset_folder = "recorded-data/"
+#dataset_folder = "/home/york/workarea/recorded-data/"
 # 2- specify base filename
-dataset_filename_base = "rx_data_record_2022_12_12-14_43_31_684"
+#dataset_filename_base = "rx_data_record_2023_01_11-10_02_04_075"
 #---------------------------------------------------------------
 
-# specify file name for meta data
-metadata_filename = os.path.join(dataset_folder, dataset_filename_base)
+def main():
+    parser = argparse.ArgumentParser(description="Read SigMF metadata and plot time domain and spectrum of recorded IQ data")
+    parser.add_argument(
+        "--dataset_folder",
+        "-f",
+        type=str,
+        default="/home/york/workarea/recorded-data",
+        help="specify folder wherein SigMF file",
+    )
+    parser.add_argument(
+        "--dataset_filename_base",
+        "-n",
+        type=str,
+        default="rx_data_record_2023_01_11-10_02_04_075",
+        help="specify name of file to plot",
+    )
 
-# load a dataset meta data
-metadata = sigmffile.fromfile(metadata_filename)
+    args = parser.parse_args()
+    # specify file name for meta data
+    metadata_filename = os.path.join(args.dataset_folder, args.dataset_filename_base)
 
-# Get some metadata and all annotations
-sample_rate = metadata.get_global_field(SigMFFile.SAMPLE_RATE_KEY)
-sample_count = metadata.sample_count
-signal_duration = sample_count / sample_rate
-annotations = metadata.get_annotations()
+    # load a dataset meta data
+    metadata = sigmffile.fromfile(metadata_filename)
 
-# Iterate over annotations
-for idx, annotation in enumerate(annotations):
-    annotation_start_idx = annotation[SigMFFile.START_INDEX_KEY]
-    annotation_length = annotation[SigMFFile.LENGTH_INDEX_KEY]
-    annotation_comment = annotation.get(SigMFFile.COMMENT_KEY, "[annotation {}]".format(idx))
+    # Get some metadata and all annotations
+    sample_rate = metadata.get_global_field(SigMFFile.SAMPLE_RATE_KEY)
+    sample_count = metadata.sample_count
+    signal_duration = sample_count / sample_rate
+    annotations = metadata.get_annotations()
 
-    # Get capture info associated with the start of annotation
-    capture = metadata.get_capture_info(annotation_start_idx)
-    freq_center = capture.get(SigMFFile.FREQUENCY_KEY, 0)
-    freq_min = freq_center - 0.5 * sample_rate
-    freq_max = freq_center + 0.5 * sample_rate
+    # Iterate over annotations
+    for idx, annotation in enumerate(annotations):
+        annotation_start_idx = annotation[SigMFFile.START_INDEX_KEY]
+        annotation_length = annotation[SigMFFile.LENGTH_INDEX_KEY]
+        annotation_comment = annotation.get(SigMFFile.COMMENT_KEY, "[annotation {}]".format(idx))
 
-    # Get frequency edges of annotation (default to edges of capture)
-    freq_start = annotation.get(SigMFFile.FLO_KEY)
-    freq_stop = annotation.get(SigMFFile.FHI_KEY)
+        # Get capture info associated with the start of annotation
+        capture = metadata.get_capture_info(annotation_start_idx)
+        freq_center = capture.get(SigMFFile.FREQUENCY_KEY, 0)
+        freq_min = freq_center - 0.5 * sample_rate
+        freq_max = freq_center + 0.5 * sample_rate
 
-# load data set
-dataset = metadata.read_samples().view("complex64").flatten()
-# NOTE: dtype should be taken from meta-data but currently cf64-le is not supported by sigmf
-# data = dataset.flatten()
+        # Get frequency edges of annotation (default to edges of capture)
+        freq_start = annotation.get(SigMFFile.FLO_KEY)
+        freq_stop = annotation.get(SigMFFile.FHI_KEY)
 
-plt.specgram(dataset, Fs=sample_rate, Fc=freq_center)
-plt.title("Spectrogram")
-plt.xlabel("Time (ms)")
-plt.ylabel("Frequency (Hz)")
-plt.show()
+    # load data set
+    dataset = metadata.read_samples().view("complex64").flatten()
+    # NOTE: dtype should be taken from meta-data but currently cf64-le is not supported by sigmf
+    # data = dataset.flatten()
+
+    plt.specgram(dataset, Fs=sample_rate, Fc=freq_center)
+    plt.title("Spectrogram")
+    plt.xlabel("Time (ms)")
+    plt.ylabel("Frequency (Hz)")
+    plt.show()
+
+
+if __name__ == "__main__":
+    main()
