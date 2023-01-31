@@ -20,7 +20,7 @@
   "comment: user comment", 
   "DeviceName: Arbitrary device name, type=str",
   "RFmode:Tx or Rx, type=str",
-  "type: USRP type, for example: x300, type=str",
+  "type: USRP type, for example: x4xx, type=str",
   "IPaddress: IP address of USRP, type=str",
   "....Note: USRP type and IPaddress will be used to create Device args to use when connecting to the USRP",
   "Seqtype: The parameter values can be given in range (start, stop, step), list, or single.",
@@ -70,7 +70,7 @@
     },
     "transmitters_config": [
       {
-        "RFmode": "Tx","type": "x300","IPaddress": "192.168.40.2",
+        "RFmode": "Tx","type": "x4xx","IPaddress": "192.168.40.2",
         "Parameters": {
           "freq":           {"SeqType": "range",    "Values": [3.6e9, 3.6e9,100e6]},
           "lo_offset":      {"SeqType": "single",   "Values": 20.0e6},
@@ -87,7 +87,7 @@
         }
       },
       {
-        "RFmode": "Tx","type": "x300","IPaddress": "192.168.50.2",
+        "RFmode": "Tx","type": "x4xx","IPaddress": "192.168.50.2",
         "Parameters": {
           "freq":           {"SeqType": "range",    "Values": [3.62e9, 3.62e9,100e6]},
           "lo_offset":      {"SeqType": "single",   "Values": 20.0e6},
@@ -104,7 +104,7 @@
         }
       },
       {
-        "RFmode": "Tx","type": "x300","IPaddress": "192.168.60.2",
+        "RFmode": "Tx","type": "x4xx","IPaddress": "192.168.60.2",
         "Parameters": {
           "freq":           {"SeqType": "range",    "Values": [3.63e9, 3.63e9,100e6]},
           "lo_offset":      {"SeqType": "single",   "Values": 10.0e6},
@@ -121,7 +121,7 @@
         }
       },
       {
-        "RFmode": "Tx","type": "x300","IPaddress": "192.168.70.2",
+        "RFmode": "Tx","type": "x4xx","IPaddress": "192.168.70.2",
         "Parameters": {
           "freq":           {"SeqType": "range",    "Values": [3.64e9, 3.64e9,100e6]},
           "lo_offset":      {"SeqType": "single",   "Values": 20.0e6},
@@ -148,7 +148,7 @@
       "tx_duc_id":        {"SeqType": "list",     "Values": [0]}},
     "receivers_config": [
       {
-        "RFmode": "Rx", "type": "x300","IPaddress": "192.168.110.2",
+        "RFmode": "Rx", "type": "x4xx","IPaddress": "192.168.110.2",
         "Parameters": {
             "freq":         {"SeqType": "range",    "Values": [3.62e9, 3.62e9,100e6]},
             "rate":         {"SeqType": "list",     "Values": [92.16e6]},

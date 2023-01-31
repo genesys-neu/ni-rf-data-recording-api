@@ -47,7 +47,7 @@ def parse_args():
     """Parse the command line arguments"""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-a", "--args", default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6", type=str
+        "-a", "--args", default="type=x4xx,addr=192.168.40.2,master_clock_rate=250e6", type=str
     )
     parser.add_argument(
         "-o",

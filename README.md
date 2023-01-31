@@ -281,7 +281,7 @@ The API needs to be executed on each machine independently. The user can use als
 For Tx only using as a single station, the user can use also the RF Replay Data Transmitter. Assume you would like to replay the 5G NR waveform `NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1.tdms`, with the following parameters (frequency = 2 GHz, rate = 30.72 MS/s, gain = 30 dB, USRP IP = 192.168.40.2). Run the following command:
 
 ```
-python3.9 rf_replay_data_transmitter_usrp_uhd.py  --args="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6" --freq=2e9 --rate=30.72e6 --gain=30 --path="waveforms/nr/" --file="NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1" --waveform_format="tdms"
+python3.9 rf_replay_data_transmitter_usrp_uhd.py  --args="type=x4xx,addr=192.168.40.2,master_clock_rate=250e6" --freq=2e9 --rate=30.72e6 --gain=30 --path="waveforms/nr/" --file="NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1" --waveform_format="tdms"
 ```
 
 To stop data transmission, click on the terminal ctrl+c.
@@ -292,7 +292,7 @@ To stop data transmission, click on the terminal ctrl+c.
 Assume you would like to record the IQ data and save it in SigMF format to this path “recorded-data”. The configuration parameters are (frequency = 2 GHz, rate = 30.72 MS/s, gain = 30 dB, channels =0, duration 10 ms, number of records 1, USRP IP = 192.168.40.2). Run the following command:
 
 ```
-python3.9 rf_data_recorder_usrp_uhd.py --nrecords 1 --args="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6" --freq 2e9 --rate 30.72e6 --duration 10e-3 --channels 0 --gain 30 --rx_recorded_data_path recorded-data
+python3.9 rf_data_recorder_usrp_uhd.py --nrecords 1 --args="type=x4xx,addr=192.168.40.2,master_clock_rate=250e6" --freq 2e9 --rate 30.72e6 --duration 10e-3 --channels 0 --gain 30 --rx_recorded_data_path recorded-data
 ```
 
 Since the Rx is running independently from Tx and this Rx Data Recorder script is not configured via the configuration file, the user needs to update the metadata in this script manually. Go to the section of write data to SigMF files in the code to update metadata.
