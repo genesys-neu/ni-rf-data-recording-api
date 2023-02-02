@@ -47,6 +47,9 @@ def rf_replay_data_transmitter(args):
     # Print help message
     print("UHD/RFNoC Replay samples from file ")
     print("This application uses the Replay block to playback data from a file to a radio")
+    
+    # Check if motherboard type is x4xx
+    isX4xx=bool(args.hw_type.find('x4xx'))
 
     # ************************************************************************
     # Create device and block controls
@@ -153,7 +156,7 @@ def rf_replay_data_transmitter(args):
 
     # Set the analog front-end filter bandwidth
     print(f"Requesting TX Bandwidth: {(args.bandwidth / 1e6)} MHz...")
-    radio_ctrl.set_tx_bandwidth(args.bandwidth, args.radio_chan)
+    if (not isX4xx) : radio_ctrl.set_tx_bandwidth(args.bandwidth, args.radio_chan)
     coerced_tx_bandwidth = radio_ctrl.get_tx_bandwidth(args.radio_chan)
     print(f"Actual TX Bandwidth: {coerced_tx_bandwidth / 1e6} MHz...")
     print("Note: Not all doughterboards support variable analog bandwidth")
