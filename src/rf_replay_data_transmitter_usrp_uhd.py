@@ -137,7 +137,7 @@ def parse_args():
         default=False,
         help="Enable LO offset True or false",
     )
-    parser.add_argument("-r", "--rate", default=30.72e6, type=float, help="rate of radio block")
+    parser.add_argument("-r", "--rate", default=31.25e6, type=float, help="rate of radio block")
     parser.add_argument("-g", "--gain", default=30, type=float, help="gain for the RF chain")
     parser.add_argument("-ant", "--antenna", default="TX/RX", type=str, help="antenna selection")
     parser.add_argument(
