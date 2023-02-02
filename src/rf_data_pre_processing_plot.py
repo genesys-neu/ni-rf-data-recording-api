@@ -34,7 +34,7 @@ def main():
         "--dataset_folder",
         "-f",
         type=str,
-        default="/home/york/workarea/recorded-data",
+        default="recorded-data",
         help="specify folder wherein SigMF file",
     )
     parser.add_argument(
