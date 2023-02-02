@@ -82,6 +82,7 @@ def main():
 
     # Get process api arguments
     args = parse_args()
+    isX4xx=bool(args.args.find('x4xx'))
 
     # Define number of samples to fetch
     num_samps = int(np.ceil(args.duration * args.rate))
@@ -138,7 +139,7 @@ def main():
     for index in args.channels:
         usrp.set_rx_antenna(args.antenna, index)
         # set the IF filter bandwidth   
-        usrp.set_rx_bandwidth(args.bandwidth, index)
+        if (not isX4xx) : usrp.set_rx_bandwidth(args.bandwidth, index)
     # set RF Configure and capture zero sample for RF Settling time
     usrp.recv_num_samps(
             0,

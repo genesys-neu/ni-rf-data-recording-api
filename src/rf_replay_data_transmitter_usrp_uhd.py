@@ -163,6 +163,7 @@ def main():
     Run Tx waveform playback
     """
     args = parse_args()
+    isX4xx=bool(args.args.find('x4xx'))
 
     # Print help message
     print("UHD/RFNoC Replay samples from file ")
@@ -268,7 +269,7 @@ def main():
 
     # Set the analog front-end filter bandwidth
     print(f"Requesting TX Bandwidth: {(args.bandwidth / 1e6)} MHz...")
-    radio_ctrl.set_tx_bandwidth(args.bandwidth, args.radio_chan)
+    if (not isX4xx) : radio_ctrl.set_tx_bandwidth(args.bandwidth, args.radio_chan)
     coerced_tx_bandwidth = radio_ctrl.get_tx_bandwidth(args.radio_chan)
     print(f"Actual TX Bandwidth: {coerced_tx_bandwidth / 1e6} MHz...")
     print("Note: Not all doughterboards support variable analog bandwidth")

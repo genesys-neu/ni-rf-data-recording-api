@@ -36,6 +36,9 @@ from lib import sync_settings
 
 def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
     """RX Data Recorder"""
+    
+    # Check if motherboard type is x4xx
+    isX4xx=bool(rx_args.hw_type.find('x4xx'))
 
     # Define number of samples to fetch
     rx_args.num_rx_samps = int(np.ceil(rx_args.duration * rx_args.rate))
@@ -67,7 +70,7 @@ def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
     for index in rx_args.channels:
         usrp.set_rx_antenna(rx_args.antenna, index)
         # set the IF filter bandwidth  
-        usrp.set_rx_bandwidth(rx_args.bandwidth, index)
+        if (not isX4xx) : usrp.set_rx_bandwidth(rx_args.bandwidth, index)
     # set RF Configure and capture zero sample for RF Settling time
     usrp.recv_num_samps(
             0,

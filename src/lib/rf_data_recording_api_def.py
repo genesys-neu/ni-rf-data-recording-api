@@ -380,9 +380,12 @@ class RFDataRecorderAPI:
             else:
                 args_out = args_in + ",master_clock_rate=200e6"
 
+        if "X4XX" in usrp_mboard_id:
+            args_out = args_in + ",master_clock_rate=250e6"
+
         # Derive master clock rate for other USRPs is not supported yet
         else:
-            print("Warning: The code can derive the master clock rate for X310/X300 USRPs only.")
+            print("Warning: The code can derive the master clock rate for X410/X310/X300 USRPs only.")
             print("         The default master clock rate will be used.")
             args_out = args_in
 
