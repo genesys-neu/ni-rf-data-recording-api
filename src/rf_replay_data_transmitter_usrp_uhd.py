@@ -67,9 +67,9 @@ def parse_args():
         type=str,
         help="Device args to use when connecting to the USRP.",
     )
-    parser.add_argument(
-        "-tx", "--tx_args", default="", type=str, help="Block args for the transmit radio"
-    )
+#    parser.add_argument(
+#        "-tx", "--tx_args", default="", type=str, help="Block args for the transmit radio"
+#    )
     parser.add_argument(
         "--radio_id",
         "-rai",
