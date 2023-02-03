@@ -461,10 +461,14 @@ class RFDataRecorderAPI:
         # ** Wait until user says to stop **
         # Setup SIGINT handler (Ctrl+C)
         signal.signal(signal.SIGINT, signal_handler)
+        list = ["\\", "|", "/", "—"]
         print("")
         print("Press Ctrl+C to stop RF streaming for this iteration ...")
         while sync_settings.stop_tx_signal_called == False:
-            time.sleep(0.1)  # sleep for 100ms
+            for i in range(0, 4):
+                index = i % 4
+                print("\rRF streaming {}".format(list[index]), end="")
+                time.sleep(0.25) # sleep for 250ms
 
     ## Start execution - TX emitters in parallel
     def start_execution_txs_in_parallel(
