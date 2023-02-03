@@ -85,7 +85,7 @@ transmitters_config:
         Values: "tdms"
       gain:     # Gain for the RF chain, type = float.
         SeqType: "list"
-        Values: [20]
+        Values: [30]
       antenna:  # TX antenna selection (TX/RX), type = str.
         SeqType: "list"
         Values: ["TX/RX"]
