@@ -408,10 +408,14 @@ def main():
         # Setup SIGINT handler (Ctrl+C)
         signal.signal(signal.SIGINT, signal_handler)
         print("Press Ctrl+C to stop RF streaming")
+        list = ["\\", "|", "/", "—"]
         while stop_tx_signal_called == False:
-            time.sleep(0.1)  # sleep for 100ms
-        # Remove SIGINT handler
-        # signal.signal(signal.SIGINT, signal_dfl)
+            for i in range(0, 4):
+                index = i % 4
+                print("\rRF streaming {}".format(list[index]), end="")
+                time.sleep(0.25) # sleep for 250ms
+                # Remove SIGINT handler
+                # signal.signal(signal.SIGINT, signal_dfl)
         print("Stopping replay...")
         replay_ctrl.stop(args.replay_chan)
         print("Letting device settle...")

@@ -261,7 +261,7 @@ Note: We built the system environment based on Python3.9. However, the default P
 
 The user can provide the configuration file to the API from the terminal:
 ```
-python3.9 main_rf_data_recording_api.py –-config config/config_rf_data_recording_api.yaml
+python3.9 main_rf_data_recording_api.py --config config/config_rf_data_recording_api.yaml
 ```
 On the console, the API prints the varaition map and the configuration vector per each iteration. User can disable it via `enable_console_logging` parameter under `general_config` section in the configuration file. In addition, it prints the hardware info, number of Rx samples and the elapsed time of getting Rx samples and writing data and metadata files per each record. The data recordings might contain a slight frequency offset due to Tx and Rx carrier frequency coercion. The Tx and Rx carrier frequency offsets are printed on the console. The coerced Rx carrier frequency is logged in the meta data while the coerced Tx carrier frequency not yet. At the end of execution, the API prints the total size of Rx data on memory.
 The following figure shows an exemplary of API console.
@@ -399,7 +399,7 @@ Note: Maintenance of this Git repository will be done on best effort basis.
 ---
 
 ## Known Issues and Limitations
--	Tested on X310 USRP only
+-	Tested on X310 and X410 USRP only
 
 ---
 

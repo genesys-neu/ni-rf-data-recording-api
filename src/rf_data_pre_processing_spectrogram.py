@@ -24,9 +24,9 @@ from sigmf import SigMFFile, sigmffile
 #----------------------------------------------------------------
 # Configuration
 # 1- specify folder
-#dataset_folder = "/home/york/workarea/recorded-data/"
+#dataset_folder = "<<repo>>/recorded-data/"
 # 2- specify base filename
-#dataset_filename_base = "rx_data_record_2023_01_11-10_02_04_075"
+#dataset_filename_base = "rx-waveform-td-rec-0-2023_01_31-17_57_41_801"
 #---------------------------------------------------------------
 
 def main():
@@ -42,13 +42,28 @@ def main():
         "--dataset_filename_base",
         "-n",
         type=str,
-        default="rx_data_record_2023_01_11-10_02_04_075",
+        default="",
         help="specify name of file to plot",
     )
 
     args = parser.parse_args()
-    # specify file name for meta data
-    metadata_filename = os.path.join(args.dataset_folder, args.dataset_filename_base)
+    if args.dataset_filename_base=="":
+        # specify file name for latest meta data file in dataset_folder
+        lists=[]
+        for file in os.listdir(args.dataset_folder):
+            if file.endswith(".sigmf-meta"):
+                lists.append(file)
+
+        lists.sort(key=lambda x:os.path.getmtime(os.path.join(args.dataset_folder,x))) 
+        if not lists==[]:
+            metadata_filename = os.path.join(args.dataset_folder, lists[-1])
+            print(f"Ploting latest sigmf file: {metadata_filename}")
+        else:
+            print(f"Aboarted!! Without finding any sigmf file in: {args.dataset_folder}")
+            return
+    else:
+        # specify file name for meta data
+        metadata_filename = os.path.join(args.dataset_folder, args.dataset_filename_base)
 
     # load a dataset meta data
     metadata = sigmffile.fromfile(metadata_filename)

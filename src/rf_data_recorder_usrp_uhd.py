@@ -101,8 +101,8 @@ def main():
     usrp_daughterboard_id = usrp_info["rx_id"]
     temp = usrp_daughterboard_id.split(" ")
     usrp_daughterboard_id_wo_ref = temp[0]
-    usrp_bandwidth = usrp.get_rx_bandwidth()
-    # get USRP type, i.e. X310
+    usrp_bandwidth = usrp.get_rx_bandwidth(args.channels[0])
+    # get USRP type, i.e. X310, X410
     usrp_mboard_id = usrp_info["mboard_id"]
     # get USRP serial number
     usrp_serial_number = usrp_info["mboard_serial"]
@@ -167,21 +167,21 @@ def main():
         # get USRP coerced values only once if we running the same config
         if i == 0:
             print(f"Requesting RX Freq: {(args.freq / 1e6)} MHz...")
-            args.coerced_rx_freq = usrp.get_rx_freq()
+            args.coerced_rx_freq = usrp.get_rx_freq(args.channels[0])
             print(f"Actual RX Freq: {args.coerced_rx_freq / 1e6}  MHz...")
             print(f"** RX Carrier Frequency Offset: {args.coerced_rx_freq - args.freq}  Hz...")
 
             print(f"Requesting RX Rate: {(args.rate / 1e6) } Msps...")
-            args.coerced_rx_rate = usrp.get_rx_rate()
+            args.coerced_rx_rate = usrp.get_rx_rate(args.channels[0])
             print(f"Actual RX Rate: {(args.coerced_rx_rate / 1e6)} Msps...")
             print(f"** RX Sampling Rate Offset: {args.coerced_rx_rate - args.rate}  Sample per second...")
             
             print(f"Requesting RX Gain: {args.gain} dB...")
-            args.coerced_rx_gain = usrp.get_rx_gain()
+            args.coerced_rx_gain = usrp.get_rx_gain(args.channels[0])
             print(f"Actual RX Gain: {args.coerced_rx_gain} dB...")
             
             print(f"Requesting RX Bandwidth: {(args.bandwidth / 1e6)} MHz...")
-            args.coerced_rx_bandwidth = usrp.get_rx_bandwidth() 
+            args.coerced_rx_bandwidth = usrp.get_rx_bandwidth(args.channels[0]) 
             print(f"Actual RX Bandwidth: {args.coerced_rx_bandwidth / 1e6} MHz...")
             print("Note: Not all doughterboards support variable analog bandwidth")
 
