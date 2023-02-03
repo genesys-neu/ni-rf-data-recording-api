@@ -1,0 +1,76 @@
+{
+    "global": {
+        "core:author": "Abdo Gaber",
+        "core:datatype": "cf32_le",
+        "core:description": "TRX use case",
+        "core:hw": "USRP x410",
+        "core:license": "URL to the license document",
+        "core:num_channels": 1,
+        "core:recorder": "NI RF Data Recording API",
+        "core:sample_rate": 250000000.0,
+        "core:sha512": "0ceaee70abf7b09f0ed5b15e427ec39024396a475d65bff916c6abbc6acbfc361868e018b621f6bbbf19e08c4a8693fbb42d4a915774f8057a1dc1247d8a418b",
+        "core:version": "1.0.0"
+    },
+    "captures": [
+        {
+            "capture_details": {
+                "acquisition_bandwidth": 400000000.0,
+                "gain": 0.0
+            },
+            "core:datetime": "2023-01-31T09:57:41.815173Z",
+            "core:frequency": 1000000000.3333406,
+            "core:sample_start": 0
+        }
+    ],
+    "annotations": [
+        {
+            "core:comment": "Using NI RF Data Recording API",
+            "core:freq_lower_edge": 875000000.3333406,
+            "core:freq_upper_edge": 1125000000.3333406,
+            "core:label": "NR Generation",
+            "core:sample_count": 312500,
+            "core:sample_start": 0,
+            "num_tx_signals": 1,
+            "system_components:channel": {
+                "attenuation": 33
+            },
+            "system_components:receiver": {
+                "bandwidth": "400000000.0",
+                "clock_reference": "internal",
+                "hw_subtype": "16386",
+                "manufacturer": "NI",
+                "seid": "32430AB"
+            },
+            "system_components:transmitter": {
+                "Tx_0": {
+                    "signal:detail": {
+                        "bandwidth": 20000000.0,
+                        "carrier_CC_index": "0",
+                        "frame_structure": "TDD",
+                        "frequency_range": "Range 1",
+                        "link_direction": "Downlink",
+                        "n_frames": "1",
+                        "pdsch:modulation": "Standard",
+                        "sampling_rate": 30720000.0,
+                        "ssb_config_set": "CaseB-3-up-to-6GHz",
+                        "ssb_periodicity": "5m",
+                        "standard": "NR Generation",
+                        "subcarrier_spacing": 30000.0,
+                        "test_model": "3GPP NR Generation-TM3.1"
+                    },
+                    "signal:emitter": {
+                        "bandwidth": "400000000.0",
+                        "clock_reference": "internal",
+                        "frequency": "3600000000.0",
+                        "gain_tx": "20",
+                        "hw": "USRP x410",
+                        "hw_subtype": "16386",
+                        "manufacturer": "NI",
+                        "sample_rate": "30720000.0",
+                        "seid": "324C383"
+                    }
+                }
+            }
+        }
+    ]
+}
