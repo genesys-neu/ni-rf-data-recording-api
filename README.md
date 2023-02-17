@@ -333,7 +333,7 @@ The figure below shows an example of recorded data sets in SigMF format. The fig
 ---
 
 ### RF Data Pre-Processing
-We created a simple example to read the SigMF metadata and visualize the recorded IQ data. The following script `src/rf_data_pre_processing_spectrogram.py` can be used to plot the spectrogram of recorded data. It will open requires two parameters:
+We created a simple example to read the SigMF metadata and visualize the recorded IQ data. The following script `src/rf_data_pre_processing_spectrogram.py` can be used to plot the spectrogram of latest created recorded data. It also can be used on other recorded data with two parameters:
 - Path to data set folder
 - Data set base filename (without SigMF file extension)
 
