@@ -186,7 +186,7 @@ class RFDataRecorderAPI:
 
     ## Get Hw type, subtype and HW ID of TX and RX stations
     # For USRP:
-    # HW type = USRP type, mboard ID, i.e. USRP X310
+    # HW type = USRP type, mboard ID, i.e. USRP X310, or ....
     # HW subtype = USRP daughterboard type
     # HW seid = USRP serial number
     # This extra step is a workaround to solve two limitations in UHD
@@ -213,7 +213,7 @@ class RFDataRecorderAPI:
                     usrp_info = usrp.get_usrp_rx_info()
                     usrp_daughterboard_id = usrp_info["rx_id"]
                     usrp_bandwidth = usrp.get_rx_bandwidth()
-                # get USRP type, i.e. X310
+                # get USRP type, i.e. X310, or ....
                 usrp_mboard_id = usrp_info["mboard_id"]
                 temp = usrp_daughterboard_id.split(" ")
                 usrp_daughterboard_id_wo_ref = temp[0]
@@ -379,7 +379,8 @@ class RFDataRecorderAPI:
                 args_out = args_in + ",master_clock_rate=184.32e6"
             else:
                 args_out = args_in + ",master_clock_rate=200e6"
-
+        
+        # Derive master clock rate for X410 USRP
         if "X4XX" in usrp_mboard_id:
             args_out = args_in + ",master_clock_rate=250e6"
 

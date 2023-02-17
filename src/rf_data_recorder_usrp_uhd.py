@@ -102,7 +102,7 @@ def main():
     temp = usrp_daughterboard_id.split(" ")
     usrp_daughterboard_id_wo_ref = temp[0]
     usrp_bandwidth = usrp.get_rx_bandwidth(args.channels[0])
-    # get USRP type, i.e. X310, X410
+    # get USRP type, i.e. X310, or ....
     usrp_mboard_id = usrp_info["mboard_id"]
     # get USRP serial number
     usrp_serial_number = usrp_info["mboard_serial"]
