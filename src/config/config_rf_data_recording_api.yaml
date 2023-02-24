@@ -138,7 +138,7 @@ receivers_config:
       gain:       # Gain for the RF chain in dB, type = float.
         SeqType: "list"
         Values: [20]
-      channels:   # Rx Channel selection (X310: 0,1).
+      channels:   # Rx Channel selection (X310: 0,1) or (X410: 0,1,2,3).
         SeqType: "list"
         Values: [0]
       antenna:    # RX antenna selection (TX/RX, RX2), type = str.
