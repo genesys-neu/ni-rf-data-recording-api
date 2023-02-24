@@ -56,7 +56,7 @@ def main(rf_data_acq_config_file):
 
     ## Get Hw type, subtype and HW ID of TX and RX stations
     # For USRP:
-    # HW type = USRP type, mboard ID, i.e. USRP X310
+    # HW type = USRP type, mboard ID, i.e. USRP X310, or ....
     # HW subtype = USRP daughterboard type
     # HW seid = USRP serial number
     # This extra step is a workaround to solve two limitations in UHD
