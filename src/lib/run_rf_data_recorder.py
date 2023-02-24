@@ -113,21 +113,21 @@ def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
         # To reduce latency, the number of records is executed per each configuration
         if i == 0:
             print(f"Requesting RX Freq: {(rx_args.freq / 1e6)} MHz...")
-            rx_args.coerced_rx_freq = usrp.get_rx_freq()
+            rx_args.coerced_rx_freq = usrp.get_rx_freq(rx_args.channels[0])
             print(f"Actual RX Freq: {rx_args.coerced_rx_freq / 1e6}  MHz...")
             print(f"** RX Carrier Frequency Offset: {rx_args.coerced_rx_freq - rx_args.freq}  Hz...")
 
             print(f"Requesting RX Rate: {(rx_args.rate / 1e6) } Msps...")
-            rx_args.coerced_rx_rate = usrp.get_rx_rate()
+            rx_args.coerced_rx_rate = usrp.get_rx_rate(rx_args.channels[0])
             print(f"Actual RX Rate: {(rx_args.coerced_rx_rate / 1e6)} Msps...")
             print(f"** RX Sampling Rate Offset: {rx_args.coerced_rx_rate - rx_args.rate}  Sample per second...")
             
             print(f"Requesting RX Gain: {rx_args.gain} dB...")
-            rx_args.coerced_rx_gain = usrp.get_rx_gain()
+            rx_args.coerced_rx_gain = usrp.get_rx_gain(rx_args.channels[0])
             print(f"Actual RX Gain: {rx_args.coerced_rx_gain} dB...")
             
             print(f"Requesting RX Bandwidth: {(rx_args.bandwidth / 1e6)} MHz...")
-            rx_args.coerced_rx_bandwidth = usrp.get_rx_bandwidth() 
+            rx_args.coerced_rx_bandwidth = usrp.get_rx_bandwidth(rx_args.channels[0]) 
             print(f"Actual RX Bandwidth: {rx_args.coerced_rx_bandwidth / 1e6} MHz...")
             print("Note: Not all doughterboards support variable analog bandwidth")
 
