@@ -56,7 +56,7 @@ def parse_args():
         type=str,
     )
     parser.add_argument("-f", "--freq", default=2e9, type=float, help="RF center frequency in Hz")
-    parser.add_argument("-r", "--rate", default=31.25e6, type=float, help="rate of radio block")
+    parser.add_argument("-r", "--rate", default=30.75e6, type=float, help="rate of radio block")
     parser.add_argument("-b", "--bandwidth", default=20e6, type=float, help="bandwidth of radio block")
     parser.add_argument(
         "-d", "--duration", default=10e-3, type=float, help="time duration of IQ data acquisition"
