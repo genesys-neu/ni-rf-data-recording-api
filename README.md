@@ -79,7 +79,7 @@ Despite being in the early phase of research for 6G, AI & ML appears to be becom
 Ubuntu 20.04 is used in our test environment. However, you can build UHD on different operating systems. Look to [Building and Installing the USRP Open-Source Toolchain (UHD and GNU Radio) on Linux - Ettus Knowledge Base](https://kb.ettus.com/Building_and_Installing_the_USRP_Open-Source_Toolchain_(UHD_and_GNU_Radio)_on_Linux).
 
 ### Hardware
-To use the NI RF Data Recording API, you need at least one NI RF USRP device (for Tx or Rx only operation mode). The API has been tested both on [NI USRP X310](https://www.ettus.com/all-products/x310-kit/) ([X300/X310 Getting Started Guides](https://kb.ettus.com/X300/X310_Getting_Started_Guides)) and [NI USRP X410](https://www.ettus.com/all-products/usrp-x410/) ([X410 Getting Started Guides](https://kb.ettus.com/USRP_X410_Getting_Started_Guide)). The devices should be connected to single or different host computers based on the API operation mode and the investigated application. The following figure shows the setup of three Tx stations and one Rx Station.   
+To use the NI RF Data Recording API, you need at least one NI RF USRP device (for Tx or Rx only operation mode). The API has been tested on both [NI USRP X310](https://www.ettus.com/all-products/x310-kit/) ([X300/X310 Getting Started Guides](https://kb.ettus.com/X300/X310_Getting_Started_Guides)) and [NI USRP X410](https://www.ettus.com/all-products/usrp-x410/) ([X410 Getting Started Guides](https://kb.ettus.com/USRP_X410_Getting_Started_Guide)). The devices should be connected to single or different host computers based on the API operation mode and the investigated application. The following figure shows the setup of three Tx stations and one Rx Station.   
 ![Hardware](docs/figures/rf_data_recording_setup.png "Hardware Configuration")
 
 The following table presents the required hardware for this configuration (cabled setup).
@@ -90,8 +90,8 @@ The following table presents the required hardware for this configuration (cable
 | SMA Cable  				| 4 		| 
 | 30 dB Attenuator  		| 1    		| 
 | 10 Gig Eth Cable (SFP+) *	| 4     	|
-***Note1**: The USRP X310 can be connect to the host machine using different options. Look to [Network Connectivity Guide](https://files.ettus.com/manual/page_usrp_x3x0.html#x3x0_getting_started_connectivity).
-***Note2**: The USRP X410 can be connect to the host machine using different options. Look to [Network Connectivity Guide](https://files.ettus.com/manual/page_usrp_x4xx.html#x4xx_getting_started_network_connectivity).
+***Note1**: The USRP X310 can be connected to the host machine using different options. Look to [Network Connectivity Guide](https://files.ettus.com/manual/page_usrp_x3x0.html#x3x0_getting_started_connectivity).
+***Note2**: The USRP X410 can be connected to the host machine using different options. Look to [Network Connectivity Guide](https://files.ettus.com/manual/page_usrp_x4xx.html#x4xx_getting_started_network_connectivity).
 - Host PC Linux server: Recommended with [10Gig Eth card (SFP+)](https://www.ettus.com/all-products/10gige-1m/).
 - SMA cable: Female/female cable that is included with the USRP RIO device.
 - USRP RIO device: USRP-X310, USRP-2940/2942/2943/2944/2950/2952/2953/2954 Software Defined Radio Reconfigurable Devices with 120 MHz or 160 MHz bandwidth and with UHD FPGA images.
