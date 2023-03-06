@@ -112,6 +112,7 @@ def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
         # Get USRP coerced values only once
         # To reduce latency, the number of records is executed per each configuration
         if i == 0:
+            #In the future, if we are going to extend the code to capture from multiple channels, we should update the meta-data also. We can read those coerced values in a loop based on the channels order.
             print(f"Requesting RX Freq: {(rx_args.freq / 1e6)} MHz...")
             rx_args.coerced_rx_freq = usrp.get_rx_freq(rx_args.channels[0])
             print(f"Actual RX Freq: {rx_args.coerced_rx_freq / 1e6}  MHz...")

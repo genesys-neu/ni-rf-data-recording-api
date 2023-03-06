@@ -173,6 +173,7 @@ def main():
 
         # get USRP coerced values only once if we running the same config
         if i == 0:
+            #In the future, if we are going to extend the code to capture from multiple channels, we should update the meta-data also. We can read those coerced values in a loop based on the channels order.
             print(f"Requesting RX Freq: {(args.freq / 1e6)} MHz...")
             args.coerced_rx_freq = usrp.get_rx_freq(args.channels[0])
             print(f"Actual RX Freq: {args.coerced_rx_freq / 1e6}  MHz...")
