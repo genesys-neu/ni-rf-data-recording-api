@@ -63,7 +63,8 @@ def parse_args():
     parser.add_argument(
         "-a",
         "--args",
-        default="type=x4xx,addr=192.168.40.2,master_clock_rate=250e6",
+        #default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6",
+        default="type=x4xx,addr=192.168.40.2,master_clock_rate=245.76e6",
         type=str,
         help="Device args to use when connecting to the USRP.",
     )
