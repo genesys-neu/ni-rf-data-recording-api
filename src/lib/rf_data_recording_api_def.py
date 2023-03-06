@@ -500,7 +500,7 @@ class RFDataRecorderAPI:
             for i in range(0, 4):
                 index = i % 4
                 print("\rRF streaming {}".format(list[index]), end="")
-                time.sleep(0.25) # sleep for 250ms
+                time.sleep(0.1) # sleep for 100ms
 
     ## Start execution - TX emitters in parallel
     def start_execution_txs_in_parallel(
