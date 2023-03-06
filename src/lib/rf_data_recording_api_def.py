@@ -381,8 +381,39 @@ class RFDataRecorderAPI:
                 args_out = args_in + ",master_clock_rate=200e6"
         
         # Derive master clock rate for X410 USRP
-        if "X4XX" in usrp_mboard_id:
-            args_out = args_in + ",master_clock_rate=250e6"
+        if "X4" in usrp_mboard_id:
+            # There are two master clock rates (MCR) supported on the X4XX: 245.76 MHz and 250 MHz.
+            # The achievable sampling rates are by using an even decimation factor
+            master_clock_rate_x310 = [245.76e6, 250e6]
+
+            # Calculate the ratio between MCR and requested sampling rate
+            ratio_frac = [x / requested_rate for x in master_clock_rate_x310]
+            # Change to integer
+            ratio_integ = [round(x) for x in ratio_frac]
+            # Find the higher even number
+            ratio_even = []
+            for index, value in enumerate(ratio_frac):
+                value = ratio_integ[index]
+                if value < 1:
+                    ratio_even.append(2)
+                elif value < 2:
+                    ratio_even.append(0)
+                else:
+                    ratio_even.append(round_up_to_even(value))
+            # Calculate the deviation
+            ratio_dev = []
+            for index, value in enumerate(ratio_even):
+                value1 = ratio_even[index]
+                value2 = ratio_frac[index]
+                ratio_dev.append(abs(value1 - value2))
+            # Find the best MCR for the requested rate
+            pos = ratio_dev.index(min(ratio_dev))
+            master_clock_rate_config = master_clock_rate_x310[pos]
+            if master_clock_rate_config == 245.76e6:
+                args_out = args_in + ",master_clock_rate=245.76e6"
+            else:
+                args_out = args_in + ",master_clock_rate=250e6"
+
 
         # Derive master clock rate for other USRPs is not supported yet
         else:
