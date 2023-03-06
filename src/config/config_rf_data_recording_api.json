@@ -76,7 +76,7 @@
         "freq":           {"SeqType": "range",    "Values": [3.6e9, 3.6e9,100e6]},
         "lo_offset":      {"SeqType": "single",   "Values": 20.0e6},
         "enable_lo_offset":{"SeqType": "single",  "Values": "False"},
-        "rate":           {"SeqType": "list",     "Values": [30.75e6]},
+        "rate":           {"SeqType": "list",     "Values": [30.72e6]},
         "bandwidth":      {"SeqType": "list",     "Values": [20e6]},
         "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
         "waveform_file_name": {"SeqType": "list", "Values": ["NR_FR1_DL_TDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1"]},
@@ -101,7 +101,7 @@
       "RFmode": "Rx", "type": "x4xx","IPaddress": "192.168.100.2",
       "Parameters": {
           "freq":         {"SeqType": "range",    "Values": [3.6e9, 3.6e9,100e6]},
-          "rate":         {"SeqType": "list",     "Values": [30.75e6]},
+          "rate":         {"SeqType": "list",     "Values": [30.72e6]},
           "bandwidth":    {"SeqType": "list",     "Values": [20e6]},
           "rate_source":  {"SeqType": "single",   "Values": "user_defined"},
           "gain":         {"SeqType": "list",     "Values": [20]},
