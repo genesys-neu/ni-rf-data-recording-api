@@ -290,10 +290,10 @@ To stop data transmission, click on the terminal ctrl+c.
 ---
 
 ### RF Rx Data Recorder
-Assume you would like to record the IQ data and save it in SigMF format to this path “recorded-data”. The configuration parameters are (frequency = 2 GHz, rate = 30.75 MS/s, gain = 30 dB, channels =0, duration 10 ms, number of records 1, USRP IP = 192.168.40.2). Run the following command:
+Assume you would like to record the IQ data and save it in SigMF format to this path “/home/user/workarea/recorded-data”. The configuration parameters are (frequency = 2 GHz, rate = 30.75 MS/s, gain = 30 dB, channels =0, duration 10 ms, number of records 1, USRP IP = 192.168.40.2). Run the following command:
 
 ```
-python3.9 rf_data_recorder_usrp_uhd.py --nrecords 1 --args="type=x4xx,addr=192.168.40.2,master_clock_rate=250e6" --freq 2e9 --rate 30.75e6 --duration 10e-3 --channels 0 --gain 30 --rx_recorded_data_path recorded-data
+python3.9 rf_data_recorder_usrp_uhd.py --nrecords 1 --args="type=x4xx,addr=192.168.40.2,master_clock_rate=250e6" --freq 2e9 --rate 30.75e6 --duration 10e-3 --channels 0 --gain 30 --rx_recorded_data_path /home/user/workarea/recorded-data
 ```
 
 Since the Rx is running independently from Tx and this Rx Data Recorder script is not configured via the configuration file, the user needs to update the metadata in this script manually. Go to the section of write data to SigMF files in the code to update metadata.

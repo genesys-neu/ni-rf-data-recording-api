@@ -58,7 +58,7 @@
     "tx_duc_id: duc id to use, type = int "
     ],
     "general_config": {
-      "rx_recorded_data_path": "recorded-data",
+      "rx_recorded_data_path": "/home/user/workarea/recorded-data",
       "rx_recorded_data_saving_format": "SigMF",
       "nrecords": 5,
       "txs_execution": "parallel",
