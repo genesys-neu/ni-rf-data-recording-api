@@ -111,6 +111,8 @@ class RFDataRecorderAPI:
             self.replay_id = iteration_config["tx_replay_id"]
             # "replay channel to use, type = int ",
             self.replay_chan = iteration_config["tx_replay_chan"]
+            # "duc id to use, type = int ",
+            self.duc_id = iteration_config["tx_duc_id"]
             # "duc channel to use, type = int ",
             self.duc_chan = iteration_config["tx_duc_chan"]
             # "Hardware type, i.e. for USRP: USRP mboard ID (X310, or ....)
@@ -184,7 +186,7 @@ class RFDataRecorderAPI:
 
     ## Get Hw type, subtype and HW ID of TX and RX stations
     # For USRP:
-    # HW type = USRP type, mboard ID, i.e. USRP X310
+    # HW type = USRP type, mboard ID, i.e. USRP X310, or ....
     # HW subtype = USRP daughterboard type
     # HW seid = USRP serial number
     # This extra step is a workaround to solve two limitations in UHD
@@ -211,7 +213,7 @@ class RFDataRecorderAPI:
                     usrp_info = usrp.get_usrp_rx_info()
                     usrp_daughterboard_id = usrp_info["rx_id"]
                     usrp_bandwidth = usrp.get_rx_bandwidth()
-                # get USRP type, i.e. X310
+                # get USRP type, i.e. X310, or ....
                 usrp_mboard_id = usrp_info["mboard_id"]
                 temp = usrp_daughterboard_id.split(" ")
                 usrp_daughterboard_id_wo_ref = temp[0]
@@ -377,10 +379,42 @@ class RFDataRecorderAPI:
                 args_out = args_in + ",master_clock_rate=184.32e6"
             else:
                 args_out = args_in + ",master_clock_rate=200e6"
+        # Derive master clock rate for X410 USRP
+        elif "X4" in usrp_mboard_id:
+            # There are two master clock rates (MCR) supported on the X4XX: 245.76 MHz and 250 MHz.
+            # The achievable sampling rates are by using an even decimation factor
+            master_clock_rate_x310 = [245.76e6, 250e6]
 
+            # Calculate the ratio between MCR and requested sampling rate
+            ratio_frac = [x / requested_rate for x in master_clock_rate_x310]
+            # Change to integer
+            ratio_integ = [round(x) for x in ratio_frac]
+            # Find the higher even number
+            ratio_even = []
+            for index, value in enumerate(ratio_frac):
+                value = ratio_integ[index]
+                if value < 1:
+                    ratio_even.append(2)
+                elif value < 2:
+                    ratio_even.append(0)
+                else:
+                    ratio_even.append(round_up_to_even(value))
+            # Calculate the deviation
+            ratio_dev = []
+            for index, value in enumerate(ratio_even):
+                value1 = ratio_even[index]
+                value2 = ratio_frac[index]
+                ratio_dev.append(abs(value1 - value2))
+            # Find the best MCR for the requested rate
+            pos = ratio_dev.index(min(ratio_dev))
+            master_clock_rate_config = master_clock_rate_x310[pos]
+            if master_clock_rate_config == 245.76e6:
+                args_out = args_in + ",master_clock_rate=245.76e6"
+            else:
+                args_out = args_in + ",master_clock_rate=250e6"
         # Derive master clock rate for other USRPs is not supported yet
         else:
-            print("Warning: The code can derive the master clock rate for X310/X300 USRPs only.")
+            print("Warning: The code can derive the master clock rate for X410/X310/X300 USRPs only.")
             print("         The default master clock rate will be used.")
             args_out = args_in
 
@@ -456,10 +490,14 @@ class RFDataRecorderAPI:
         # ** Wait until user says to stop **
         # Setup SIGINT handler (Ctrl+C)
         signal.signal(signal.SIGINT, signal_handler)
+        list = ["\\", "|", "/", "—"]
         print("")
         print("Press Ctrl+C to stop RF streaming for this iteration ...")
         while sync_settings.stop_tx_signal_called == False:
-            time.sleep(0.1)  # sleep for 100ms
+            for i in range(0, 4):
+                index = i % 4
+                print("\rRF streaming {}".format(list[index]), end="")
+                time.sleep(0.1) # sleep for 100ms
 
     ## Start execution - TX emitters in parallel
     def start_execution_txs_in_parallel(

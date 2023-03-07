@@ -1,5 +1,5 @@
 FROM ubuntu:20.04
-MAINTAINER Mauro Belgiovine <belgiovine.m@northeastern.edu>
+LABEL MAINTAINER="Mauro Belgiovine <belgiovine.m@northeastern.edu> & Lawson Gu <lawson.gu@ni.com>"
 RUN apt update
 RUN apt-get install -y software-properties-common
 
@@ -14,7 +14,8 @@ RUN apt-get install -y software-properties-common
 #RUN update-alternatives --set python /usr/bin/python3.9 
 #RUN alias python='/usr/bin/python3.9'
 
-#ENV PYTHONPATH=/usr/local/lib/python3.9/site-packages/
+RUN echo "export PYTHONPATH=/usr/local/lib/python3.8/site-packages">>~/.bashrc
+RUN /bin/bash -c "source ~/.bashrc" source ~/.bashrc
 
 # install required packages
 RUN apt install -y python3-pip
@@ -30,12 +31,12 @@ RUN cd workarea
 RUN git clone https://github.com/EttusResearch/uhd
 
 # let's build UHD from source (note that with Dockerfile current directory path is not kept in the next commands)
-RUN cd uhd && cd host && mkdir build && cd build && cmake .. && make && make test && make install
+RUN cd uhd && git checkout v4.3.0.0 && cd host && mkdir build && cd build && cmake .. && make && make test && make install
 
 # setup the library references
 RUN ldconfig
-ENV LD_LIBRARY_PATH=/usr/local/lib
-ENV PYTHONPATH=/usr/local/lib/python3.8/site-packages
+RUN echo "LD_LIBRARY_PATH=/usr/local/lib">>~/.bashrc
+RUN /bin/bash -c "source ~/.bashrc" source ~/.bashrc
 
 # install net-tools (needed to look at the ethernet card configuration)
 RUN apt install -y net-tools

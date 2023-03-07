@@ -43,7 +43,7 @@ transmitters_config:
   -
     RFmode: "Tx"  # Tx or Rx, type=str
     # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
-    type: "x300"  # USRP type, for example: x300, type=str.
+    type: "x4xx"  # USRP type, for example: x4xx, type=str.
     IPaddress: "192.168.40.2" # IP address of USRP, type=str.
     Parameters:
       freq:       # RF target center frequency in Hz, type = float.
@@ -85,7 +85,7 @@ transmitters_config:
         Values: "tdms"
       gain:     # Gain for the RF chain, type = float.
         SeqType: "list"
-        Values: [20]
+        Values: [30]
       antenna:  # TX antenna selection (TX/RX), type = str.
         SeqType: "list"
         Values: ["TX/RX"]
@@ -108,6 +108,9 @@ common_transmitters_config:
   tx_duc_chan:    # duc channel to use, type = int.
     SeqType: "list"
     Values: [0]
+  tx_duc_id:    # duc id to use, type = int.
+    SeqType: "list"
+    Values: [0]
 # ============================================
 # ================== Receivers   =============
 # ============================================
@@ -115,7 +118,7 @@ receivers_config:
   -
     RFmode: "Rx"    # Tx or Rx, type=str.
     # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
-    type: "x300"    # USRP type, for example: x300, type=str.
+    type: "x4xx"    # USRP type, for example: x4xx, type=str.
     IPaddress: "192.168.100.2" # IP address of USRP, type=str.
     Parameters:
       freq:         # RF target center frequency in Hz, type = float.
@@ -135,7 +138,7 @@ receivers_config:
       gain:       # Gain for the RF chain in dB, type = float.
         SeqType: "list"
         Values: [20]
-      channels:   # Rx Channel selection (X310: 0,1).
+      channels:   # Rx Channel selection (X310: 0,1) or (X410: 0,1,2,3).
         SeqType: "list"
         Values: [0]
       antenna:    # RX antenna selection (TX/RX, RX2), type = str.

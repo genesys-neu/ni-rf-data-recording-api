@@ -79,18 +79,19 @@ Despite being in the early phase of research for 6G, AI & ML appears to be becom
 Ubuntu 20.04 is used in our test environment. However, you can build UHD on different operating systems. Look to [Building and Installing the USRP Open-Source Toolchain (UHD and GNU Radio) on Linux - Ettus Knowledge Base](https://kb.ettus.com/Building_and_Installing_the_USRP_Open-Source_Toolchain_(UHD_and_GNU_Radio)_on_Linux).
 
 ### Hardware
-To use the NI RF Data Recording API, you need at least one NI RF USRP device (for Tx or Rx only operation mode). The API has been tested only on [NI USRP X310](https://www.ettus.com/all-products/x310-kit/) ([X300/X310 Getting Started Guides](https://kb.ettus.com/X300/X310_Getting_Started_Guides)). The devices should be connected to single or different host computers based on the API operation mode and the investigated application. The following figure shows the setup of three Tx stations and one Rx Station.   
+To use the NI RF Data Recording API, you need at least one NI RF USRP device (for Tx or Rx only operation mode). The API has been tested on both [NI USRP X310](https://www.ettus.com/all-products/x310-kit/) ([X300/X310 Getting Started Guides](https://kb.ettus.com/X300/X310_Getting_Started_Guides)) and [NI USRP X410](https://www.ettus.com/all-products/usrp-x410/) ([X410 Getting Started Guides](https://kb.ettus.com/USRP_X410_Getting_Started_Guide)). The devices should be connected to single or different host computers based on the API operation mode and the investigated application. The following figure shows the setup of three Tx stations and one Rx Station.   
 ![Hardware](docs/figures/rf_data_recording_setup.png "Hardware Configuration")
 
 The following table presents the required hardware for this configuration (cabled setup).
 | Item    					| Number	| 
 | ------------------------- | ----------|
 | Host PC (Linux Server)   	| 1 		|
-| X310 USRP Device    		| 4    		| 
+| X310 or X410 USRP Device    		| 4    		| 
 | SMA Cable  				| 4 		| 
 | 30 dB Attenuator  		| 1    		| 
 | 10 Gig Eth Cable (SFP+) *	| 4     	|
-***Note**: The USRP X310 can be connect to the host machine using different options. Look to [Network Connectivity Guide](https://files.ettus.com/manual/page_usrp_x3x0.html).
+***Note1**: The USRP X310 can be connected to the host machine using different options. Look to [Network Connectivity Guide](https://files.ettus.com/manual/page_usrp_x3x0.html#x3x0_getting_started_connectivity).
+***Note2**: The USRP X410 can be connected to the host machine using different options. Look to [Network Connectivity Guide](https://files.ettus.com/manual/page_usrp_x4xx.html#x4xx_getting_started_network_connectivity).
 - Host PC Linux server: Recommended with [10Gig Eth card (SFP+)](https://www.ettus.com/all-products/10gige-1m/).
 - SMA cable: Female/female cable that is included with the USRP RIO device.
 - USRP RIO device: USRP-X310, USRP-2940/2942/2943/2944/2950/2952/2953/2954 Software Defined Radio Reconfigurable Devices with 120 MHz or 160 MHz bandwidth and with UHD FPGA images.
@@ -261,7 +262,7 @@ Note: We built the system environment based on Python3.9. However, the default P
 
 The user can provide the configuration file to the API from the terminal:
 ```
-python3.9 main_rf_data_recording_api.py –-config config/config_rf_data_recording_api.yaml
+python3.9 main_rf_data_recording_api.py --config config/config_rf_data_recording_api.yaml
 ```
 On the console, the API prints the varaition map and the configuration vector per each iteration. User can disable it via `enable_console_logging` parameter under `general_config` section in the configuration file. In addition, it prints the hardware info, number of Rx samples and the elapsed time of getting Rx samples and writing data and metadata files per each record. The data recordings might contain a slight frequency offset due to Tx and Rx carrier frequency coercion. The Tx and Rx carrier frequency offsets are printed on the console. The coerced Rx carrier frequency is logged in the meta data while the coerced Tx carrier frequency not yet. At the end of execution, the API prints the total size of Rx data on memory.
 The following figure shows an exemplary of API console.
@@ -278,10 +279,17 @@ The API needs to be executed on each machine independently. The user can use als
 ---
 
 ### RF Replay Data Transmitter
-For Tx only using as a single station, the user can use also the RF Replay Data Transmitter. Assume you would like to replay the 5G NR waveform `NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1.tdms`, with the following parameters (frequency = 2 GHz, rate = 30.72 MS/s, gain = 30 dB, USRP IP = 192.168.40.2). Run the following command:
+For Tx only using as a single station, the user can use also the RF Replay Data Transmitter. Assume you would like to replay the 5G NR waveform `NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1.tdms`, with the following parameters (frequency = 2 GHz, rate = 30.72 MS/s, gain = 30 dB, USRP IP = 192.168.40.2). 
+Run the following command if you're using X310:
 
 ```
-python3.9 rf_replay_data_transmitter_usrp_uhd.py  --args="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6" --freq=2e9 --rate=30.72e6 --gain=30 --path="waveforms/nr/" --file="NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1" --waveform_format="tdms"
+python3.9 rf_replay_data_transmitter_usrp_uhd.py --args="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6" --freq=2e9 --rate=30.72e6 --gain=30 --path="waveforms/nr/" --file="NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1" --waveform_format="tdms"
+```
+
+or run the following command if you're using X410:
+
+```
+python3.9 rf_replay_data_transmitter_usrp_uhd.py --args="type=x4xx,addr=192.168.40.2,master_clock_rate=245.76e6" --freq=2e9 --rate=30.72e6 --gain=30 --path="waveforms/nr/" --file="NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1" --waveform_format="tdms"
 ```
 
 To stop data transmission, click on the terminal ctrl+c.
@@ -289,10 +297,17 @@ To stop data transmission, click on the terminal ctrl+c.
 ---
 
 ### RF Rx Data Recorder
-Assume you would like to record the IQ data and save it in SigMF format to this path “/home/user/workarea/recorded-data”. The configuration parameters are (frequency = 2 GHz, rate = 30.72 MS/s, gain = 30 dB, channels =0, duration 10 ms, number of records 1, USRP IP = 192.168.40.2). Run the following command:
+Assume you would like to record the IQ data and save it in SigMF format to this path “/home/user/workarea/recorded-data”. The configuration parameters are (frequency = 2 GHz, rate = 30.72 MS/s, gain = 30 dB, channels =0, duration 10 ms, number of records 1, USRP IP = 192.168.40.2). 
+Run the following command if you're using X310:
 
 ```
 python3.9 rf_data_recorder_usrp_uhd.py --nrecords 1 --args="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6" --freq 2e9 --rate 30.72e6 --duration 10e-3 --channels 0 --gain 30 --rx_recorded_data_path /home/user/workarea/recorded-data
+```
+
+or run the following command if you're using X410:
+
+```
+python3.9 rf_data_recorder_usrp_uhd.py --nrecords 1 --args="type=x4xx,addr=192.168.40.2,master_clock_rate=245.76e6" --freq 2e9 --rate 30.72e6 --duration 10e-3 --channels 0 --gain 30 --rx_recorded_data_path /home/user/workarea/recorded-data
 ```
 
 Since the Rx is running independently from Tx and this Rx Data Recorder script is not configured via the configuration file, the user needs to update the metadata in this script manually. Go to the section of write data to SigMF files in the code to update metadata.
@@ -332,7 +347,7 @@ The figure below shows an example of recorded data sets in SigMF format. The fig
 ---
 
 ### RF Data Pre-Processing
-We created a simple example to read the SigMF metadata and visualize the recorded IQ data. The following script `src/rf_data_pre_processing_spectrogram.py` can be used to plot the spectrogram of recorded data. It requires two parameters:
+We created a simple example to read the SigMF metadata and visualize the recorded IQ data. The following script `src/rf_data_pre_processing_spectrogram.py` can be used to plot the spectrogram of latest created recorded data. It also can be used on other recorded data with two parameters:
 - Path to data set folder
 - Data set base filename (without SigMF file extension)
 
@@ -399,7 +414,7 @@ Note: Maintenance of this Git repository will be done on best effort basis.
 ---
 
 ## Known Issues and Limitations
--	Tested on X310 USRP only
+-	Tested on both X310 and X410 USRP only
 
 ---
 

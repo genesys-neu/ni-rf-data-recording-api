@@ -63,29 +63,29 @@ def parse_args():
     parser.add_argument(
         "-a",
         "--args",
-        default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6",
+        #default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6",
+        default="type=x4xx,addr=192.168.40.2,master_clock_rate=245.76e6",
         type=str,
         help="Device args to use when connecting to the USRP.",
     )
-    parser.add_argument(
-        "-tx", "--tx_args", default="", type=str, help="Block args for the transmit radio"
-    )
+#    parser.add_argument(
+#        "-tx", "--tx_args", default="", type=str, help="Block args for the transmit radio"
+#    )
     parser.add_argument(
         "--radio_id",
         "-rai",
         default=0,
-        nargs="+",
         type=int,
         help="radio block to use (e.g., 0 or 1).",
     )
     parser.add_argument(
-        "--radio_chan", "-rac", default=0, nargs="+", type=int, help="radio channel to use"
+        "--radio_chan", "-rac", default=0, type=int, help="radio channel to use"
     )
     parser.add_argument(
         "--replay_id",
         "-rpi",
         default=0,
-        nargs="+",
+        nargs="+", 
         type=int,
         help="replay block to use (e.g., 0 or 1)",
     )
@@ -93,7 +93,10 @@ def parse_args():
         "--replay_chan", "-rpc", default=0, nargs="+", type=int, help="replay channel to use"
     )
     parser.add_argument(
-        "--duc_chan", "-duc", default=0, nargs="+", type=int, help="duc channel to use"
+        "--duc_chan", "-duc", default=0, type=int, help="duc channel to use"
+    )
+    parser.add_argument(
+        "--duc_id", "-dui", default=0, type=int, help="duc block id to use"
     )
     parser.add_argument(
         "--nsamps",
@@ -161,6 +164,7 @@ def main():
     Run Tx waveform playback
     """
     args = parse_args()
+    isX4xx=bool(args.args.find('x4xx'))
 
     # Print help message
     print("UHD/RFNoC Replay samples from file ")
@@ -192,7 +196,7 @@ def main():
     replay_ctrl = uhd.rfnoc.ReplayBlockControl(graph.get_block(replay_ctrl_id))
 
     # Check for a DUC connected to the radio
-    duc_ctrl_id = uhd.rfnoc.BlockID(0, "DUC", args.duc_chan)
+    duc_ctrl_id = uhd.rfnoc.BlockID(0, "DUC", args.duc_id)
     duc_ctrl = uhd.rfnoc.DucBlockControl(graph.get_block(duc_ctrl_id))
 
     # Connect replay to radio
@@ -266,7 +270,7 @@ def main():
 
     # Set the analog front-end filter bandwidth
     print(f"Requesting TX Bandwidth: {(args.bandwidth / 1e6)} MHz...")
-    radio_ctrl.set_tx_bandwidth(args.bandwidth, args.radio_chan)
+    if (not isX4xx) : radio_ctrl.set_tx_bandwidth(args.bandwidth, args.radio_chan)
     coerced_tx_bandwidth = radio_ctrl.get_tx_bandwidth(args.radio_chan)
     print(f"Actual TX Bandwidth: {coerced_tx_bandwidth / 1e6} MHz...")
     print("Note: Not all doughterboards support variable analog bandwidth")
@@ -405,10 +409,14 @@ def main():
         # Setup SIGINT handler (Ctrl+C)
         signal.signal(signal.SIGINT, signal_handler)
         print("Press Ctrl+C to stop RF streaming")
+        list = ["\\", "|", "/", "—"]
         while stop_tx_signal_called == False:
-            time.sleep(0.1)  # sleep for 100ms
-        # Remove SIGINT handler
-        # signal.signal(signal.SIGINT, signal_dfl)
+            for i in range(0, 4):
+                index = i % 4
+                print("\rRF streaming {}".format(list[index]), end="")
+                time.sleep(0.1) # sleep for 100ms
+                # Remove SIGINT handler
+                # signal.signal(signal.SIGINT, signal_dfl)
         print("Stopping replay...")
         replay_ctrl.stop(args.replay_chan)
         print("Letting device settle...")

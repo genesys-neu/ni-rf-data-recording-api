@@ -47,7 +47,8 @@ def parse_args():
     """Parse the command line arguments"""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-a", "--args", default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6", type=str
+        #"-a", "--args", default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6", type=str
+        "-a", "--args", default="type=x4xx,addr=192.168.40.2,master_clock_rate=245.76e6", type=str
     )
     parser.add_argument(
         "-o",
@@ -83,6 +84,13 @@ def main():
     # Get process api arguments
     args = parse_args()
 
+    # Check the receive target path is valid, else create folder
+    if not os.path.isdir(args.rx_recorded_data_path):
+        print('Create new folder for recorded data: ' + args.rx_recorded_data_path)
+        os.makedirs(args.rx_recorded_data_path)
+
+    isX4xx=bool(args.args.find('x4xx'))
+
     # Define number of samples to fetch
     num_samps = int(np.ceil(args.duration * args.rate))
 
@@ -100,8 +108,8 @@ def main():
     usrp_daughterboard_id = usrp_info["rx_id"]
     temp = usrp_daughterboard_id.split(" ")
     usrp_daughterboard_id_wo_ref = temp[0]
-    usrp_bandwidth = usrp.get_rx_bandwidth()
-    # get USRP type, i.e. X310
+    usrp_bandwidth = usrp.get_rx_bandwidth(args.channels[0])
+    # get USRP type, i.e. X310, or ....
     usrp_mboard_id = usrp_info["mboard_id"]
     # get USRP serial number
     usrp_serial_number = usrp_info["mboard_serial"]
@@ -138,7 +146,7 @@ def main():
     for index in args.channels:
         usrp.set_rx_antenna(args.antenna, index)
         # set the IF filter bandwidth   
-        usrp.set_rx_bandwidth(args.bandwidth, index)
+        if (not isX4xx) : usrp.set_rx_bandwidth(args.bandwidth, index)
     # set RF Configure and capture zero sample for RF Settling time
     usrp.recv_num_samps(
             0,
@@ -165,26 +173,27 @@ def main():
 
         # get USRP coerced values only once if we running the same config
         if i == 0:
+            #In the future, if we are going to extend the code to capture from multiple channels, we should update the meta-data also. We can read those coerced values in a loop based on the channels order.
             print(f"Requesting RX Freq: {(args.freq / 1e6)} MHz...")
-            args.coerced_rx_freq = usrp.get_rx_freq()
+            args.coerced_rx_freq = usrp.get_rx_freq(args.channels[0])
             print(f"Actual RX Freq: {args.coerced_rx_freq / 1e6}  MHz...")
             print(f"** RX Carrier Frequency Offset: {args.coerced_rx_freq - args.freq}  Hz...")
 
             print(f"Requesting RX Rate: {(args.rate / 1e6) } Msps...")
-            args.coerced_rx_rate = usrp.get_rx_rate()
+            args.coerced_rx_rate = usrp.get_rx_rate(args.channels[0])
             print(f"Actual RX Rate: {(args.coerced_rx_rate / 1e6)} Msps...")
             print(f"** RX Sampling Rate Offset: {args.coerced_rx_rate - args.rate}  Sample per second...")
             
             print(f"Requesting RX Gain: {args.gain} dB...")
-            args.coerced_rx_gain = usrp.get_rx_gain()
+            args.coerced_rx_gain = usrp.get_rx_gain(args.channels[0])
             print(f"Actual RX Gain: {args.coerced_rx_gain} dB...")
             
             print(f"Requesting RX Bandwidth: {(args.bandwidth / 1e6)} MHz...")
-            args.coerced_rx_bandwidth = usrp.get_rx_bandwidth() 
+            args.coerced_rx_bandwidth = usrp.get_rx_bandwidth(args.channels[0]) 
             print(f"Actual RX Bandwidth: {args.coerced_rx_bandwidth / 1e6} MHz...")
             print("Note: Not all doughterboards support variable analog bandwidth")
 
-            args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data yet
+            #args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data yet
 
         # Get time stamp
         time_stamp_micro_sec = datetime.now().strftime("%Y_%m_%d-%H_%M_%S_%f")

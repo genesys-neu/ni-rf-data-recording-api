@@ -251,6 +251,12 @@ def generate_rf_data_recording_configs(rf_data_acq_config_file: str):
         rf_data_acq_config["general_config"]["enable_console_logging"]
     )
 
+    # Check the receive target path is valid, else create folder
+    rx_recorded_data_path=rf_data_acq_config["general_config"]["rx_recorded_data_path"]
+    if not os.path.isdir(rx_recorded_data_path):
+        print('Create new folder for recorded data: ' + rx_recorded_data_path)
+        os.makedirs(rx_recorded_data_path)
+
     # Print RF Data Collection Config as it is given in the config file
     if enable_console_logging:
         print("RF Data Collection Configuration based on the Config File: ")
