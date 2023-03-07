@@ -379,9 +379,8 @@ class RFDataRecorderAPI:
                 args_out = args_in + ",master_clock_rate=184.32e6"
             else:
                 args_out = args_in + ",master_clock_rate=200e6"
-        
         # Derive master clock rate for X410 USRP
-        if "X4" in usrp_mboard_id:
+        elif "X4" in usrp_mboard_id:
             # There are two master clock rates (MCR) supported on the X4XX: 245.76 MHz and 250 MHz.
             # The achievable sampling rates are by using an even decimation factor
             master_clock_rate_x310 = [245.76e6, 250e6]
@@ -413,8 +412,6 @@ class RFDataRecorderAPI:
                 args_out = args_in + ",master_clock_rate=245.76e6"
             else:
                 args_out = args_in + ",master_clock_rate=250e6"
-
-
         # Derive master clock rate for other USRPs is not supported yet
         else:
             print("Warning: The code can derive the master clock rate for X410/X310/X300 USRPs only.")
