@@ -71,7 +71,7 @@
   },
   "transmitters_config": [
     {
-      "RFmode": "Tx","type": "x4xx","IPaddress": "192.168.40.2",
+      "RFmode": "Tx","type": "x300","IPaddress": "192.168.40.2",
       "Parameters": {
         "freq":           {"SeqType": "range",    "Values": [3.6e9, 3.6e9,100e6]},
         "lo_offset":      {"SeqType": "single",   "Values": 20.0e6},
@@ -98,7 +98,7 @@
     "tx_duc_id":        {"SeqType": "list",     "Values": [0]}},
   "receivers_config": [
     {
-      "RFmode": "Rx", "type": "x4xx","IPaddress": "192.168.100.2",
+      "RFmode": "Rx", "type": "x300","IPaddress": "192.168.100.2",
       "Parameters": {
           "freq":         {"SeqType": "range",    "Values": [3.6e9, 3.6e9,100e6]},
           "rate":         {"SeqType": "list",     "Values": [30.72e6]},

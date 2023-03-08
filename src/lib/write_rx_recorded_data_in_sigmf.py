@@ -22,6 +22,11 @@ from datetime import datetime
 
 
 def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config, idx):
+    # Check the receive target path is valid, else create folder
+    if not os.path.isdir(rx_args.rx_recorded_data_path):
+        print('Create new folder for recorded data: ' + str(rx_args.rx_recorded_data_path))
+        os.makedirs(rx_args.rx_recorded_data_path)
+
     # Write recorded data to file
     # Get time stamp
     time_stamp_micro_sec = datetime.now().strftime("%Y_%m_%d-%H_%M_%S_%f")
@@ -42,8 +47,8 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config, 
             SigMFFile.NUM_CHANNELS_KEY: len(rx_args.channels),
             SigMFFile.AUTHOR_KEY: general_config["author"],
             SigMFFile.DESCRIPTION_KEY: general_config["description"],
-            SigMFFile.RECORDER_KEY: "NI RF Data Recording API",
-            SigMFFile.LICENSE_KEY: "URL to the license document",
+            SigMFFile.RECORDER_KEY: "Using NI RF Data Recording API: https://github.com/genesys-neu/ni-rf-data-recording-api",
+            SigMFFile.LICENSE_KEY: "MIT License",
             SigMFFile.HW_KEY: rx_args.hw_type,
             # Disable DATASET key to mitigate the warning when read SIGMF data although it is given in the spec.
             # It seems SIGMF still has bug here

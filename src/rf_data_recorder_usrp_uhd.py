@@ -86,7 +86,7 @@ def main():
 
     # Check the receive target path is valid, else create folder
     if not os.path.isdir(args.rx_recorded_data_path):
-        print('Create new folder for recorded data: ' + args.rx_recorded_data_path)
+        print('Create new folder for recorded data: ' + str(args.rx_recorded_data_path))
         os.makedirs(args.rx_recorded_data_path)
 
     isX4xx=bool(args.args.find('x4xx'))
