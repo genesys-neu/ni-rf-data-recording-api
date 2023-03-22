@@ -68,7 +68,7 @@ def get_nr_waveform_parameters_from_rfws_format(waveform_path, waveform_file_nam
     factory = root.findall(".//*[@name='factory']")
     standard = factory[0].text
     # waveform_config_src["factory"] = "standard"
-    waveform_config_src["standard"] = "nr"
+    waveform_config_src["standard"] = "5gnr"
 
     # get frequency range
     freqRanges = root.findall(".//*[@name='Frequency Range']")
@@ -442,6 +442,8 @@ def map_metadata_to_sigmf_format(waveform_config_src, wireless_link_parameter_ma
 
     # pre-allocate target dict
     waveform_config = {}
+    waveform_config ["standard"] = waveform_config_src["standard"]
+
     for parameter_pair in waveform_parameter_map_dic:
         # check if key for chosen simulator even exists
         if data_source + "_parameter" in parameter_pair.keys():

@@ -20,89 +20,84 @@
 # =====================================================================================
 transmitter:
   # 5G NR subfield
-  nr:
+  5gnr:
     # waveform generator
     - sigmf_parameter_name: "generator"
       description: "waveform generator"
-      nr_ni_rfmx_rfws_parameter: 
+      5gnr_ni_rfmx_rfws_parameter: 
         name: 'generator'
-    # standard
-    - sigmf_parameter_name: "standard"
-      description: "Standard such as LTE, NR, ... etc"
-      nr_ni_rfmx_rfws_parameter:
-        name: "standard" # It is called in RFWS "factory"
     # Frequency Range
     - sigmf_parameter_name: "frequency_range"
       description: "Frequency Range"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: "Frequency Range"
         value_map: # simu value : SigMF value
-          "Range 1": "FR1" 
-          "Range 2": "FR2" 
+          "Range 1": "fr1" 
+          "Range 2": "fr2" 
     # bandwidth
     - sigmf_parameter_name: "bandwidth"
       description: "5G NR bandwidth"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: "Bandwidth (Hz)"
     # Link direction
     - sigmf_parameter_name: "link_direction"
       description: "Link direction"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: "Link Direction"
     # cell ID
     - sigmf_parameter_name: "cell_id"
       description: "cell ID"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: "Cell ID"
     # Number of frames
     - sigmf_parameter_name: "num_frames"
       description: Number of frames
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: 'Number of Frames'
     # Frame structure
     - sigmf_parameter_name: "frame_structure"
       description: "5G NR duplexing scheme FDD, TDD, user defined"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: "Duplex Scheme" # not exact, since it depends if the waveform is for UL or DL
     # Subcarrier spacing in Hz
     - sigmf_parameter_name: "subcarrier_spacing"
       description: "Subcarrier spacing in Hz"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: Subcarrier Spacing (Hz)
       # Cyclic prefix mode
     - sigmf_parameter_name: "cp_mode"
       description: "Cyclic prefix mode"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: "Cyclic Prefix Mode"
     # SSB configuration
     - sigmf_parameter_name: "ssb:config"
       description: "SSB Configuration set"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: "Configuration Set"
     # SSB subcarrier spacing
     - sigmf_parameter_name: "ssb:subcarrier_spacing"
       description: "subcarrier spacing"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: "Subcarrier Spacing Common"
     # SSB periodicity
     - sigmf_parameter_name: "ssb:periodicity"
       description: "SSB Periodicity"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: "Periodicity"
     # Sampling rate in Hz
     - sigmf_parameter_name: "sample_rate"
       description: "Sampling rate in Hz"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: "sample_rate_hz"
     # Test Model
     - sigmf_parameter_name: "test_model"
       description: "Test Model"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: "Test Model"
     # pdsch Modulation
     - sigmf_parameter_name: "pdsch:modulation"
       description: "PDSCH modulation"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: "DL Modulation Type" # not exact name, since it depends if the waveform created based on test model or user custmized. 
         value_map: # simu value : SigMF value 
           "8PSK": "8_psk"
@@ -115,7 +110,7 @@ transmitter:
     # pusch Modulation
     - sigmf_parameter_name: "pusch:modulation"
       description: "PUSCH modulation"
-      nr_ni_rfmx_rfws_parameter:
+      5gnr_ni_rfmx_rfws_parameter:
         name: "UL Modulation Type" # not exact name
         value_map: # simu value : SigMF value 
           "8PSK": "8_psk"
@@ -132,11 +127,6 @@ transmitter:
       description: "waveform generator"
       lte_ni_rfmx_rfws_parameter: 
         name: 'generator'
-    # standard
-    - sigmf_parameter_name: "standard"
-      description: "Standard such as LTE, NR, ... etc"
-      lte_ni_rfmx_rfws_parameter:
-        name: "standard" # It is called in RFWS "factory"
     # bandwidth
     - sigmf_parameter_name: "bandwidth"
       description: "LTE bandwidth"
@@ -213,11 +203,6 @@ transmitter:
       description: "waveform generator"
       radar_neu_parameter: 
         name: 'generator'
-    # standard
-    - sigmf_parameter_name: "standard"
-      description: "Standard such as LTE, NR, ... etc"
-      radar_neu_parameter:
-        name: "standard"
     # Sampling rate in Hz
     - sigmf_parameter_name: "sample_rate"
       description: "Sampling rate in Hz"
@@ -261,11 +246,6 @@ transmitter:
       description: "waveform generator"
       802.11_ieee_gen_matlab_parameter: 
         name: 'generator'
-    # standard 
-    - sigmf_parameter_name: "standard"
-      description: "Standard"
-      802.11_ieee_gen_matlab_parameter: 
-        name: 'standard'
     # modulation
     - sigmf_parameter_name: "modulation"
       description: "modulation"
