@@ -21,7 +21,7 @@
   "comment: user comment",  
   "DeviceName: Arbitrary device name, type=str",
   "RFmode:Tx or Rx, type=str",
-  "type: USRP type, for example: x4xx, type=str",
+  "type: USRP type, for example: x300, x4xx, type=str",
   "IPaddress: IP address of USRP, type=str",
   "....Note: USRP type and IPaddress will be used to create Device args to use when connecting to the USRP",
   "Seqtype: The parameter values can be given in range (start, stop, step), list, or single.",
@@ -48,7 +48,7 @@
   "channels: Rx Channel selection (0,1)",
   "reference: Rx sync reference source (internal, external, gpsdo, type = str",    
   "duration: Rx Time duration of IQ data acquisition, type=float", 
-  "channel_attenuation: expected channel attenuation, type = float",
+  "channel_attenuation_db: expected channel attenuation in dB, type = float",
   "tx_reference: Tx sync reference source (internal, external, gpsdo, type = str",
   "tx_radio_id: radio block to use (e.g., 0 or 1), type = int",
   "tx_radio_chan: radio channel to use, type = int",
@@ -60,7 +60,7 @@
   "general_config": {
     "rx_recorded_data_path": "/home/user/workarea/recorded-data",
     "rx_recorded_data_saving_format": "SigMF",
-    "nrecords": 5,
+    "nrecords": 1,
     "txs_execution": "parallel",
     "wireless_link_parameter_map": "wireless_link_parameter_map.yaml",
     "enable_console_logging": "True",
@@ -79,10 +79,10 @@
         "rate":           {"SeqType": "list",     "Values": [30.72e6]},
         "bandwidth":      {"SeqType": "list",     "Values": [20e6]},
         "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
-        "waveform_file_name": {"SeqType": "list", "Values": ["NR_FR1_DL_TDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1"]},
-        "waveform_path":  {"SeqType": "single",   "Values": "waveforms/nr/"},
+        "waveform_file_name": {"SeqType": "list", "Values": ["IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame"]},
+        "waveform_path":  {"SeqType": "single",   "Values": "waveforms/wifi/"},
         "waveform_path_type":  {"SeqType": "single",   "Values": "relative"},
-        "waveform_format":{"SeqType": "single",   "Values": "tdms"},
+        "waveform_format":{"SeqType": "single",   "Values": "matlab_ieee"},
         "gain":           {"SeqType": "list",     "Values": [20]},
         "antenna":        {"SeqType": "list",     "Values": ["TX/RX"]}
       }
@@ -109,7 +109,7 @@
           "antenna":      {"SeqType": "list",     "Values":  ["TX/RX"]},
           "clock_reference":    {"SeqType": "list",     "Values": ["internal"]},
           "duration":     {"SeqType": "list",     "Values": [0.01]},
-          "channel_attenuation": { "SeqType": "single","Values": 33}
+          "channel_attenuation_db": { "SeqType": "single","Values": 33}
       }
     }
   ]

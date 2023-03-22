@@ -21,7 +21,7 @@
     "comment: user comment",  
     "DeviceName: Arbitrary device name, type=str",
     "RFmode:Tx or Rx, type=str",
-    "type: USRP type, for example: x4xx, type=str",
+    "type: USRP type, for example: x300, x4xx, type=str",
     "IPaddress: IP address of USRP, type=str",
     "....Note: USRP type and IPaddress will be used to create Device args to use when connecting to the USRP",
     "Seqtype: The parameter values can be given in range (start, stop, step), list, or single.",
@@ -48,7 +48,7 @@
     "channels: Rx Channel selection (0,1)",
     "reference: Rx sync reference source (internal, external, gpsdo, type = str",    
     "duration: Rx Time duration of IQ data acquisition, type=float", 
-    "channel_attenuation: expected channel attenuation, type = float",
+    "channel_attenuation_db: expected channel attenuation in dB, type = float",
     "tx_reference: Tx sync reference source (internal, external, gpsdo, type = str",
     "tx_radio_id: radio block to use (e.g., 0 or 1), type = int",
     "tx_radio_chan: radio channel to use, type = int",
@@ -143,7 +143,7 @@
             "antenna":      {"SeqType": "list",     "Values":  ["TX/RX"]},
             "clock_reference":    {"SeqType": "list",     "Values": ["internal"]},
             "duration":     {"SeqType": "list",     "Values": [0.01]},
-            "channel_attenuation": { "SeqType": "single","Values": 33}
+            "channel_attenuation_db": { "SeqType": "single","Values": 33}
         }
       }
     ]

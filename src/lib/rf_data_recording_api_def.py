@@ -87,13 +87,13 @@ class RFDataRecorderAPI:
             self.waveform_file_name = iteration_config[tx_id + "_waveform_file_name"]
             # "path to TDMS/mat/... file, type = str ",
             self.waveform_path = iteration_config[tx_id + "_waveform_path"]
-            # waveform_path_type: type of waveform path:relative or absolute 
+            # waveform_path_type: type of waveform path:relative or absolute
             # absolute: Full path to waveform should be given to use waveforms from another directory
             # relative: path related to waveform folder given with the API
             self.waveform_path_type = iteration_config[tx_id + "_waveform_path_type"]
             if self.waveform_path_type == "relative":
                 dir_path = os.path.dirname(__file__)
-                src_path = os.path.split(dir_path)[0] 
+                src_path = os.path.split(dir_path)[0]
                 self.waveform_path = os.path.join(src_path, self.waveform_path)
             elif self.waveform_path_type == "absolute":
                 pass
@@ -182,7 +182,7 @@ class RFDataRecorderAPI:
             self.coerced_rx_lo_source = 0.0
             # channel parameters of this RX
             # expected channel atteuntion, type = float"
-            self.channel_attenuation = iteration_config[rx_id + "_channel_attenuation"]
+            self.channel_attenuation_db = iteration_config[rx_id + "_channel_attenuation_db"]
 
     ## Get Hw type, subtype and HW ID of TX and RX stations
     # For USRP:
@@ -290,7 +290,7 @@ class RFDataRecorderAPI:
                     tx_data_recording_api_config.waveform_config["bandwidth"]
                 )
                 tx_data_recording_api_config.rate = tx_data_recording_api_config.waveform_config[
-                    "sampling_rate"
+                    "sample_rate"
                 ]
             txs_data_recording_api_config[tx_idx] = tx_data_recording_api_config
 
@@ -414,7 +414,9 @@ class RFDataRecorderAPI:
                 args_out = args_in + ",master_clock_rate=250e6"
         # Derive master clock rate for other USRPs is not supported yet
         else:
-            print("Warning: The code can derive the master clock rate for X410/X310/X300 USRPs only.")
+            print(
+                "Warning: The code can derive the master clock rate for X410/X310/X300 USRPs only."
+            )
             print("         The default master clock rate will be used.")
             args_out = args_in
 
@@ -457,7 +459,7 @@ class RFDataRecorderAPI:
         warnings.filterwarnings("ignore")
         for tx_idx, tx_data_recording_api_config in enumerate(txs_data_recording_api_config):
             iteration_config[
-                RFDataRecorderAPI.RFmode[0] + str(tx_idx + 1) + "_sampling_rate"
+                RFDataRecorderAPI.RFmode[0] + str(tx_idx + 1) + "_sample_rate"
             ] = tx_data_recording_api_config.rate
             iteration_config[
                 RFDataRecorderAPI.RFmode[0] + str(tx_idx + 1) + "_bandwidth"
@@ -465,7 +467,7 @@ class RFDataRecorderAPI:
 
         for rx_idx, rx_data_recording_api_config in enumerate(rxs_data_recording_api_config):
             iteration_config[
-                RFDataRecorderAPI.RFmode[1] + str(rx_idx + 1) + "_sampling_rate"
+                RFDataRecorderAPI.RFmode[1] + str(rx_idx + 1) + "_sample_rate"
             ] = rx_data_recording_api_config.rate
             iteration_config[
                 RFDataRecorderAPI.RFmode[1] + str(rx_idx + 1) + "_bandwidth"
@@ -497,7 +499,7 @@ class RFDataRecorderAPI:
             for i in range(0, 4):
                 index = i % 4
                 print("\rRF streaming {}".format(list[index]), end="")
-                time.sleep(0.1) # sleep for 100ms
+                time.sleep(0.1)  # sleep for 100ms
 
     ## Start execution - TX emitters in parallel
     def start_execution_txs_in_parallel(
@@ -515,9 +517,7 @@ class RFDataRecorderAPI:
         for idx, tx_data_recording_api_config in enumerate(txs_data_recording_api_config):
             process = threading.Thread(
                 target=run_rf_replay_data_transmitter.rf_replay_data_transmitter,
-                args=(
-                    txs_data_recording_api_config[idx],
-                ),
+                args=(txs_data_recording_api_config[idx],),
             )
             process.start()
             threads.append(process)
@@ -581,9 +581,7 @@ class RFDataRecorderAPI:
             # start transmitter
             process = threading.Thread(
                 target=run_rf_replay_data_transmitter.rf_replay_data_transmitter,
-                args=(
-                    txs_data_recording_api_config[tx_idx],
-                ),
+                args=(txs_data_recording_api_config[tx_idx],),
             )
             process.start()
             threads.append(process)
@@ -596,7 +594,7 @@ class RFDataRecorderAPI:
             # ------ As soon as the Rx data is recorded, the txs will stop data tranmission
             # ------ The flag "sync_settings.stop_tx_signal_called" is used for that
 
-            # Read tx config of related Tx to be stored in meta-data 
+            # Read tx config of related Tx to be stored in meta-data
             # In case of squential tranmissions, store only the meta-data of active Tx.
             txs_data_recording_api_config_i = [txs_data_recording_api_config[tx_idx]]
             for rx_idx, rx_data_recording_api_config in enumerate(rxs_data_recording_api_config):

@@ -42,7 +42,7 @@ transmitters_config:
   -
     RFmode: "Tx"  # Tx or Rx, type=str
     # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
-    type: "x4xx"  # USRP type, for example: x4xx, type=str.
+    type: "x4xx"  # USRP type, for example: x300, x4xx, type=str.
     IPaddress: "192.168.40.2" # IP address of USRP, type=str.
     Parameters:
       freq:       # RF target center frequency in Hz, type = float.
@@ -91,7 +91,7 @@ transmitters_config:
   -
     RFmode: "Tx"  # Tx or Rx, type=str
     # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
-    type: "x4xx"  # USRP type, for example: x4xx, type=str.
+    type: "x4xx"  # USRP type, for example: x300, x4xx, type=str.
     IPaddress: "192.168.50.2" # IP address of USRP, type=str.
     Parameters:
       freq:       # RF target center frequency in Hz, type = float.
@@ -140,7 +140,7 @@ transmitters_config:
   - 
     RFmode: "Tx"  # Tx or Rx, type=str
     # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
-    type: "x4xx"  # USRP type, for example: x4xx, type=str.
+    type: "x4xx"  # USRP type, for example: x300, x4xx, type=str.
     IPaddress: "192.168.60.2" # IP address of USRP, type=str.
     Parameters:
       freq:       # RF target center frequency in Hz, type = float.

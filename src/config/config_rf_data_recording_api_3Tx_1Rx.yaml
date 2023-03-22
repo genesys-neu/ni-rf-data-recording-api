@@ -43,7 +43,7 @@ transmitters_config:
   -
     RFmode: "Tx"  # Tx or Rx, type=str
     # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
-    type: "x4xx"  # USRP type, for example: x4xx, type=str.
+    type: "x4xx"  # USRP type, for example: x300, x4xx, type=str.
     IPaddress: "192.168.40.2" # IP address of USRP, type=str.
     Parameters:
       freq:       # RF target center frequency in Hz, type = float.
@@ -92,7 +92,7 @@ transmitters_config:
   -
     RFmode: "Tx"  # Tx or Rx, type=str
     # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
-    type: "x4xx"  # USRP type, for example: x4xx, type=str.
+    type: "x4xx"  # USRP type, for example: x300, x4xx, type=str.
     IPaddress: "192.168.50.2" # IP address of USRP, type=str.
     Parameters:
       freq:       #  RF target center frequency in Hz, type = float.
@@ -141,7 +141,7 @@ transmitters_config:
   - 
     RFmode: "Tx"  # Tx or Rx, type=str
     # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
-    type: "x4xx"  # USRP type, for example: x4xx, type=str.
+    type: "x4xx"  # USRP type, for example: x300, x4xx, type=str.
     IPaddress: "192.168.60.2" # IP address of USRP, type=str.
     Parameters:
       freq:       # RF target center frequency in Hz, type = float.
@@ -216,7 +216,7 @@ receivers_config:
   -
     RFmode: "Rx"    # Tx or Rx, type=str.
     # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
-    type: "x4xx"    # USRP type, for example: x4xx, type=str.
+    type: "x4xx"    # USRP type, for example: x300, x4xx, type=str.
     IPaddress: "192.168.100.2" # IP address of USRP, type=str.
     Parameters:
       freq:         # RF target center frequency in Hz, type = float.
@@ -248,6 +248,6 @@ receivers_config:
       duration:   # Rx Time duration of IQ data acquisition, type=float.
         SeqType: "list"
         Values: [10.0e-3]
-      channel_attenuation: # Expected channel attenuation in dB, type = float.
+      channel_attenuation_db: # Expected channel attenuation in dB, type = float.
         SeqType: "single"
         Values: 33.0

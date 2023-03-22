@@ -47,8 +47,11 @@ def parse_args():
     """Parse the command line arguments"""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        #"-a", "--args", default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6", type=str
-        "-a", "--args", default="type=x4xx,addr=192.168.40.2,master_clock_rate=245.76e6", type=str
+        # "-a", "--args", default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6", type=str
+        "-a",
+        "--args",
+        default="type=x4xx,addr=192.168.40.2,master_clock_rate=245.76e6",
+        type=str,
     )
     parser.add_argument(
         "-o",
@@ -58,7 +61,9 @@ def parse_args():
     )
     parser.add_argument("-f", "--freq", default=2e9, type=float, help="RF center frequency in Hz")
     parser.add_argument("-r", "--rate", default=30.72e6, type=float, help="rate of radio block")
-    parser.add_argument("-b", "--bandwidth", default=20e6, type=float, help="bandwidth of radio block")
+    parser.add_argument(
+        "-b", "--bandwidth", default=20e6, type=float, help="bandwidth of radio block"
+    )
     parser.add_argument(
         "-d", "--duration", default=10e-3, type=float, help="time duration of IQ data acquisition"
     )
@@ -86,10 +91,10 @@ def main():
 
     # Check the receive target path is valid, else create folder
     if not os.path.isdir(args.rx_recorded_data_path):
-        print('Create new folder for recorded data: ' + str(args.rx_recorded_data_path))
+        print("Create new folder for recorded data: " + str(args.rx_recorded_data_path))
         os.makedirs(args.rx_recorded_data_path)
 
-    isX4xx=bool(args.args.find('x4xx'))
+    isX4xx = bool(args.args.find("x4xx"))
 
     # Define number of samples to fetch
     num_samps = int(np.ceil(args.duration * args.rate))
@@ -145,17 +150,18 @@ def main():
     # Set TX/RX port as receive port
     for index in args.channels:
         usrp.set_rx_antenna(args.antenna, index)
-        # set the IF filter bandwidth   
-        if (not isX4xx) : usrp.set_rx_bandwidth(args.bandwidth, index)
+        # set the IF filter bandwidth
+        if not isX4xx:
+            usrp.set_rx_bandwidth(args.bandwidth, index)
     # set RF Configure and capture zero sample for RF Settling time
     usrp.recv_num_samps(
-            0,
-            args.freq,
-            args.rate,
-            args.channels,
-            args.gain,
-            streamer=rx_streamer,
-        )
+        0,
+        args.freq,
+        args.rate,
+        args.channels,
+        args.gain,
+        streamer=rx_streamer,
+    )
     # run data recording loop over specified number of iterations
     print("Start fetching RX data from USRP...")
     for i in range(args.nrecords):
@@ -173,7 +179,7 @@ def main():
 
         # get USRP coerced values only once if we running the same config
         if i == 0:
-            #In the future, if we are going to extend the code to capture from multiple channels, we should update the meta-data also. We can read those coerced values in a loop based on the channels order.
+            # In the future, if we are going to extend the code to capture from multiple channels, we should update the meta-data also. We can read those coerced values in a loop based on the channels order.
             print(f"Requesting RX Freq: {(args.freq / 1e6)} MHz...")
             args.coerced_rx_freq = usrp.get_rx_freq(args.channels[0])
             print(f"Actual RX Freq: {args.coerced_rx_freq / 1e6}  MHz...")
@@ -182,18 +188,20 @@ def main():
             print(f"Requesting RX Rate: {(args.rate / 1e6) } Msps...")
             args.coerced_rx_rate = usrp.get_rx_rate(args.channels[0])
             print(f"Actual RX Rate: {(args.coerced_rx_rate / 1e6)} Msps...")
-            print(f"** RX Sampling Rate Offset: {args.coerced_rx_rate - args.rate}  Sample per second...")
-            
+            print(
+                f"** RX Sampling Rate Offset: {args.coerced_rx_rate - args.rate}  Sample per second..."
+            )
+
             print(f"Requesting RX Gain: {args.gain} dB...")
             args.coerced_rx_gain = usrp.get_rx_gain(args.channels[0])
             print(f"Actual RX Gain: {args.coerced_rx_gain} dB...")
-            
+
             print(f"Requesting RX Bandwidth: {(args.bandwidth / 1e6)} MHz...")
-            args.coerced_rx_bandwidth = usrp.get_rx_bandwidth(args.channels[0]) 
+            args.coerced_rx_bandwidth = usrp.get_rx_bandwidth(args.channels[0])
             print(f"Actual RX Bandwidth: {args.coerced_rx_bandwidth / 1e6} MHz...")
             print("Note: Not all doughterboards support variable analog bandwidth")
 
-            #args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data yet
+            # args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data yet
 
         # Get time stamp
         time_stamp_micro_sec = datetime.now().strftime("%Y_%m_%d-%H_%M_%S_%f")
@@ -244,8 +252,8 @@ def main():
             "frequency_range": "FR1",
             "link_direction": "Downlink",
             "test_model": "TM3.1",
-            "bandwidth": "20000000",
-            "subcarrier_spacing": "30000",
+            "bandwidth": 20000000,
+            "subcarrier_spacing": 30000,
             "duplexing": "FDD",
             "multiplexing": "OFDM",
             "multiple_access": "OFDM",
@@ -257,10 +265,10 @@ def main():
             "hw": "USRP X310",
             "hw_subtype": "UBX-120",
             "manufacturer": "NI",
-            "frequency": "20000000000",
-            "sample_rate": "30720000",
-            "bandwidth": "160000000",
-            "gain_tx": "20",
+            "frequency": 20000000000,
+            "sample_rate": 30720000,
+            "bandwidth": 160000000,
+            "gain_tx": 20,
             "clock_reference": "internal",
         }
 
@@ -271,7 +279,7 @@ def main():
 
         # get channel info
         channel_info = {
-            "attenuation": "33",
+            "attenuation_db": 33,
         }
         # get rx info
         rx_info = {
@@ -292,7 +300,7 @@ def main():
                 + args.coerced_rx_rate / 2,  # args.freq + args.rate / 2,
                 SigMFFile.LABEL_KEY: "5GNR_FR1",
                 SigMFFile.COMMENT_KEY: "USRP RX IQ DATA CAPTURE",
-                "num_tx_signals": "uknown",
+                "num_transmitters": "uknown",
                 "system_components:transmitter": txs_info,
                 "system_components:channel": channel_info,
                 "system_components:receiver": rx_info,

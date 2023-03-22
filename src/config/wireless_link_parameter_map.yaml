@@ -12,179 +12,308 @@
 #             - Use different waveform creator that has Different naming scheme
 #             - Define your own customized standard or new wireless system
 #             - All changes are limited to parameter map dictionary
+# the parameter name of waveform generator has the following style:
+# StandardName_WaveformGenerator_parameter, i.e. 
+# if standard = nr, WaveformGenerator: ni_rfmx_rfws, then the parameter name: nr_ni_rfmx_rfws_parmater
 # =====================================================================================
 # ======== list of parameter pairs between waveform config and API~ SigMF Meta-Data ===
 # =====================================================================================
-
 transmitter:
   # 5G NR subfield
   nr:
+    # waveform generator
+    - sigmf_parameter_name: "generator"
+      description: "waveform generator"
+      nr_ni_rfmx_rfws_parameter: 
+        name: 'generator'
     # standard
     - sigmf_parameter_name: "standard"
       description: "Standard such as LTE, NR, ... etc"
-      nr_rfmx_rfws_parameter_name: "factory"
+      nr_ni_rfmx_rfws_parameter:
+        name: "standard" # It is called in RFWS "factory"
     # Frequency Range
     - sigmf_parameter_name: "frequency_range"
       description: "Frequency Range"
-      nr_rfmx_rfws_parameter_name: "Frequency Range"
+      nr_ni_rfmx_rfws_parameter:
+        name: "Frequency Range"
+        value_map: # simu value : SigMF value
+          "Range 1": "FR1" 
+          "Range 2": "FR2" 
     # bandwidth
     - sigmf_parameter_name: "bandwidth"
       description: "5G NR bandwidth"
-      nr_rfmx_rfws_parameter_name: "Bandwidth (Hz)"
+      nr_ni_rfmx_rfws_parameter:
+        name: "Bandwidth (Hz)"
     # Link direction
     - sigmf_parameter_name: "link_direction"
       description: "Link direction"
-      nr_rfmx_rfws_parameter_name: "Link Direction"
+      nr_ni_rfmx_rfws_parameter:
+        name: "Link Direction"
+    # cell ID
+    - sigmf_parameter_name: "cell_id"
+      description: "cell ID"
+      nr_ni_rfmx_rfws_parameter:
+        name: "Cell ID"
+    # Number of frames
+    - sigmf_parameter_name: "num_frames"
+      description: Number of frames
+      nr_ni_rfmx_rfws_parameter:
+        name: 'Number of Frames'
     # Frame structure
     - sigmf_parameter_name: "frame_structure"
       description: "5G NR duplexing scheme FDD, TDD, user defined"
-      nr_rfmx_rfws_parameter_name: ""
+      nr_ni_rfmx_rfws_parameter:
+        name: "Duplex Scheme" # not exact, since it depends if the waveform is for UL or DL
     # Subcarrier spacing in Hz
     - sigmf_parameter_name: "subcarrier_spacing"
       description: "Subcarrier spacing in Hz"
-      nr_rfmx_rfws_parameter_name: Subcarrier Spacing (Hz)
+      nr_ni_rfmx_rfws_parameter:
+        name: Subcarrier Spacing (Hz)
+      # Cyclic prefix mode
+    - sigmf_parameter_name: "cp_mode"
+      description: "Cyclic prefix mode"
+      nr_ni_rfmx_rfws_parameter:
+        name: "Cyclic Prefix Mode"
     # SSB configuration
-    - sigmf_parameter_name: "ssb_config_set"
+    - sigmf_parameter_name: "ssb:config"
       description: "SSB Configuration set"
-      nr_rfmx_rfws_parameter_name: "Configuration Set"
+      nr_ni_rfmx_rfws_parameter:
+        name: "Configuration Set"
+    # SSB subcarrier spacing
+    - sigmf_parameter_name: "ssb:subcarrier_spacing"
+      description: "subcarrier spacing"
+      nr_ni_rfmx_rfws_parameter:
+        name: "Subcarrier Spacing Common"
     # SSB periodicity
-    - sigmf_parameter_name: "ssb_periodicity"
+    - sigmf_parameter_name: "ssb:periodicity"
       description: "SSB Periodicity"
-      nr_rfmx_rfws_parameter_name: "Periodicity"
+      nr_ni_rfmx_rfws_parameter:
+        name: "Periodicity"
     # Sampling rate in Hz
-    - sigmf_parameter_name: "sampling_rate"
+    - sigmf_parameter_name: "sample_rate"
       description: "Sampling rate in Hz"
-      lte_rfmx_rfws_parameter_name: "sample_rate_hz"
-    # Carrier CC Index
-    - sigmf_parameter_name: "carrier_CC_index"
-      description: "Carrier CC Index"
-      lte_rfmx_rfwss_parameter_name: "CarrierCCIndex"
+      nr_ni_rfmx_rfws_parameter:
+        name: "sample_rate_hz"
     # Test Model
     - sigmf_parameter_name: "test_model"
       description: "Test Model"
-      nr_rfmx_rfws_parameter_name: "TestModel"
+      nr_ni_rfmx_rfws_parameter:
+        name: "Test Model"
     # pdsch Modulation
     - sigmf_parameter_name: "pdsch:modulation"
       description: "PDSCH modulation"
-      nr_rfmx_rfws_parameter_name: ""
+      nr_ni_rfmx_rfws_parameter:
+        name: "DL Modulation Type" # not exact name, since it depends if the waveform created based on test model or user custmized. 
+        value_map: # simu value : SigMF value 
+          "8PSK": "8_psk"
+          "QPSK": "qpsk"
+          "QAM16": "16_qam"
+          "QAM64": "64_qam"
+          "QAM256": "256_qam"
+          "QAM1024": "1024_qam"
+          "Standard": ""
     # pusch Modulation
     - sigmf_parameter_name: "pusch:modulation"
       description: "PUSCH modulation"
-      nr_rfmx_rfws_parameter_name: ""
+      nr_ni_rfmx_rfws_parameter:
+        name: "UL Modulation Type" # not exact name
+        value_map: # simu value : SigMF value 
+          "8PSK": "8_psk"
+          "QPSK": "qpsk"
+          "QAM16": "16_qam"
+          "QAM64": "64_qam"
+          "QAM256": "256_qam"
+          "QAM1024": "1024_qam"
+          "Standard": ""
   # LTE subfield
   lte:
+    # waveform generator
+    - sigmf_parameter_name: "generator"
+      description: "waveform generator"
+      lte_ni_rfmx_rfws_parameter: 
+        name: 'generator'
     # standard
     - sigmf_parameter_name: "standard"
       description: "Standard such as LTE, NR, ... etc"
-      nr_rfmx_rfws_parameter_name: "factory"
+      lte_ni_rfmx_rfws_parameter:
+        name: "standard" # It is called in RFWS "factory"
     # bandwidth
     - sigmf_parameter_name: "bandwidth"
       description: "LTE bandwidth"
-      lte_rfmx_rfws_parameter_name: "Bandwidth"
+      lte_ni_rfmx_rfws_parameter:
+        name: "Bandwidth"
     # Frame structure
     - sigmf_parameter_name: "frame_structure"
       description: "LTE frame structure"
-      lte_rfmx_rfws_parameter_name: "factory"
+      lte_ni_rfmx_rfws_parameter:
+        name: "factory"
     # Link direction
     - sigmf_parameter_name: "link_direction"
       description: "Link direction"
-      lte_rfmx_rfws_parameter_name: "LinkDirection"
+      lte_ni_rfmx_rfws_parameter:
+        name: "LinkDirection"
+    # cell ID
+    - sigmf_parameter_name: "cell_id"
+      description: "cell ID"
+      lte_ni_rfmx_rfws_parameter:
+        name: "CellID"
     # test model
     - sigmf_parameter_name: "test_model"
       description: "Test Model"
-      lte_rfmx_rfws_parameter_name: "TestModel"
+      lte_ni_rfmx_rfws_parameter:
+        name: "TestModel"
     # Sampling rate in Hz
-    - sigmf_parameter_name: "sampling_rate"
+    - sigmf_parameter_name: "sample_rate"
       description: "Sampling rate in Hz"
-      lte_rfmx_rfws_parameter_name: ""
+      lte_ni_rfmx_rfws_parameter:
+        name: "sample_rate"
     # Subcarrier spacing in Hz
     - sigmf_parameter_name: "subcarrier_spacing"
       description: "Subcarrier spacing in Hz"
-      lte_rfmx_rfws_parameter_name: ""
+      lte_ni_rfmx_rfws_parameter:
+        name: "subcarrier_spacing"
+    # Cyclic prefix mode
+    - sigmf_parameter_name: "cp_mode"
+      description: "Cyclic prefix mode"
+      lte_ni_rfmx_rfws_parameter:
+        name: "CyclicPrefixType"
+        value_map: # simu value : SigMF value 
+          "0": "normal"
+          "1": "extended"
     # PDSCH: modulation
     - sigmf_parameter_name: "pdsch:modulation"
       description: "PDSCH: modulation"
-      lte_rfmx_rfws_parameter_name: 'PDSCHCodeWord1ModulationType'
+      lte_ni_rfmx_rfws_parameter:
+        name: 'PDSCHCodeWord1ModulationType'
+        value_map: # simu value : SigMF value 
+          "8PSK": "8_psk"
+          "QPSK": "qpsk"
+          "QAM16": "16_qam"
+          "QAM64": "64_qam"
+          "QAM256": "256_qam"
+          "QAM1024": "1024_qam"
+          "Standard": ""
     # PUSCH: modulation
     - sigmf_parameter_name: "pusch:modulation"
       description: "PUSCH: modulation"
-      lte_rfmx_rfws_parameter_name: 'User Defined Modulation Type'
+      lte_ni_rfmx_rfws_parameter:
+        name: 'User Defined Modulation Type'
+        value_map: # simu value : SigMF value 
+          "8PSK": "8_psk"
+          "QPSK": "qpsk"
+          "QAM16": "16_qam"
+          "QAM64": "64_qam"
+          "QAM256": "256_qam"
+          "QAM1024": "1024_qam"
+          "Standard": ""
   # Radar  
   radar:
+    # waveform generator
+    - sigmf_parameter_name: "generator"
+      description: "waveform generator"
+      radar_neu_parameter: 
+        name: 'generator'
     # standard
     - sigmf_parameter_name: "standard"
       description: "Standard such as LTE, NR, ... etc"
-      radar_parameter_name: "standard"
+      radar_neu_parameter:
+        name: "standard"
     # Sampling rate in Hz
-    - sigmf_parameter_name: "sampling_rate"
+    - sigmf_parameter_name: "sample_rate"
       description: "Sampling rate in Hz"
-      radar_parameter_name: "sampling_rate"
+      radar_neu_parameter:
+        name: "sample_rate"
     # bandwidth
     - sigmf_parameter_name: "bandwidth"
       description: "bandwidth in Hz"
-      radar_parameter_name: "bandwidth"
+      radar_neu_parameter:
+        name: "bandwidth"
     # time duration
     - sigmf_parameter_name: "time_duration"
       description: "Time duration in seconds"
-      radar_parameter_name: "time_duration"
+      radar_neu_parameter:
+        name: "time_duration"
     # Pulse modulation type
     - sigmf_parameter_name: "pulse_modulation_type"
       description: "pulse modulation type"
-      radar_parameter_name: "pulse_modulation_type"
+      radar_neu_parameter:
+        name: "pulse_modulation_type"
     # Pulse Width
     - sigmf_parameter_name: "pulse_width"
       description: "pulse width"
-      radar_parameter_name: "pulse_width" 
+      radar_neu_parameter:
+        name: "pulse_width" 
     # Number of pulses per burst
     - sigmf_parameter_name: "pulses_per_burst"
       description: "Number of pulses per burst"
-      radar_parameter_name: "pulses_per_burst" 
+      radar_neu_parameter:
+        name: "pulses_per_burst" 
     # Pulse repetition rate per second
-    - sigmf_parameter_name: "pulse_repetition_rate_per_sec"
+    - sigmf_parameter_name: "pulse_repetition_rate_hz"
       description: "Pulse repetition rate per second"
-      radar_parameter_name: "pulse_repetition_rate_per_sec"  
+      radar_neu_parameter:
+        name: "pulse_repetition_rate_hz"  
 
-  # 802.11 IEEE Waveform Generator: waveform data config in matlab format  
-  802.11_ieee_gen_matlab:
+  # 802.11 IEEE Waveform Generator: waveform data config in matlab format   
+  wifi:
+    # waveform generator
+    - sigmf_parameter_name: "generator"
+      description: "waveform generator"
+      802.11_ieee_gen_matlab_parameter: 
+        name: 'generator'
     # standard 
     - sigmf_parameter_name: "standard"
       description: "Standard"
-      802.11_ieee_gen_matlab_parameter_name: 'standard'
+      802.11_ieee_gen_matlab_parameter: 
+        name: 'standard'
     # modulation
     - sigmf_parameter_name: "modulation"
       description: "modulation"
-      802.11_ieee_gen_matlab_parameter_name: 'mods'
-    # modulation
-    - sigmf_parameter_name: "MCS"
+      802.11_ieee_gen_matlab_parameter: 
+        name: 'mods'
+        value_map: # simu value : SigMF value
+          "1": "bpsk" 
+          "2": "qpsk"
+          "4": "16_qam"
+          "6": "64_qam"
+          "8": "256_qam"
+    # modulation and coding scheme
+    - sigmf_parameter_name: "mcs"
       description: "modulation and coding scheme"
-      802.11_ieee_gen_matlab_parameter_name: 'mcs'
+      802.11_ieee_gen_matlab_parameter:
+        name: 'mcs'
     # code rate
     - sigmf_parameter_name: "code_rate"
       description: "Code rate"
-      802.11_ieee_gen_matlab_parameter_name: 'crate'
+      802.11_ieee_gen_matlab_parameter:
+        name: 'crate'
     # Scrampling Seed
-    - sigmf_parameter_name: "scrampling_seed"
-      description: "Scrampling Seed"
-      802.11_ieee_gen_matlab_parameter_name: 'scram_seed'
-      # Number of Symbols
-    - sigmf_parameter_name: "num_symbols"
-      description: "Number of Symbols"
-      802.11_ieee_gen_matlab_parameter_name: 'N_sym'
+    - sigmf_parameter_name: "scrambling_seed"
+      description: "Scrambling Seed"
+      802.11_ieee_gen_matlab_parameter: 
+        name: 'scram_seed'
+    # Number of OFDM Symbols
+    - sigmf_parameter_name: "num_ofdm_symbols"
+      description: "Number of OFDM Symbols"
+      802.11_ieee_gen_matlab_parameter: 
+        name: 'N_sym'
     # bandwidth
     - sigmf_parameter_name: "bandwidth"
       description: "bandwidth in Hz"
-      802.11_ieee_gen_matlab_parameter_name: "BW_str"
+      802.11_ieee_gen_matlab_parameter: 
+        name: "BW_str"
     # Sampling rate in Hz
-    - sigmf_parameter_name: "sampling_rate"
-      description: "Sampling rate in Hz"
-      802.11_ieee_gen_matlab_parameter_name: "BW_str"
+    - sigmf_parameter_name: "sample_rate"
+      description: "Sample rate in Hz"
+      802.11_ieee_gen_matlab_parameter: 
+        name: "BW_str"
     # MAC Frame Type
-    - sigmf_parameter_name: "MAC_frame_format"
+    - sigmf_parameter_name: "mac_frame_format"
       description: "MAC Frame format"
-      802.11_ieee_gen_matlab_parameter_name: "format"
+      802.11_ieee_gen_matlab_parameter: 
+        name: "format"
     # MAC Frame Type
-    - sigmf_parameter_name: "PSDU_length_bytes"
+    - sigmf_parameter_name: "psdu_length_bytes"
       description: "PSDU length in bytes"
-      802.11_ieee_gen_matlab_parameter_name: "PSDU_length"
- 
-
+      802.11_ieee_gen_matlab_parameter: 
+        name: "PSDU_length"
