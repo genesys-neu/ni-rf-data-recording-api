@@ -30,8 +30,12 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config, 
 
     # Write recorded data to file
     # Get time stamp
-    time_stamp_micro_sec = datetime.now().strftime("%Y_%m_%d-%H_%M_%S_%f")
-    time_stamp_milli_sec = time_stamp_micro_sec[:-3]
+    if general_config["use_tx_timestamp"]:
+        prefix_length = len("tx_waveform_")
+        time_stamp_milli_sec = txs_args[0].waveform_file_name[prefix_length:]
+    else:
+        time_stamp_micro_sec = datetime.now().strftime("%Y_%m_%d-%H_%M_%S_%f")
+        time_stamp_milli_sec = time_stamp_micro_sec[:-3]
 
     rx_data_file_name = rx_args.captured_data_file_name + str(idx) + "-" + time_stamp_milli_sec
     dataset_filename = rx_data_file_name + ".sigmf-data"
@@ -56,7 +60,7 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config, 
             SigMFFile.HW_KEY: rx_args.hw_type,
             # Disable DATASET key to mitigate the warning when read SIGMF data although it is given in the spec.
             # It seems SIGMF still has bug here
-            SigMFFile.DATASET_KEY: dataset_filename,
+            # SigMFFile.DATASET_KEY: dataset_filename,
             SigMFFile.VERSION_KEY: sigmf.__version__,
         },
     )

@@ -33,6 +33,8 @@ general_config:
   description: "API Rx Only Test"
   # captured_data_file_name: user prefered name for rx captured data
   captured_data_file_name: "rx-waveform-td-rec-"
+  # use timestamp from TX waveform file for RX waveform file instead of generating a recent one
+  use_tx_timestamp: false
   # User Comment
   comment: "Using NI RF Data Collection API"
 # ============================================
