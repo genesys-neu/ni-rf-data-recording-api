@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MIT
 #
 """
-Save data and meta-data interfacen - SigMF format
+Save data and meta-data interface - SigMF format
 """
 # Description:
 #   Write data and meta-data to files in SigMF format
@@ -17,6 +17,7 @@ import datetime as dt
 from sigmf import SigMFFile
 from sigmf.utils import get_data_type_str
 import numpy as np
+from lib import data_format_conversion_lib
 
 # To use data time
 from datetime import datetime
@@ -30,7 +31,8 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config, 
 
     # Write recorded data to file
     # Get time stamp
-    if general_config["use_tx_timestamp"]:
+    print(general_config["use_tx_timestamp"])
+    if data_format_conversion_lib.str2bool(general_config["use_tx_timestamp"]):
         prefix_length = len("tx_waveform_")
         time_stamp_milli_sec = txs_args[0].waveform_file_name[prefix_length:]
     else:
@@ -78,11 +80,17 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config, 
 
     # Get tx waveform config
     txs_info = [{} for sub in range(len(txs_args))]
+    channel_info = [{} for sub in range(len(txs_args))]
     label = ""
+
     for idx, tx_args in enumerate(txs_args):
         signal_detail = tx_args.waveform_config
         standard = signal_detail["standard"]
-        signal_detail.pop("standard")
+        signal_info = {}
+        for key, value in signal_detail.items():
+            if key != "standard" and key != "generator":
+                signal_info[key] = value
+        # signal_detail.pop("standard")
         if idx == 0:
             label = standard
         else:
@@ -104,15 +112,18 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config, 
             "transmitter_id": str(idx),
             "signal:detail": {
                 "standard": standard,
-                standard: signal_detail,
+                "generator": signal_detail["generator"],
+                standard: signal_info,
             },
             "signal:emitter": signal_emitter,
         }
 
-    # get channel info
-    channel_info = {
-        "attenuation_db": float(rx_args.channel_attenuation_db),
-    }
+        # get channel info
+        channel_info[idx] = {
+            "transmitter_id": str(idx),
+            "attenuation_db": float(rx_args.channel_attenuation_db),
+        }
+
     # get rx info
     rx_info = {
         "manufacturer": "NI",
@@ -158,7 +169,7 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config, 
 # example:
 #         waveform name: ["NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1.tdms"]},
 #         ['NR', 'FR1', 'DL', 'FDD', 'SISO', 'BW-20MHz', 'CC-1', 'SCS-30kHz', 'Mod-64QAM', 'OFDM']
-# to do: Enhance the list to be as a dictonary
+# Note: Function not used anymore
 def get_tx_waveform_config_info(waveform_file_name):
     num_waveform_config_info = waveform_file_name.count("_")
     temp = waveform_file_name

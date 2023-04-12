@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MIT
 #
 ## Description:
-#   Used to plot time domain and freqeuncy domain of recorded IQ data
+#   Used to plot time domain and frequency domain of recorded IQ data
 #
 # Parameters:
 #   dataset_folder: specify path to folder of recorded data
@@ -15,19 +15,20 @@
 import os
 import numpy as np
 import scipy.signal as scipysig
+
 # import matplotlib as mpl
 import matplotlib.pyplot as plt
 from sigmf import SigMFFile, sigmffile
 
-#----------------------------------------------------------------
+# ----------------------------------------------------------------
 # Configuration
 # 1- specify folder
 dataset_folder = "/home/user/workarea/recorded-data"
 # 2- specify base filename
 dataset_filename_base = "rx-waveform-td-rec-0-2022_12_22-10_49_41_418"
-#---------------------------------------------------------------
+# ---------------------------------------------------------------
 
-# initalize local variables
+# initialize local variables
 plot_enabled = True
 # specify file name for meta data
 metadata_filename = os.path.join(dataset_folder, dataset_filename_base)
@@ -56,8 +57,8 @@ for idx, annotation in enumerate(annotations):
     # Get frequency edges of annotation (default to edges of capture)
     freq_start = annotation.get(SigMFFile.FLO_KEY)
     freq_stop = annotation.get(SigMFFile.FHI_KEY)
-    
-    data_type = "complex64" #signal_detail["data_type"]
+
+    data_type = "complex64"  # signal_detail["data_type"]
 
 # load data set
 dataset = metadata.read_samples().view(data_type).flatten()
@@ -79,7 +80,7 @@ if plot_enabled == True:
     f, Pxx_den = scipysig.periodogram(
         plot_signal, fs=sample_rate, nfft=None, window="hamming", scaling="spectrum"
     )
-    plt.plot(f, 10*np.log10(Pxx_den))
+    plt.plot(f, 10 * np.log10(Pxx_den))
     plt.title("Frequency domain signal (Spectrum)")
     plt.xlabel("frequency [Hz]")
     plt.ylabel("PSD")

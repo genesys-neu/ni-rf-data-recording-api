@@ -7,7 +7,7 @@
 TX Waveform Playback
 """
 # Description:
-#   Use for TX waveform playback. Given wavform can be in TDMS or MATLAB format
+#   Use for TX waveform playback. Given waveform can be in TDMS or MATLAB format
 #
 # Parameters:
 #   Given from the top-level script based on the API configuration file
@@ -47,9 +47,9 @@ def rf_replay_data_transmitter(args):
     # Print help message
     print("UHD/RFNoC Replay samples from file ")
     print("This application uses the Replay block to playback data from a file to a radio")
-    
+
     # Check if motherboard type is x4xx
-    isX4xx=bool(args.hw_type.find('x4xx'))
+    isX4xx = bool(args.hw_type.find("x4xx"))
 
     # ************************************************************************
     # Create device and block controls
@@ -128,7 +128,7 @@ def rf_replay_data_transmitter(args):
             duc_ctrl.set_freq(-args.lo_offset, args.duc_chan)
         else:
             raise Exception(
-                "ERROR: LO Freqeuncy offset is:",
+                "ERROR: LO Frequency offset is:",
                 args.lo_offset,
                 ". It should be greater than ",
                 args.bandwidth / 2,
@@ -137,7 +137,7 @@ def rf_replay_data_transmitter(args):
             )
     else:
         radio_ctrl.set_tx_frequency(args.freq, args.radio_chan)
-    coerced_tx_freq = radio_ctrl.get_tx_frequency(args.radio_chan) 
+    coerced_tx_freq = radio_ctrl.get_tx_frequency(args.radio_chan)
     print(f"Actual TX Freq: {coerced_tx_freq/ 1e6}  MHz...")
     print(f"** TX Carrier Frequency Offset: {coerced_tx_freq - args.freq}  Hz...")
 
@@ -156,7 +156,8 @@ def rf_replay_data_transmitter(args):
 
     # Set the analog front-end filter bandwidth
     print(f"Requesting TX Bandwidth: {(args.bandwidth / 1e6)} MHz...")
-    if (not isX4xx) : radio_ctrl.set_tx_bandwidth(args.bandwidth, args.radio_chan)
+    if not isX4xx:
+        radio_ctrl.set_tx_bandwidth(args.bandwidth, args.radio_chan)
     coerced_tx_bandwidth = radio_ctrl.get_tx_bandwidth(args.radio_chan)
     print(f"Actual TX Bandwidth: {coerced_tx_bandwidth / 1e6} MHz...")
     print("Note: Not all doughterboards support variable analog bandwidth")
@@ -197,7 +198,7 @@ def rf_replay_data_transmitter(args):
             args.waveform_path, args.waveform_file_name
         )
     else:
-        raise Exception("ERROR: Unkown or not supported tx waveform format.")
+        raise Exception("ERROR: Unknown or not supported tx waveform format.")
 
     # Get the file size
     file_size = len(tx_data_complex) * sample_size
@@ -292,7 +293,7 @@ def rf_replay_data_transmitter(args):
     time_spec = uhd.types.TimeSpec(0.0)
     replay_ctrl.play(replay_buff_addr, replay_buff_size, args.replay_chan, time_spec, repeat)
 
-    # Send a command to start RX data aquestions
+    # Send a command to start RX data acquisition
     sync_settings.start_rx_data_acquisition_called = True
     while sync_settings.stop_tx_signal_called == False:
         time.sleep(0.05)  # sleep for 50ms

@@ -31,10 +31,10 @@ general_config:
   author: Abdo Gaber
   # A text description of the SigMF Recording.
   description: "API Rx Only Test"
-  # captured_data_file_name: user prefered name for rx captured data
+  # captured_data_file_name: user preferred name for rx captured data
   captured_data_file_name: "rx-waveform-td-rec-"
   # use timestamp from TX waveform file for RX waveform file instead of generating a recent one
-  use_tx_timestamp: false
+  use_tx_timestamp: "False"
   # User Comment
   comment: "Using NI RF Data Recording API"
 # ============================================
@@ -43,27 +43,7 @@ general_config:
 transmitters_config:
 #
 common_transmitters_config:
-  tx_clock_reference:   # Tx sync reference source (internal, external, gpsdo), type = str.
-    SeqType: "list"
-    Values: ["internal"]
-  tx_radio_id:    # radio block to use (e.g., 0 or 1), type = in.
-    SeqType: "list"
-    Values: [0]
-  tx_radio_chan:  # radio channel to use, type = int.
-    SeqType: "list"
-    Values: [0]
-  tx_replay_id:   # replay block to use (e.g., 0 or 1), type = int.
-    SeqType: "list"
-    Values: [0]
-  tx_replay_chan: # replay channel to use, type = int.
-    SeqType: "list"
-    Values: [0]
-  tx_duc_chan:    # duc channel to use, type = int.
-    SeqType: "list"
-    Values: [0]
-  tx_duc_id:    # duc id to use, type = int.
-    SeqType: "list"
-    Values: [0]
+#
 # ============================================
 # ================== Receivers   =============
 # ============================================
@@ -71,7 +51,7 @@ receivers_config:
   -
     RFmode: "Rx"    # Tx or Rx, type=str.
     # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
-    type: "x4xx"    # USRP type, for example: x300, x4xx, type=str.
+    type: "x300"    # USRP type, for example: x300, x4xx, type=str.
     IPaddress: "192.168.100.2" # IP address of USRP, type=str.
     Parameters:
       freq:         # RF target center frequency in Hz, type = float.
@@ -109,7 +89,7 @@ receivers_config:
   -
     RFmode: "Rx"    # Tx or Rx, type=str.
     # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
-    type: "x4xx"    # USRP type, for example: x300, x4xx, type=str.
+    type: "x300"    # USRP type, for example: x300, x4xx, type=str.
     IPaddress: "192.168.110.2" # IP address of USRP, type=str.
     Parameters:
       freq:         # RF target center frequency in Hz, type = float.

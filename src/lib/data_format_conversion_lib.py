@@ -7,7 +7,7 @@
 Data format conversion Lib
 """
 # Description:
-#   Change the data format of a given varible based on the need
+#   Change the data format of a given variable based on the need
 #
 # Change numerical string with k, M, or G to float number
 def si_unit_string_converstion_to_float(x):
@@ -29,13 +29,13 @@ def si_unit_string_converstion_to_float(x):
     return float(value)
 
 
-# string to boolean
+# string to Boolean
 def str2bool(v):
     if isinstance(v, bool):
         return v
-    if v.lower() in ("yes", "true", "t", "y", "1"):
+    if v.lower() in ("yes", "true", "True", "t", "y", "1"):
         return True
-    elif v.lower() in ("no", "false", "f", "n", "0"):
+    elif v.lower() in ("no", "false", "False", "f", "n", "0"):
         return False
     else:
         raise Exception("ERROR: Boolean value expected.")

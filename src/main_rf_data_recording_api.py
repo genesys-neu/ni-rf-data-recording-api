@@ -47,7 +47,7 @@ def main(rf_data_acq_config_file):
     # Read general config, it has only a single list
     general_config = variations_map.general_config.iloc[0]
 
-    # get default wavefrom config
+    # get default waveform config
     wireless_link_parameter_map = general_config["wireless_link_parameter_map"]
     # get enabel console logging flag
     enable_console_logging = data_format_conversion_lib.str2bool(
@@ -79,7 +79,7 @@ def main(rf_data_acq_config_file):
         # print sync status
         if enable_console_logging:
             print(
-                "Sync Status: Start Data Acquestion called = ",
+                "Sync Status: Start Data Acquisition called = ",
                 sync_settings.start_rx_data_acquisition_called,
                 " Stop Tx Signal called = ",
                 sync_settings.stop_tx_signal_called,

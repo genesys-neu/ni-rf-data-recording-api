@@ -7,7 +7,7 @@
 TX Waveform Playback
 """
 # Description:
-#   Use for TX waveform playback. Given wavform can be in TDMS or MATLAB format
+#   Use for TX waveform playback. Given waveform can be in TDMS or MATLAB format
 #
 # Parameters:
 #   Look to parse the command line arguments
@@ -63,14 +63,14 @@ def parse_args():
     parser.add_argument(
         "-a",
         "--args",
-        #default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6",
+        # default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6",
         default="type=x4xx,addr=192.168.40.2,master_clock_rate=245.76e6",
         type=str,
         help="Device args to use when connecting to the USRP.",
     )
-#    parser.add_argument(
-#        "-tx", "--tx_args", default="", type=str, help="Block args for the transmit radio"
-#    )
+    #    parser.add_argument(
+    #        "-tx", "--tx_args", default="", type=str, help="Block args for the transmit radio"
+    #    )
     parser.add_argument(
         "--radio_id",
         "-rai",
@@ -78,26 +78,20 @@ def parse_args():
         type=int,
         help="radio block to use (e.g., 0 or 1).",
     )
-    parser.add_argument(
-        "--radio_chan", "-rac", default=0, type=int, help="radio channel to use"
-    )
+    parser.add_argument("--radio_chan", "-rac", default=0, type=int, help="radio channel to use")
     parser.add_argument(
         "--replay_id",
         "-rpi",
         default=0,
-        nargs="+", 
+        nargs="+",
         type=int,
         help="replay block to use (e.g., 0 or 1)",
     )
     parser.add_argument(
         "--replay_chan", "-rpc", default=0, nargs="+", type=int, help="replay channel to use"
     )
-    parser.add_argument(
-        "--duc_chan", "-duc", default=0, type=int, help="duc channel to use"
-    )
-    parser.add_argument(
-        "--duc_id", "-dui", default=0, type=int, help="duc block id to use"
-    )
+    parser.add_argument("--duc_chan", "-duc", default=0, type=int, help="duc channel to use")
+    parser.add_argument("--duc_id", "-dui", default=0, type=int, help="duc block id to use")
     parser.add_argument(
         "--nsamps",
         "-ns",
@@ -164,7 +158,7 @@ def main():
     Run Tx waveform playback
     """
     args = parse_args()
-    isX4xx=bool(args.args.find('x4xx'))
+    isX4xx = bool(args.args.find("x4xx"))
 
     # Print help message
     print("UHD/RFNoC Replay samples from file ")
@@ -245,13 +239,13 @@ def main():
         radio_ctrl.set_tx_frequency(args.freq + args.lo_offset, args.radio_chan)
         duc_ctrl.set_freq(-args.lo_offset, args.duc_chan)
         print(
-            "Note: LO Freqeuncy offset is:",
+            "Note: LO Frequency offset is:",
             args.lo_offset,
             ". It should be greater than Signal BW /2 and less than (max_RF_bandwidth - Signal BW)/2",
         )
     else:
         radio_ctrl.set_tx_frequency(args.freq, args.radio_chan)
-    coerced_tx_freq = radio_ctrl.get_tx_frequency(args.radio_chan) 
+    coerced_tx_freq = radio_ctrl.get_tx_frequency(args.radio_chan)
     print(f"Actual TX Freq: {coerced_tx_freq/ 1e6}  MHz...")
     print(f"** TX Carrier Frequency Offset: {coerced_tx_freq - args.freq}  Hz...")
 
@@ -270,7 +264,8 @@ def main():
 
     # Set the analog front-end filter bandwidth
     print(f"Requesting TX Bandwidth: {(args.bandwidth / 1e6)} MHz...")
-    if (not isX4xx) : radio_ctrl.set_tx_bandwidth(args.bandwidth, args.radio_chan)
+    if not isX4xx:
+        radio_ctrl.set_tx_bandwidth(args.bandwidth, args.radio_chan)
     coerced_tx_bandwidth = radio_ctrl.get_tx_bandwidth(args.radio_chan)
     print(f"Actual TX Bandwidth: {coerced_tx_bandwidth / 1e6} MHz...")
     print("Note: Not all doughterboards support variable analog bandwidth")
@@ -311,7 +306,7 @@ def main():
             args.path, args.file
         )
     else:
-        raise Exception("ERROR: Unkown or not supported tx waveform format")
+        raise Exception("ERROR: Unknown or not supported tx waveform format")
 
     # Get the file size
     file_size = len(tx_data_complex) * sample_size
@@ -414,7 +409,7 @@ def main():
             for i in range(0, 4):
                 index = i % 4
                 print("\rRF streaming {}".format(list[index]), end="")
-                time.sleep(0.1) # sleep for 100ms
+                time.sleep(0.1)  # sleep for 100ms
                 # Remove SIGINT handler
                 # signal.signal(signal.SIGINT, signal_dfl)
         print("Stopping replay...")

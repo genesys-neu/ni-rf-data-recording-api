@@ -18,14 +18,34 @@
 # =====================================================================================
 # ======== list of parameter pairs between waveform config and API ~ SigMF Meta-Data ===
 # =====================================================================================
+
+# List of waveform generators that generate waveforms
+#   key:
+#     standard: "name"
+#     generator: "link or text ... etc"
+#   key: Used to create parameter names in wireless_link_parameter_map
+#     Recommended name for each waveform generator to be given as: standard_WaveformGenerator
+#     Example: 5g NR waveform created using RFmx with RFWS config file:  "5gnr_ni_rfmx_rfws" 
+#     Note: The suffix "_parameter" will be added automatically
+#   standard name: occur in meta-data
+#   generator: generator description to occur in meta-data
+waveform_generator:
+  # waveform_source: standard
+  5gnr_ni_rfmx_rfws:  # Generated using NI RFmx Tool
+    standard: "5gnr"
+    generator: "NI RFmx Waveform Creator: https://www.ni.com/en-ca/shop/wireless-design-test/application-software-for-wireless-design-test-category/what-is-rfmx.html"
+  lte_ni_rfmx_rfws:   # Generated using NI RFmx Tool
+    standard: "lte"
+    generator: "NI RFmx Waveform Creator: https://www.ni.com/en-ca/shop/wireless-design-test/application-software-for-wireless-design-test-category/what-is-rfmx.html"
+  radar_nist:
+    standard: "radar"
+    generator: "National Institute of Standards and Technology"
+  802.11_ieee_gen_matlab: 
+    standard: "802.11"
+    generator: "ieee_gen_matlab"
 transmitter:
   # 5G NR subfield
   5gnr:
-    # waveform generator
-    - sigmf_parameter_name: "generator"
-      description: "waveform generator"
-      5gnr_ni_rfmx_rfws_parameter: 
-        name: 'generator'
     # Frequency Range
     - sigmf_parameter_name: "frequency_range"
       description: "Frequency Range"
@@ -39,65 +59,36 @@ transmitter:
       description: "5G NR bandwidth"
       5gnr_ni_rfmx_rfws_parameter:
         name: "Bandwidth (Hz)"
-      5gnr_sionna_parameter:
-        name: "bandwidth_hz"
     # Link direction
     - sigmf_parameter_name: "link_direction"
       description: "Link direction"
       5gnr_ni_rfmx_rfws_parameter:
         name: "Link Direction"
-      5gnr_sionna_parameter:
-        name: "link_direction"
     # cell ID
     - sigmf_parameter_name: "cell_id"
       description: "cell ID"
       5gnr_ni_rfmx_rfws_parameter:
         name: "Cell ID"
-      5gnr_sionna_parameter:
-        name: "cell_id"
-    # RNTI
-    - sigmf_parameter_name: "rnti"
-      description: "RNTI"
-      5gnr_sionna_parameter:
-        name: "rnti"
-    # FFT size
-    - sigmf_parameter_name: "fft_size"
-      description: "FFT size"
-      5gnr_sionna_parameter:
-        name: "fft_size"
     # Number of frames
     - sigmf_parameter_name: "num_frames"
       description: Number of transmitted frames
       5gnr_ni_rfmx_rfws_parameter:
         name: 'Number of Frames'
-      5gnr_sionna_parameter:
-        name: "num_frames"
     # Frame structure
     - sigmf_parameter_name: "frame_structure"
       description: "5G NR duplexing scheme FDD, TDD, user defined"
       5gnr_ni_rfmx_rfws_parameter:
         name: "Duplex Scheme" # not exact, since it depends if the waveform is for UL or DL
-      5gnr_sionna_parameter:
-        name: "frame_structure"
     # Subcarrier spacing in Hz
     - sigmf_parameter_name: "subcarrier_spacing"
       description: "Subcarrier spacing in Hz"
       5gnr_ni_rfmx_rfws_parameter:
         name: Subcarrier Spacing (Hz)
-      5gnr_sionna_parameter:
-        name: "subcarrier_spacing"
     # Cyclic prefix mode
     - sigmf_parameter_name: "cp_mode"
       description: "Cyclic prefix mode"
       5gnr_ni_rfmx_rfws_parameter:
         name: "Cyclic Prefix Mode"
-      5gnr_sionna_parameter:
-        name: "cp_mode"
-    # SSB: content
-    - sigmf_parameter_name: "ssb:content"
-      description: "SSB: content"
-      5gnr_sionna_parameter:
-        name: "ssb_content"
     # SSB configuration
     - sigmf_parameter_name: "ssb:config"
       description: "SSB Configuration set"
@@ -118,20 +109,16 @@ transmitter:
       description: "Sampling rate in Hz"
       5gnr_ni_rfmx_rfws_parameter:
         name: "sample_rate_hz"
-      5gnr_sionna_parameter:
-        name: "sample_rate"
     # Test Model
     - sigmf_parameter_name: "test_model"
       description: "Test Model"
       5gnr_ni_rfmx_rfws_parameter:
         name: "Test Model"
-      5gnr_sionna_parameter:
-        name: "test_model"
     # pdsch Modulation
     - sigmf_parameter_name: "pdsch:modulation"
       description: "PDSCH modulation"
       5gnr_ni_rfmx_rfws_parameter:
-        name: "DL Modulation Type" # not exact name, since it depends if the waveform created based on test model or user custmized. 
+        name: "DL Modulation Type" # not exact name, since it depends if the waveform created based on test model or user customized. 
         value_map: # simu value : SigMF value 
           "8PSK": "8_psk"
           "QPSK": "qpsk"
@@ -140,51 +127,6 @@ transmitter:
           "QAM256": "256_qam"
           "QAM1024": "1024_qam"
           "Standard": ""
-    # PUSCH: content
-    - sigmf_parameter_name: "pusch:content"
-      description: "PUSCH: content"
-      5gnr_sionna_parameter:
-        name: "pusch_content"
-    # PUSCH: payload bit pattern
-    - sigmf_parameter_name: "pusch:payload_bit_pattern"
-      description: "PUSCH: payload bit pattern"
-      5gnr_sionna_parameter:
-        name: "pusch_payload_bit_pattern"
-    # PUSCH: channel code
-    - sigmf_parameter_name: "pusch:channel_code"
-      description: "PUSCH: channel code"
-      5gnr_sionna_parameter:
-        name: "pusch_channel_code"
-    # PUSCH: code rate
-    - sigmf_parameter_name: "pusch:code_rate"
-      description: "PUSCH: code rate"
-      5gnr_sionna_parameter:
-        name: "pusch_code_rate"
-    # PUSCH: number of PRBs
-    - sigmf_parameter_name: "pusch:num_prb"
-      description: "PUSCH: number of PRBs"
-      5gnr_sionna_parameter:
-        name: "num_prbs"
-    # PUSCH: PRB start index
-    - sigmf_parameter_name: "pusch:start_prb"
-      description: "PUSCH: first PRB used for PUSCH"
-      5gnr_sionna_parameter:
-        name: "pusch_start_prb"
-    # PUSCH: mapping type
-    - sigmf_parameter_name: "pusch:mapping_type"
-      description: "PUSCH: mapping type"
-      5gnr_sionna_parameter:
-        name: "pusch_mapping_type"
-    # PUSCH: OFDM symbol start index within slot
-    - sigmf_parameter_name: "pusch:start_ofdm_symbol"
-      description: "PUSCH: OFDM symbol start index within slot"
-      5gnr_sionna_parameter:
-        name: "pusch_start_ofdm_symbol"
-    # PUSCH: number of OFDM symbols in one slot
-    - sigmf_parameter_name: "pusch:num_ofdm_symbols"
-      description: "PUSCH: number of OFDM symbols in one slot"
-      5gnr_sionna_parameter:
-        name: "pusch_num_ofdm_symbols"
     # pusch Modulation
     - sigmf_parameter_name: "pusch:modulation"
       description: "PUSCH modulation"
@@ -198,145 +140,43 @@ transmitter:
           "QAM256": "256_qam"
           "QAM1024": "1024_qam"
           "Standard": ""
-      5gnr_sionna_parameter:
-        name: "modulation"
-    # PUSCH: number of transmission layers
-    - sigmf_parameter_name: "pusch:num_layer"
-      description: "PUSCH: number of transmission layers"
-      5gnr_sionna_parameter:
-        name: "pusch_num_layer"
-    # PUSCH: transform precoding
-    - sigmf_parameter_name: "pusch:transform_precoding"
-      description: "PUSCH: transform precoding"
-      5gnr_sionna_parameter:
-        name: "pusch_transform_precoding"
-    # PUSCH: scrambler type
-    - sigmf_parameter_name: "pusch:scrambler"
-      description: "PUSCH: scrambler type"
-      5gnr_sionna_parameter:
-        name: "pusch_scrambler"
-    # PUSCH DMRS: content
-    - sigmf_parameter_name: "pusch_dmrs:content"
-      description: "PUSCH DMRS: content"
-      5gnr_sionna_parameter:
-        name: "pusch_dmrs_content"
-        value_map:
-          # Sionna value : SigMF value
-          "none": "none"
-          "random_qpsk": "random_qpsk"
-          "compliant": "compliant"
-    # PUSCH DMRS: resource map configuration
-    - sigmf_parameter_name: "pusch_dmrs:resource_map_config"
-      description: "PUSCH DMRS: resource map configuration"
-      5gnr_sionna_parameter:
-        name: "pusch_dmrs_resource_map_config"
-    # PUSCH DMRS: OFDM symbol start index within slot
-    - sigmf_parameter_name: "pusch_dmrs:start_ofdm_symbol"
-      description: "PUSCH DMRS: OFDM symbol start index within slot"
-      5gnr_sionna_parameter:
-        name: "pusch_dmrs_start_ofdm_symbol"
-    # PUSCH DMRS: DMRS duration in number of OFDM symbols
-    - sigmf_parameter_name: "pusch_dmrs:duration_num_ofdm_symbols"
-      description: "PUSCH DMRS: DMRS duration in number of OFDM symbols"
-      5gnr_sionna_parameter:
-        name: "pusch_dmrs_duration_num_ofdm_symbols"
-    # PUSCH DMRS: OFDM symbol indices within resource grid
-    - sigmf_parameter_name: "pusch_dmrs:ofdm_symbol_idx"
-      description: "PUSCH DMRS: OFDM symbol indices within resource grid"
-      5gnr_sionna_parameter:
-        name: "pusch_dmrs_ofdm_symbol_idx"
-    # PUSCH DMRS: number of additional PUSCH DMRS positions
-    - sigmf_parameter_name: "pusch_dmrs:num_add_positions"
-      description: "PUSCH DMRS: number of additional PUSCH DMRS positions"
-      5gnr_sionna_parameter:
-        name: "pusch_dmrs_num_add_positions"
-    # PUSCH DMRS: antenna port
-    - sigmf_parameter_name: "pusch_dmrs:antennna_port"
-      description: "PUSCH DMRS: antenna port"
-      5gnr_sionna_parameter:
-        name: "pusch_dmrs_antennna_port"
-    # PUSCH DMRS: scrambler initialization
-    - sigmf_parameter_name: "pusch_dmrs:nscid"
-      description: "PUSCH DMRS: scrambler initialization"
-      5gnr_sionna_parameter:
-        name: "pusch_dmrs_nscid"
-    # PUSCH DMRS: ratio of PUSCH energy per RE to DMRS energy per RE in dB
-    - sigmf_parameter_name: "pusch_dmrs:pusch_to_dmrs_epre"
-      description: "PUSCH DMRS: ratio of PUSCH energy per RE to DMRS energy per RE in dB"
-      5gnr_sionna_parameter:
-        name: "pusch_dmrs_pusch_to_dmrs_epre"
-    # PUCCH: content
-    - sigmf_parameter_name: "pucch:content"
-      description: "PUCCH: content"
-      5gnr_sionna_parameter:
-        name: "pucch_content"
-
   # LTE subfield
   lte:
-    # waveform generator
-    - sigmf_parameter_name: "generator"
-      description: "waveform generator"
-      lte_ni_rfmx_rfws_parameter: 
-        name: 'generator'
     # bandwidth
     - sigmf_parameter_name: "bandwidth"
       description: "LTE bandwidth"
       lte_ni_rfmx_rfws_parameter:
         name: "Bandwidth"
-      lte_ni_link_sim_parameter:
-        name: "bw"
     # Frame structure
     - sigmf_parameter_name: "frame_structure"
       description: "LTE frame structure"
       lte_ni_rfmx_rfws_parameter:
         name: "factory"
-      lte_ni_link_sim_parameter:
-        name: "frame_type"
     # Link direction
     - sigmf_parameter_name: "link_direction"
       description: "Link direction"
       lte_ni_rfmx_rfws_parameter:
         name: "LinkDirection"
-      lte_ni_link_sim_parameter:
-        name: "link_direction"
     # cell ID
     - sigmf_parameter_name: "cell_id"
       description: "cell ID"
       lte_ni_rfmx_rfws_parameter:
         name: "CellID"
-      lte_ni_link_sim_parameter:
-        name: "cell_id"
-    # FFT size
-    - sigmf_parameter_name: "fft_size"
-      description: "FFT size"
-      lte_ni_link_sim_parameter:
-        name: "ofdm_fft_size"
     # test model
     - sigmf_parameter_name: "test_model"
       description: "Test Model"
       lte_ni_rfmx_rfws_parameter:
         name: "TestModel"
-      lte_ni_link_sim_parameter:
-        name: "test_model"
-    # Number of transmitted frames
-    - sigmf_parameter_name: "num_frames"
-      description: "Number of transmitted frames"
-      lte_ni_link_sim_parameter:
-        name: "radio_frame_num"
     # Sampling rate in Hz
     - sigmf_parameter_name: "sample_rate"
       description: "Sampling rate in Hz"
       lte_ni_rfmx_rfws_parameter:
         name: "sample_rate"
-      lte_ni_link_sim_parameter:
-        name: "sample_rate_hz"
     # Subcarrier spacing in Hz
     - sigmf_parameter_name: "subcarrier_spacing"
       description: "Subcarrier spacing in Hz"
       lte_ni_rfmx_rfws_parameter:
         name: "subcarrier_spacing"
-      lte_ni_link_sim_parameter:
-        name: "ofdm_subc_space_hz"
     # Cyclic prefix mode
     - sigmf_parameter_name: "cp_mode"
       description: "Cyclic prefix mode"
@@ -345,57 +185,6 @@ transmitter:
         value_map: # simu value : SigMF value 
           "0": "normal"
           "1": "extended"
-      lte_ni_link_sim_parameter:
-        name: "cp_mode"
-    # PSS
-    - sigmf_parameter_name: "pss"
-      description: "PSS content"
-      lte_ni_link_sim_parameter:
-        name: "pss_on"
-        value_map:
-          # LTE link sim value : SigMF value
-          0: "none"
-          1: "compliant"
-    # SSS
-    - sigmf_parameter_name: "sss"
-      description: "SSS content"
-      lte_ni_link_sim_parameter:
-        name: "sss_on"
-        value_map:
-          # LTE link sim value : SigMF value
-          0: "none"
-          1: "compliant"
-    # CRS
-    - sigmf_parameter_name: "crs"
-      description: "CRS content"
-      lte_ni_link_sim_parameter:
-        name: "crs_select"
-        value_map:
-          # LTE link sim value : SigMF value
-          0: "zeros"
-          1: "ones"
-          2: "compliant"
-          3: "none"
-    # PDSCH: content
-    - sigmf_parameter_name: "pdsch:content"
-      description: "PDSCH: content"
-      lte_ni_link_sim_parameter:
-        name: "pdsch_content"
-    # PDSCH: payload bit pattern
-    - sigmf_parameter_name: "pdsch:payload_bit_pattern"
-      description: "PDSCH: payload bit pattern"
-      lte_ni_link_sim_parameter:
-        name: "pdsch_payload_bit_pattern"
-    # PDSCH: number of PRBs
-    - sigmf_parameter_name: "pdsch:num_prb"
-      description: "PDSCH: number of PRBs"
-      lte_ni_link_sim_parameter:
-        name: "num_prbs"
-    # PDSCH: PRB start index
-    - sigmf_parameter_name: "pdsch:start_prb"
-      description: "PDSCH: first PRB used for PDSCH"
-      lte_ni_link_sim_parameter:
-        name: "pdsch_start_prb"
     # PDSCH: modulation
     - sigmf_parameter_name: "pdsch:modulation"
       description: "PDSCH: modulation"
@@ -409,13 +198,6 @@ transmitter:
           "QAM256": "256_qam"
           "QAM1024": "1024_qam"
           "Standard": ""
-      lte_ni_link_sim_parameter:
-        name: "modulation"
-    # PDCCH: content
-    - sigmf_parameter_name: "pdcch:content"
-      description: "PDCCH: content"
-      lte_ni_link_sim_parameter:
-        name: "pdcch_content"
     # PUSCH: modulation
     - sigmf_parameter_name: "pusch:modulation"
       description: "PUSCH: modulation"
@@ -431,54 +213,44 @@ transmitter:
           "Standard": ""
   # Radar  
   radar:
-    # waveform generator
-    - sigmf_parameter_name: "generator"
-      description: "waveform generator"
-      radar_neu_parameter: 
-        name: 'generator'
     # Sampling rate in Hz
     - sigmf_parameter_name: "sample_rate"
       description: "Sampling rate in Hz"
-      radar_neu_parameter:
+      radar_nist_parameter:
         name: "sample_rate"
     # bandwidth
     - sigmf_parameter_name: "bandwidth"
       description: "bandwidth in Hz"
-      radar_neu_parameter:
+      radar_nist_parameter:
         name: "bandwidth"
     # time duration
     - sigmf_parameter_name: "time_duration"
       description: "Time duration in seconds"
-      radar_neu_parameter:
+      radar_nist_parameter:
         name: "time_duration"
     # Pulse modulation type
     - sigmf_parameter_name: "pulse_modulation_type"
       description: "pulse modulation type"
-      radar_neu_parameter:
+      radar_nist_parameter:
         name: "pulse_modulation_type"
     # Pulse Width
     - sigmf_parameter_name: "pulse_width"
       description: "pulse width"
-      radar_neu_parameter:
+      radar_nist_parameter:
         name: "pulse_width" 
     # Number of pulses per burst
     - sigmf_parameter_name: "pulses_per_burst"
       description: "Number of pulses per burst"
-      radar_neu_parameter:
+      radar_nist_parameter:
         name: "pulses_per_burst" 
     # Pulse repetition rate per second
     - sigmf_parameter_name: "pulse_repetition_rate_hz"
       description: "Pulse repetition rate per second"
-      radar_neu_parameter:
+      radar_nist_parameter:
         name: "pulse_repetition_rate_hz"  
 
   # 802.11 IEEE Waveform Generator: waveform data config in matlab format   
   wifi:
-    # waveform generator
-    - sigmf_parameter_name: "generator"
-      description: "waveform generator"
-      802.11_ieee_gen_matlab_parameter: 
-        name: 'generator'
     # modulation
     - sigmf_parameter_name: "modulation"
       description: "modulation"
@@ -530,179 +302,3 @@ transmitter:
       description: "PSDU length in bytes"
       802.11_ieee_gen_matlab_parameter: 
         name: "PSDU_length"
-
-channel:
-# Signal-to-noise ratio (Es/N0) in dB
-- sigmf_parameter_name: "snr_esn0_db"
-  description: "Signal-to-noise ratio (Es/N0) in dB"
-  lte_ni_link_sim_parameter:
-    name: "esn0_db"
-# Signal-to-noise ratio (Eb/N0) in dB
-- sigmf_parameter_name: "snr_ebn0_db"
-  description: "Signal-to-noise ratio (Eb/N0) in dB"
-  lte_ni_link_sim_parameter:
-    name: "ebn0_db"
-  5gnr_sionna_parameter:
-    name: "ebn0_db"
-# Channel model
-- sigmf_parameter_name: "channel_model"
-  description: "Fading channel model"
-  lte_ni_link_sim_parameter:
-    name: "channel_model"
-  5gnr_sionna_parameter:
-    name: "channel_model"
-# Number of channel taps
-- sigmf_parameter_name: "num_channel_taps"
-  description: "Number of channel taps"
-  lte_ni_link_sim_parameter:
-    name: "num_channel_taps"
-# Channel attenuation level in dB
-- sigmf_parameter_name: "attenuation_db"
-  description: "Channel attenuation level in dB"
-  lte_ni_link_sim_parameter:
-    name: "ch_att_db"
-# Nominal delay spread in s
-- sigmf_parameter_name: "delay_spread"
-  description: "Nominal delay spread in s"
-  5gnr_sionna_parameter:
-    name: "delay_spread"
-# UE speed in m/s
-- sigmf_parameter_name: "speed"
-  description: "UE speed in m/s"
-  5gnr_sionna_parameter:
-    name: "speed"
-# Carrier frequency in Hz
-- sigmf_parameter_name: "carrier_frequency"
-  description: "Carrier frequency in Hz"
-  5gnr_sionna_parameter:
-    name: "carrier_frequency"
-
-receiver:
-# Analog receiver bandwidth
-- sigmf_parameter_name: "bandwidth"
-  description: "Analog receiver bandwidth"
-# RX gain in dB
-- sigmf_parameter_name: "gain"
-  description: "RX gain in dB" 
-# Frequency domain interpolation method for channel estimation
-- sigmf_parameter_name: "channel_estimation_freq_interpolation"
-  description: "Frequency domain interpolation method for channel estimation"
-  lte_ni_link_sim_parameter:
-    name: "ch_est_freq_interp_method"
-    value_map:
-      # LTE link sim value : SigMF value
-      "zero_order": "zero_order"
-      "linear_polar": "linear"
-      "linear_polar_phase_interleaved": "linear"
-      "linear_cartesian": "linear"
-  5gnr_sionna_parameter:
-    name: "interpolation_type"
-    value_map:
-      # Sionna value : SigMF value
-      "nn": "zero_order"
-      "lin": "linear"
-# Time domain interpolation method for channel estimation
-- sigmf_parameter_name: "channel_estimation_time_interpolation"
-  description: "Time domain interpolation method for channel estimation"
-  lte_ni_link_sim_parameter:
-    name: "ch_est_time_interp_method"
-    value_map:
-      # LTE link sim value : SigMF value
-      "zero_order": "zero_order"
-      "linear_polar": "linear"
-      "linear_polar_phase_interleaved": "linear"
-      "linear_cartesian": "linear"
-  5gnr_sionna_parameter:
-    name: "interpolation_type"
-    value_map:
-      # Sionna value : SigMF value
-      "nn": "zero_order"
-      "lin": "linear"
-  5gnr_sionna_parameter_name: "interpolation_type"
-# Channel equalization method
-- sigmf_parameter_name: "channel_equalization_method"
-  description: "Channel equalization method"
-  lte_ni_link_sim_parameter:
-    name: "eq_method_select"
-    value_map:
-      # LTE link sim value : SigMF value
-      "none": "none"
-      "derotation": "derotation"
-      "lmmse": "lmmse"
-      "zero_forcing": "zero_forcing"
-  5gnr_sionna_parameter:
-    name: "channel_eq_method"
-    value_map:
-      # Sionna value : SigMF value
-      "none": "none"
-      "lmmse": "lmmse"
-# Symbol demapping method
-- sigmf_parameter_name: "symbol_demapping_method"
-  description: "Symbol demapping method"
-  5gnr_sionna_parameter:
-    name: "symbol_demap_method"
-    value_map:
-      # Sionna value : SigMF value
-      "app": "app"
-      "maxlog": "maxlog"
-# Manufacturer of the hardware used to receive the signal
-- sigmf_parameter_name: "manufacturer"
-  description: "Manufacturer"
-  lte_ni_link_sim_parameter:
-    name: "manufacturer"
-# Unique ID of the emitter, USRP serial number --> usrp_mboard_serial
-- sigmf_parameter_name: "seid"
-  description: "Emitter ID (USRP serial number)"
-  lte_ni_link_sim_parameter:
-    name: "seid"
-# For USRP, use “daughterboard ID, a string read out from the device shortened by the hex ID e.g. ‘(0x0085)’
-- sigmf_parameter_name: "hw_subtype"
-  description: "Hardware subtype (for USRP: daughterboard ID)"
-  lte_ni_link_sim_parameter:
-    name: hw_subtype
-# RX sync reference source ("internal", "external", "gpsdo")
-- sigmf_parameter_name: "clock_reference"
-  description: "RX clock reference"
-  lte_ni_link_sim_parameter:
-    name: "clock_reference"
-# Estimated SNR in dB 
-- sigmf_parameter_name: "snr_estimate_db"
-  description: "SNR estimate in dB"
-  lte_ni_link_sim_parameter:
-    name: "snr_estimate_db"
-# Result of coarse PSS-based timing estimation (used for synchronization)
-- sigmf_parameter_name: "timing_estimate_coarse"
-  description: "Coarse timing estimate in samples"
-  lte_ni_link_sim_parameter:
-    name: "timing_estimate_coarse"
-# Result of coarse PSS-based frequency offset estimation (used for synchronization)
-- sigmf_parameter_name: "cfo_estimate_coarse"
-  description: "Coarse frequency estimate in Hz"
-  lte_ni_link_sim_parameter:
-    name: "cfo_estimate_coarse"
-# Result of fine CRS-based frequency offset estimation (used for synchronization)
-- sigmf_parameter_name: "cfo_estimate_fine"
-  description: "Fine frequency estimate in Hz"
-  lte_ni_link_sim_parameter:
-    name: "cfo_estimate_fine"
-# Number of transmitted payload bits
-- sigmf_parameter_name: "num_payload_bits"
-  description: "Number of transmitted payload bits"
-  5gnr_sionna_parameter:
-    name: "num_payload_bits"
-  lte_ni_link_sim_parameter:
-    name: "num_payload_bits"
-# Number of bit errors when applying traditional RX processing
-- sigmf_parameter_name: "bit_errors_trad_rx"
-  description: "Bit errors"
-  lte_ni_link_sim_parameter:
-    name: "bit_errors_trad_rx"
-  5gnr_sionna_parameter:
-    name: "bit_errors_trad_rx"
-# BER when applying traditional RX processing
-- sigmf_parameter_name: "bit_error_rate_trad_rx"
-  description: "Bit error rate"
-  lte_ni_link_sim_parameter:
-    name: "bit_error_rate_trad_rx"
-  5gnr_sionna_parameter:
-    name: "bit_error_rate_trad_rx"

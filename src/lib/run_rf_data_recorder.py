@@ -7,7 +7,7 @@
 RF Data Recorder
 """
 # Description:
-#   Use for Rx data acquistion and save RX data and meta-data to files in SigMF format
+#   Use for Rx data acquisition and save RX data and meta-data to files in SigMF format
 #
 # Parameters:
 #   Given from the top-level script based on the API configuration file
@@ -34,11 +34,12 @@ from termcolor import colored, cprint
 from lib import write_rx_recorded_data_in_sigmf
 from lib import sync_settings
 
+
 def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
     """RX Data Recorder"""
-    
+
     # Check if motherboard type is x4xx
-    isX4xx=bool(rx_args.hw_type.find('x4xx'))
+    isX4xx = bool(rx_args.hw_type.find("x4xx"))
 
     # Define number of samples to fetch
     rx_args.num_rx_samps = int(np.ceil(rx_args.duration * rx_args.rate))
@@ -69,26 +70,27 @@ def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
     # Set receive port (TX/RX or RX2)
     for index in rx_args.channels:
         usrp.set_rx_antenna(rx_args.antenna, index)
-        # set the IF filter bandwidth  
-        if (not isX4xx) : usrp.set_rx_bandwidth(rx_args.bandwidth, index)
+        # set the IF filter bandwidth
+        if not isX4xx:
+            usrp.set_rx_bandwidth(rx_args.bandwidth, index)
     # set RF Configure and capture zero sample for RF Settling time
     usrp.recv_num_samps(
-            0,
-            rx_args.freq,
-            rx_args.rate,
-            rx_args.channels,
-            rx_args.gain,
-            streamer=rx_streamer,
-        )
+        0,
+        rx_args.freq,
+        rx_args.rate,
+        rx_args.channels,
+        rx_args.gain,
+        streamer=rx_streamer,
+    )
     # Wait to get a command to start RX data acquisition if TX is on TX mode already
     while sync_settings.start_rx_data_acquisition_called == False:
         time.sleep(0.1)  # sleep for 100ms
 
     # Run data recording loop over specified number of iterations
     print("Start fetching RX data from USRP...")
-    
+
     rx_data_nbytes = 0.0
-    
+
     for i in range(rx_args.nrecords):
         print("")
         # Fetch data from usrp device
@@ -112,29 +114,31 @@ def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
         # Get USRP coerced values only once
         # To reduce latency, the number of records is executed per each configuration
         if i == 0:
-            #In the future, if we are going to extend the code to capture from multiple channels, we should update the meta-data also. We can read those coerced values in a loop based on the channels order.
+            # In the future, if we are going to extend the code to capture from multiple channels, we should update the meta-data also. We can read those coerced values in a loop based on the channels order.
             print(f"Requesting RX Freq: {(rx_args.freq / 1e6)} MHz...")
             rx_args.coerced_rx_freq = usrp.get_rx_freq(rx_args.channels[0])
             print(f"Actual RX Freq: {rx_args.coerced_rx_freq / 1e6}  MHz...")
-            print(f"** RX Carrier Frequency Offset: {rx_args.coerced_rx_freq - rx_args.freq}  Hz...")
+            print(
+                f"** RX Carrier Frequency Offset: {rx_args.coerced_rx_freq - rx_args.freq}  Hz..."
+            )
 
             print(f"Requesting RX Rate: {(rx_args.rate / 1e6) } Msps...")
             rx_args.coerced_rx_rate = usrp.get_rx_rate(rx_args.channels[0])
             print(f"Actual RX Rate: {(rx_args.coerced_rx_rate / 1e6)} Msps...")
-            print(f"** RX Sampling Rate Offset: {rx_args.coerced_rx_rate - rx_args.rate}  Sample per second...")
-            
+            print(
+                f"** RX Sampling Rate Offset: {rx_args.coerced_rx_rate - rx_args.rate}  Sample per second..."
+            )
+
             print(f"Requesting RX Gain: {rx_args.gain} dB...")
             rx_args.coerced_rx_gain = usrp.get_rx_gain(rx_args.channels[0])
             print(f"Actual RX Gain: {rx_args.coerced_rx_gain} dB...")
-            
+
             print(f"Requesting RX Bandwidth: {(rx_args.bandwidth / 1e6)} MHz...")
-            rx_args.coerced_rx_bandwidth = usrp.get_rx_bandwidth(rx_args.channels[0]) 
+            rx_args.coerced_rx_bandwidth = usrp.get_rx_bandwidth(rx_args.channels[0])
             print(f"Actual RX Bandwidth: {rx_args.coerced_rx_bandwidth / 1e6} MHz...")
             print("Note: Not all doughterboards support variable analog bandwidth")
 
-            #rx_args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data yet
-            
-            
+            # rx_args.coerced_rx_lo_source = usrp.get_rx_lo_source()  # Not part of meta data yet
 
         # Write data into files with the given format
         if rx_args.rx_recorded_data_saving_format == "SigMF":

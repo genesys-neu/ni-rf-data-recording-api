@@ -7,8 +7,8 @@
 RF Data Recorder (Rx Only)
 """
 # Description:
-#   Use for Rx data acquistion and save RX data and meta-data to files in SigMF format
-#   User needs to specify Tx signal config detial and Tx HW info manually (signal_detail, signal_emitter)
+#   Use for Rx data acquisition and save RX data and meta-data to files in SigMF format
+#   User needs to specify Tx signal config detail and Tx HW info manually (signal_detail, signal_emitter)
 #
 # Parameters:
 #   Look to parse the command line arguments

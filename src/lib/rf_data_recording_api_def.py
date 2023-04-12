@@ -83,7 +83,9 @@ class RFDataRecorderAPI:
             self.antenna = iteration_config[tx_id + "_antenna"]
             # "analog front-end filter bandwidth in Hz, type = float",
             self.bandwidth = iteration_config[tx_id + "_bandwidth"]
-            # "tdms file name, type = str ",
+            # "waveform generator, type = str ",
+            self.waveform_generator = iteration_config[tx_id + "_waveform_generator"]
+            # "waveform file name, type = str ",
             self.waveform_file_name = iteration_config[tx_id + "_waveform_file_name"]
             # "path to TDMS/mat/... file, type = str ",
             self.waveform_path = iteration_config[tx_id + "_waveform_path"]
@@ -123,7 +125,7 @@ class RFDataRecorderAPI:
             self.seid = iteration_config[tx_id + "_seid"]
             # "HW RF maximum supported bandwidth
             self.max_RF_bandwidth = iteration_config[tx_id + "_max_RF_bandwidth"]
-            # Define dictionary for tx wavform config
+            # Define dictionary for tx waveform config
             waveform_config = {}
             self.waveform_config = waveform_config
 
@@ -571,7 +573,7 @@ class RFDataRecorderAPI:
             sync_settings.init()
             if enable_console_logging:
                 print(
-                    "Sync Status: Start Data Acquestion called = ",
+                    "Sync Status: Start Data acquisition called = ",
                     sync_settings.start_rx_data_acquisition_called,
                     " Stop Tx Signal called = ",
                     sync_settings.stop_tx_signal_called,
@@ -635,7 +637,7 @@ class RFDataRecorderAPI:
 
         threads = []
         # For Rx only, no trigger required from Tx to start data acquisition
-        # Send a command to start RX data aquestions
+        # Send a command to start RX data acquisition
         sync_settings.start_rx_data_acquisition_called = True
 
         for idx, rx_data_recording_api_config in enumerate(rxs_data_recording_api_config):

@@ -315,7 +315,7 @@ Since the Rx is running independently from Tx and this Rx Data Recorder script i
 ---
 
 ### LO Configuration
-To mitigate the LO leakage/DC offset, the LO configuration can be used for that. It can be enabled or disabled via the configuration file. Those parametes are (i.e. in JSON file):
+To mitigate the LO leakage/DC offset, the LO configuration can be used for that. It can be enabled or disabled via the configuration file. Those parameters are (i.e. in JSON file):
 ```
 "lo_offset":      {"SeqType": "single",   "Values": 20.0e6},
 "enable_lo_offset":{"SeqType": "single",  "Values": "True"},
@@ -352,9 +352,9 @@ We created a simple example to read the SigMF metadata and visualize the recorde
 - Data set base filename (without SigMF file extension)
 
 Assume three transmitters transmit the following signals (default configuration file `config_rf_data_recording_api.json`):
-- 5G NR FR1 DL FDD wavefrom with 10 MHz bandwidth created based on 3GPP Release 15 [testmodel 3.1](https://www.etsi.org/deliver/etsi_ts/138100_138199/13814101/15.00.00_60/ts_13814101v150000p.pdf), Section 4.9.2.2.5, and 3.6 GHz carrier target frequency. 
-- LTE DL FDD wavefrom with 10 MHz bandwidth created based on 3GPP Release 8 EUTRA2 [testmodel 2](https://www.etsi.org/deliver/etsi_ts/136100_136199/136141/08.03.00_60/ts_136141v080300p.pdf), Section 6.1.1.3, and 3.61 GHz carrier target frequency. 
-- Radar waveform with 1.428 MHz bandiwth, 10 MHz sampling rate, and 3.62 GHz carrier target frequency. The lo_offset is enabled, where the freqeuncy of LO offset is 10 MHz.
+- 5G NR FR1 DL FDD waveform with 10 MHz bandwidth created based on 3GPP Release 15 [testmodel 3.1](https://www.etsi.org/deliver/etsi_ts/138100_138199/13814101/15.00.00_60/ts_13814101v150000p.pdf), Section 4.9.2.2.5, and 3.6 GHz carrier target frequency. 
+- LTE DL FDD waveform with 10 MHz bandwidth created based on 3GPP Release 8 EUTRA2 [testmodel 2](https://www.etsi.org/deliver/etsi_ts/136100_136199/136141/08.03.00_60/ts_136141v080300p.pdf), Section 6.1.1.3, and 3.61 GHz carrier target frequency. 
+- Radar waveform with 1.428 MHz bandwidth, 10 MHz sampling rate, and 3.62 GHz carrier target frequency. The lo_offset is enabled, where the frequency of LO offset is 10 MHz.
 
 The figure below shows the spectrogram of received 5G NR, LTE, and Radar signals. The Rx sampling rate is 92.16 MHz.
  

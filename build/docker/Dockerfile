@@ -5,7 +5,7 @@ RUN apt-get install -y software-properties-common
 
 # install python
 # To install different version of Python, use the following commands. 
-# Note: Building and Installing UHD driver for NI USRP from source requeres Minimum Python Version: 3.5.
+# Note: Building and Installing UHD driver for NI USRP from source requires Minimum Python Version: 3.5.
 # Note: Ubuntu 20.04 has been built based on Python 3.8.
 # Add the deadsnakes PPA to your system’s sources list:
 #RUN add-apt-repository ppa:deadsnakes/ppa

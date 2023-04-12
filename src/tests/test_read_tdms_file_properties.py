@@ -16,7 +16,7 @@ waveform_file_name = "NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_
 
 # path to TDMS file
 dir_path = os.path.dirname(__file__)
-src_path = os.path.split(dir_path)[0] 
+src_path = os.path.split(dir_path)[0]
 tdms_path = os.path.join(src_path, waveform_path, waveform_file_name)
 
 tdms_file = TdmsFile.read(tdms_path)
@@ -39,7 +39,7 @@ tx_data = channel_data[::2] + 1j * channel_data[1::2]
 print("Print complex data: ", tx_data)
 
 
-# Get all properites
+# Get all properties
 channel_properties = channel.properties
 print("Example to get all channel properties: ", channel_properties)
 NI_RF_IQRate = channel.properties["NI_RF_IQRate"]
@@ -61,7 +61,7 @@ print("Example to get IQ Rate: ", NI_RF_IQRate)
 group = tdms_file["ModulationSettings"]
 all_group_channels = group.channels()
 print("Example to get all group channels: ", all_group_channels)
-# Get all properites
+# Get all properties
 channel_properties = group.properties
 print("Example to get all channel properties: ", channel_properties)
 description = channel.properties["description"]

@@ -31,7 +31,7 @@ general_config:
   author: Abdo Gaber
   # A text description of the SigMF Recording.
   description: "TRX use case"
-  # captured_data_file_name: user prefered name for rx captured data
+  # captured_data_file_name: user preferred name for rx captured data
   captured_data_file_name: "rx-waveform-td-rec-"
   # use timestamp from TX waveform file for RX waveform file instead of generating a recent one
   use_tx_timestamp: false
@@ -69,6 +69,10 @@ transmitters_config:
       # ............ user_defined: The given rate by the user in this config file will be used.
         SeqType: "single"
         Values: "waveform_config"
+      waveform_generator:
+      # waveform_generator: Name of waveform generator, name should be added to wireless_link_parameter_map.yaml"
+        SeqType: "single"
+        Values: "5gnr_ni_rfmx_rfws"
       waveform_file_name: # TX waveform file name without extension, type = str
         # Example: "NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1(.tdms)",
         # ........ "IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame (folder name), waveform in ssb_str.mat".

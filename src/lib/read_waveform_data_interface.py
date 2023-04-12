@@ -17,7 +17,7 @@ from pathlib import Path
 # to read tdms file
 from nptdms import TdmsFile
 
-# to read matlab data
+# to read MATLAB data
 import scipy.io
 
 # check if file exists
@@ -49,23 +49,23 @@ def read_waveform_data_tdms(waveform_path, waveform_file_name):
         elif "segment0/channel0" in group:
             channel = group["segment0/channel0"]
         if not channel:
-            raise Exception("ERROR: Unkown channel name of a given TDMS Waveform")
+            raise Exception("ERROR: Unknown channel name of a given TDMS Waveform")
 
-        wavform_IQ_rate = channel.properties["NI_RF_IQRate"]
+        waveform_IQ_rate = channel.properties["NI_RF_IQRate"]
 
         tx_data_float = channel[:]
         tx_data_complex = tx_data_float[::2] + 1j * tx_data_float[1::2]
     else:
         raise Exception("ERROR: Waveform Config file is not exist", path_to_file)
 
-    return tx_data_complex, wavform_IQ_rate
+    return tx_data_complex, waveform_IQ_rate
 
 
-## Read waveform data in matlab format for IEEE waveform generator
+## Read waveform data in MATLAB format for IEEE waveform generator
 def read_waveform_data_matlab_ieee(waveform_path, waveform_file_name):
-    
+
     waveform_file_path = os.path.join(waveform_path, waveform_file_name)
-    mat_data = scipy.io.loadmat(str(waveform_file_path)+ "/sbb_str.mat")
+    mat_data = scipy.io.loadmat(str(waveform_file_path) + "/sbb_str.mat")
     # get data
     data = mat_data["sbb_str"]
     tx_data_complex = data[0][0][0]
@@ -73,11 +73,11 @@ def read_waveform_data_matlab_ieee(waveform_path, waveform_file_name):
     return tx_data_complex
 
 
-## Read waveform data in matlab format - arbitrary mode
+## Read waveform data in MATLAB format - arbitrary mode
 def read_waveform_data_matlab(waveform_path, waveform_file_name):
-    
+
     waveform_file_path = os.path.join(waveform_path, waveform_file_name)
-    mat_data = scipy.io.loadmat(str(waveform_file_path)+".mat")
+    mat_data = scipy.io.loadmat(str(waveform_file_path) + ".mat")
     # get data
     data = mat_data["waveform"]
     tx_data_complex = data.flatten()

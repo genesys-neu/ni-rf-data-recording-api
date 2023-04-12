@@ -16,8 +16,10 @@
   "enable_console_logging: Enable or disable console logging --> True or False",
   "Author name, handle, email, and/or other ID like Amateur Call Sign",
   "description: user description for the test case",
-  "captured_data_file_name: user prefered name for rx captured data",
+  "captured_data_file_name: user preferred name for rx captured data",
   "comment: user comment", 
+  "use_tx_timestamp: boolean, enable it if API is integrated to system", 
+  " and TX waveform time stamp is used as a reference for all recorded files, SigMF collection",
   "DeviceName: Arbitrary device name, type=str",
   "RFmode:Tx or Rx, type=str",
   "type: USRP type, for example:x300, x4xx, type=str",
@@ -33,6 +35,8 @@
   "bandwidth: TX analog front-end filter bandwidth in Hz, type = float",
   "...........: If rate_source --> waveform_config: It will be read from the waveform config file.",
   "...........: If rate_source --> user_defined: The given bandwidth by the user in this config file will be used.",
+  "waveform_generator: Name of waveform generator, name should be added to wireless_link_parameter_map.yaml",
+  " .................: example: 5gnr_ni_rfmx_rfws",
   "waveform_file_name: TX waveform file name without extension, type = str",
   "NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1(.tdms)",
   "IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame (folder name), waveform in ssb_str.mat ",
@@ -59,14 +63,15 @@
     "general_config": {
       "rx_recorded_data_path": "/home/user/workarea/recorded-data",
       "rx_recorded_data_saving_format": "SigMF",
-      "nrecords": 1,
+      "nrecords": 5,
       "txs_execution": "parallel",
       "wireless_link_parameter_map": "wireless_link_parameter_map.yaml",
       "enable_console_logging": "True", 
       "author": "Abdo Gaber",
       "description": "CBRS use case", 
       "captured_data_file_name": "rx-waveform-td-rec-",
-      "comment": "Using NI RF Data Recording API"
+      "comment": "Using NI RF Data Recording API",
+      "use_tx_timestamp": "False"
     },
     "transmitters_config": [
       {
@@ -74,10 +79,11 @@
         "Parameters": {
           "freq":           {"SeqType": "range",    "Values": [3.6e9, 3.6e9,100e6]},
           "lo_offset":      {"SeqType": "single",   "Values": 20.0e6},
-          "enable_lo_offset":{"SeqType": "single",  "Values": "False"},
+          "enable_lo_offset":{"SeqType": "single",  "Values": "True"},
           "rate":           {"SeqType": "list",     "Values": [30.72e6]},
           "bandwidth":      {"SeqType": "list",     "Values": [20e6]},
           "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
+          "waveform_generator": {"SeqType": "single","Values": "5gnr_ni_rfmx_rfws"},
           "waveform_file_name": {"SeqType": "list", "Values": ["NR_FR1_DL_TDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1"]},
           "waveform_path":  {"SeqType": "single",   "Values": "waveforms/nr/"},
           "waveform_path_type":  {"SeqType": "single",   "Values": "relative"},
@@ -91,10 +97,11 @@
         "Parameters": {
           "freq":           {"SeqType": "range",    "Values": [3.62e9, 3.62e9,100e6]},
           "lo_offset":      {"SeqType": "single",   "Values": 20.0e6},
-          "enable_lo_offset":{"SeqType": "single",  "Values": "False"},
+          "enable_lo_offset":{"SeqType": "single",  "Values": "True"},
           "rate":           {"SeqType": "list",     "Values": [15.36e6]},
           "bandwidth":      {"SeqType": "list",     "Values": [10e6 ]},
           "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
+          "waveform_generator": {"SeqType": "single","Values": "lte_ni_rfmx_rfws"},
           "waveform_file_name": {"SeqType": "list", "Values": ["LTE_FDD_DL_10MHz_CC-1_E-UTRA_E-TM2"]},
           "waveform_path":  {"SeqType": "single",   "Values": "waveforms/lte/"},
           "waveform_path_type":  {"SeqType": "single",   "Values": "relative"},
@@ -108,10 +115,11 @@
         "Parameters": {
           "freq":           {"SeqType": "range",    "Values": [3.63e9, 3.63e9,100e6]},
           "lo_offset":      {"SeqType": "single",   "Values": 10.0e6},
-          "enable_lo_offset":{"SeqType": "single",  "Values": "False"},
+          "enable_lo_offset":{"SeqType": "single",  "Values": "True"},
           "rate":           {"SeqType": "list",     "Values": [20e6]},
           "bandwidth":      {"SeqType": "list",     "Values": [2e6]},
           "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
+          "waveform_generator": {"SeqType": "single","Values": "radar_nist"},
           "waveform_file_name": {"SeqType": "list", "Values": ["RadarWaveform_BW_2M"]},
           "waveform_path":  {"SeqType": "single",   "Values": "waveforms/radar/"},
           "waveform_path_type":  {"SeqType": "single",   "Values": "relative"},
@@ -125,10 +133,11 @@
         "Parameters": {
           "freq":           {"SeqType": "range",    "Values": [3.64e9, 3.64e9,100e6]},
           "lo_offset":      {"SeqType": "single",   "Values": 20.0e6},
-          "enable_lo_offset":{"SeqType": "single",  "Values": "False"},
+          "enable_lo_offset":{"SeqType": "single",  "Values": "True"},
           "rate":           {"SeqType": "list",     "Values": [20e6]},
           "bandwidth":      {"SeqType": "list",     "Values": [20e6]},
           "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
+          "waveform_generator": {"SeqType": "single","Values": "802.11_ieee_gen_matlab"},
           "waveform_file_name": {"SeqType": "list", "Values": ["IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame"]},
           "waveform_path":  {"SeqType": "single",   "Values": "waveforms/wifi/"},
           "waveform_path_type":  {"SeqType": "single",   "Values": "relative"},
@@ -147,6 +156,21 @@
       "tx_duc_chan":        {"SeqType": "list",     "Values": [0]},
       "tx_duc_id":        {"SeqType": "list",     "Values": [0]}},
     "receivers_config": [
+      {
+        "RFmode": "Rx", "type": "x300","IPaddress": "192.168.100.2",
+        "Parameters": {
+            "freq":         {"SeqType": "range",    "Values": [3.62e9, 3.62e9,100e6]},
+            "rate":         {"SeqType": "list",     "Values": [92.16e6]},
+            "bandwidth":    {"SeqType": "list",     "Values": [100e6]},
+            "rate_source":  {"SeqType": "single",   "Values": "user_defined"},
+            "gain":         {"SeqType": "list",     "Values": [20]},
+            "channels":     {"SeqType": "list",     "Values": [0]},
+            "antenna":      {"SeqType": "list",     "Values":  ["TX/RX"]},
+            "clock_reference":    {"SeqType": "list",     "Values": ["internal"]},
+            "duration":     {"SeqType": "list",     "Values": [0.01]},
+            "channel_attenuation_db": { "SeqType": "single","Values": 33}
+        }
+      },
       {
         "RFmode": "Rx", "type": "x300","IPaddress": "192.168.110.2",
         "Parameters": {

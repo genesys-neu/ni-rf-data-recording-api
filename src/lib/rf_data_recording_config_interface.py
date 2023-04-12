@@ -19,6 +19,7 @@ import json
 import pandas as pd
 import functools
 from pathlib import Path
+
 # import other functions
 from lib import data_format_conversion_lib
 from lib import rf_data_recording_api_def
@@ -26,11 +27,11 @@ from lib import rf_data_recording_api_def
 # Read config file
 def read_config_files(rf_data_acq_config_file: str):
     """
-    Reads rf data acq config file of RF Data Collection API
+    Reads rf data recording config file of RF Data Collection API
     """
     name, extension = os.path.splitext(rf_data_acq_config_file)
     dir_path = os.path.dirname(__file__)
-    src_path = os.path.split(dir_path)[0] 
+    src_path = os.path.split(dir_path)[0]
     # read general parameter set from yaml config file
     if extension == ".yaml":
         with open(os.path.join(src_path, rf_data_acq_config_file), "r") as file:
@@ -59,11 +60,12 @@ def drange(start, stop, step):
         raise Exception(f"ERROR: Wronge range config, stop:'{stop}' less than start: '{start}' ")
     elif step < 0:
         raise Exception(f"ERROR: Wronge range config, step: '{step}' should be larger than zero.")
-    
+
     r = start
     while r <= stop:
         yield r
         r += step
+
 
 # Change parameter from range to list
 def change_parameter_range_to_list(parameter_config):
@@ -96,9 +98,9 @@ def get_device_variations_config_dict(device_variations_config_dict, RFmode, var
                 num_usrps = num_usrps + 1
                 device_id = device_config["RFmode"] + str(num_usrps)
             else:
-                raise Exception("ERROR: Unkown RF Mode of given device or wrong config")
+                raise Exception("ERROR: Unknown RF Mode of given device or wrong config")
 
-            # get device arguements
+            # get device arguments
             variations_dict[device_id + "_args"] = [
                 "type=" + device_config["type"] + ",addr=" + device_config["IPaddress"]
             ]
@@ -107,7 +109,7 @@ def get_device_variations_config_dict(device_variations_config_dict, RFmode, var
             parameters = device_config["Parameters"]
             for key, parameter_config in parameters.items():
                 key_id = device_id + "_" + key
-                # get parmeter values, change to list if values given in range or single
+                # get parameter values, change to list if values given in range or single
                 if parameter_config["SeqType"] == "range":
                     parameter_config = change_parameter_range_to_list(parameter_config)
                     target_value = parameter_config["Values"]
@@ -156,7 +158,7 @@ class CreateVariationsMap:
             tx_common_config_dict = rf_data_acq_config["common_transmitters_config"]
             ## Create list of variations for every parameter
             for key, parameter_config in tx_common_config_dict.items():
-                # get parmeter values, change to list if values given in range or single
+                # get parameter values, change to list if values given in range or single
                 if parameter_config["SeqType"] == "range":
                     parameter_config = change_parameter_range_to_list(parameter_config)
                     target_value = parameter_config["Values"]
@@ -252,9 +254,9 @@ def generate_rf_data_recording_configs(rf_data_acq_config_file: str):
     )
 
     # Check the receive target path is valid, else create folder
-    rx_recorded_data_path=rf_data_acq_config["general_config"]["rx_recorded_data_path"]
+    rx_recorded_data_path = rf_data_acq_config["general_config"]["rx_recorded_data_path"]
     if not os.path.isdir(rx_recorded_data_path):
-        print('Create new folder for recorded data: ' + rx_recorded_data_path)
+        print("Create new folder for recorded data: " + rx_recorded_data_path)
         os.makedirs(rx_recorded_data_path)
 
     # Print RF Data Collection Config as it is given in the config file

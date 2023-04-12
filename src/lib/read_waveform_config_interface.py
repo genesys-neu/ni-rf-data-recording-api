@@ -15,7 +15,7 @@ import os
 import yaml
 import numpy as np
 
-# to read csv file of matlab waveform created using IEEE reference generator
+# to read csv file of MATLAB waveform created using IEEE reference generator
 import csv
 
 # from timeit import default_timer as timer
@@ -42,25 +42,14 @@ def get_nr_waveform_parameters_from_rfws_format(waveform_path, waveform_file_nam
     # Preallocate target dict for waveform config
     waveform_config_src = {}
 
-    # waveform_config_src["generator"] ={"generator_abbr": "abbreviation",
-    #                                   "generator_description":"description"}
-    # generator_abbr: used to create parameter names in wireless_link_parameter_map
-    # ............. if standard = nr, WaveformGenerator: ni_rfmx_rfws, then the parameter name: nr_ni_rfmx_rfws_parmater
-    # generator_description: generator description to occur in meta-data
-    #
-    waveform_config_src["generator"] = {
-        "generator_abbr": "ni_rfmx_rfws",
-        "generator_description": "NI RFmx Waveform Creator: https://www.ni.com/en-ca/shop/wireless-design-test/application-software-for-wireless-design-test-category/what-is-rfmx.html",
-    }
-
     # The tdms waveform config file is saved with the same name of waveform but it has .rfws extension
     waveform_file_path = os.path.join(waveform_path, waveform_file_name + ".rfws")
 
     ## Load Waveform Config from rfws file
     xmlDoc = ET.parse(waveform_file_path)
     root = xmlDoc.getroot()
-    # XPath expressiion searching all elements recursively starting from root './/*'
-    # that have an attribute 'name' with the value e.i. 'Bandwidth (Hz)'
+    # XPath expression searching all elements recursively starting from root './/*'
+    # that have an attribute 'name' with the value ei.e. 'Bandwidth (Hz)'
     # returns a list, either iterate over the list or select list element zero [0] if you expect only one hit
     # more sophisticated expressions are possible
 
@@ -181,7 +170,7 @@ def get_nr_waveform_parameters_from_rfws_format(waveform_path, waveform_file_nam
         waveform_config_src["Duplex Scheme"] = "user_defined"
     else:
         raise Exception(
-            "ERROR: Unkown or not supported link direction (Downlink or Uplink):",
+            "ERROR: Unknown or not supported link direction (Downlink or Uplink):",
             waveform_config_src["link_direction"],
         )
 
@@ -202,17 +191,6 @@ def get_lte_waveform_parameters_from_rfws_format(waveform_path, waveform_file_na
     # Preallocate target dict for waveform config
     waveform_config_src = {}
 
-    # waveform_config_src["generator"] ={"generator_abbr": "abbreviation",
-    #                                   "generator_description":"description"}
-    # generator_abbr: used to create parameter names in wireless_link_parameter_map
-    # ............. if standard = nr, WaveformGenerator: ni_rfmx_rfws, then the parameter name: nr_ni_rfmx_rfws_parmater
-    # generator_description: generator description to occur in meta-data
-    #
-    waveform_config_src["generator"] = {
-        "generator_abbr": "ni_rfmx_rfws",
-        "generator_description": "NI RFmx Waveform Creator: https://www.ni.com/en-ca/shop/wireless-design-test/application-software-for-wireless-design-test-category/what-is-rfmx.html",
-    }
-
     def get_lte_parameter_config(key, str_idx):
         y = key.find("_" + str_idx)
         req_key = key[y + 3 :]
@@ -224,8 +202,8 @@ def get_lte_waveform_parameters_from_rfws_format(waveform_path, waveform_file_na
     ## Load Waveform Config from rfws file
     xmlDoc = ET.parse(waveform_file_path)
     root = xmlDoc.getroot()
-    # XPath expressiion searching all elements recursively starting from root './/*'
-    # that have an attribute 'name' with the value e.i. 'Bandwidth (Hz)'
+    # XPath expression searching all elements recursively starting from root './/*'
+    # that have an attribute 'name' with the value i.e. 'Bandwidth (Hz)'
     # returns a list, either iterate over the list or select list element zero [0] if you expect only one hit
     # more sophisticated expressions are possible
 
@@ -288,7 +266,7 @@ def get_lte_waveform_parameters_from_rfws_format(waveform_path, waveform_file_na
         waveform_config_src["User Defined Modulation Type"] = get_lte_parameter_config(mod, "mt")
     else:
         raise Exception(
-            "ERROR: Unkown or not supported link direction (Downlink or Uplink):",
+            "ERROR: Unknown or not supported link direction (Downlink or Uplink):",
             waveform_config_src["LinkDirection"],
         )
 
@@ -336,7 +314,7 @@ def read_tdms_waveform_config(waveform_path, waveform_file_name):
             waveform_path, waveform_file_name
         )
     else:
-        raise Exception("ERROR: Unkown or not supported standard", standard)
+        raise Exception("ERROR: Unknown or not supported standard", standard)
 
     return waveform_config_src
 
@@ -346,7 +324,7 @@ def read_matlab_waveform_config(waveform_path, waveform_file_name, format):
     Read waveform configuration file and map metadata to dictionary conforming the API and SigMF format.
     The wireless link parameter map (YAML file) has the dictionary of used parameters and specify the mapping pairs.
     """
-    # Read wavefrom configuration file in YAML format
+    # Read waveform configuration file in YAML format
     if format == "matlab":
         # The MATLAB waveform config file is saved with the same name of waveform but in yaml
         path_to_file = os.path.join(waveform_path, waveform_file_name + ".yaml")
@@ -385,17 +363,15 @@ def read_matlab_waveform_config(waveform_path, waveform_file_name, format):
         # change code rate to decimal, i.e. 3/7
         waveform_config_src["crate"] = eval(waveform_config_src["crate"])
 
-        # since in this matlab waveforms, the ieee generator does not write the standard key to config file, do it manaully
-        waveform_config_src["standard"] = "802.11"
-        waveform_config_src["generator"] = "ieee_gen_matlab"
-
     else:
         raise Exception("ERROR: Unsupported waveform format")
 
     return waveform_config_src
 
 
-def map_metadata_to_sigmf_format(waveform_config_src, wireless_link_parameter_map_file):
+def map_metadata_to_sigmf_format(
+    waveform_config_src, wireless_link_parameter_map_file, waveform_generator
+):
     """
     Maps metadata from Waveform creator to API and SigMF format.
     The used parameters and the mapping pairs are specified in a separate YAML file
@@ -408,61 +384,62 @@ def map_metadata_to_sigmf_format(waveform_config_src, wireless_link_parameter_ma
         wireless_link_parameter_map_dic = yaml.load(file, Loader=yaml.Loader)
 
     # check if standard key is given
-    if waveform_config_src.get("standard") is None:
-        raise Exception(f"standard should be given via config file or added manually!")
+    if wireless_link_parameter_map_dic["waveform_generator"][waveform_generator] is None:
+        raise Exception(
+            f"Invalid standard key: Name should be corrected or added to wireless_link_parameter_map.yaml, given: ",
+            waveform_generator,
+        )
 
-    # check if waveform generator key is given
-    if waveform_config_src.get("generator") is None:
-        print("Error: waveform generator is used to derive the paramter name")
-        raise Exception(f"waveform generator should be given via config file or added manually!")
+    #  get standard and name of generator
+    standard_key = wireless_link_parameter_map_dic["waveform_generator"][waveform_generator]
 
-    if waveform_config_src["standard"] == "802.11":
+    # get parameters map based on standard key
+    if standard_key["standard"] == "802.11":
         waveform_parameter_map_dic = wireless_link_parameter_map_dic["transmitter"]["wifi"]
     else:
         waveform_parameter_map_dic = wireless_link_parameter_map_dic["transmitter"][
-            waveform_config_src["standard"]
+            standard_key["standard"]
         ]
-    # Get waveform generator info
-    # It can be provided as
-    # option1: waveform_parameter_map_dic["generator"] = "name" such as "ieee_gen_matlab"
-    # option2: waveform_config_src["generator"] ={"generator_abbr": "abbreviation",
-    #                                   "generator_description":"description"}
-    # generator_abbr: used to create parameter names in wireless_link_parameter_map
-    # ............. if standard = nr, WaveformGenerator: ni_rfmx_rfws, then the parameter name: nr_ni_rfmx_rfws_parmater
-    # generator_description: generator description to occur in meta-data
-    #
-    if isinstance(waveform_config_src["generator"], dict):
-        generator_abbr = data_source = waveform_config_src["generator"]["generator_abbr"]
-        # keep generator_description and remove generator_abbr
-        waveform_config_src["generator"] = waveform_config_src["generator"]["generator_description"]
-    else:
-        generator_abbr = data_source = waveform_config_src["generator"]
-    # create common parameters key: StandardName +_ + WaveformGenerator
-    data_source = waveform_config_src["standard"] + "_" + generator_abbr
 
     # pre-allocate target dict
     waveform_config = {}
-    waveform_config ["standard"] = waveform_config_src["standard"]
 
     for parameter_pair in waveform_parameter_map_dic:
         # check if key for chosen simulator even exists
-        if data_source + "_parameter" in parameter_pair.keys():
+        if waveform_generator + "_parameter" in parameter_pair.keys():
             # only continue with mapping from file if direct equivalent exists
-            if parameter_pair[data_source + "_parameter"]["name"]:
+            if parameter_pair[waveform_generator + "_parameter"]["name"]:
                 # It is not necessary to get all parameters from wireless_link_parameter_map.yaml in waveform_config_src
                 # since some parameters related to DL or UL only
-                if parameter_pair[data_source + "_parameter"]["name"] in waveform_config_src.keys():
+                if (
+                    parameter_pair[waveform_generator + "_parameter"]["name"]
+                    in waveform_config_src.keys()
+                ):
                     # extract value from waveform config source
-                    value = waveform_config_src[parameter_pair[data_source + "_parameter"]["name"]]
+                    value = waveform_config_src[
+                        parameter_pair[waveform_generator + "_parameter"]["name"]
+                    ]
                     # additional mapping if parameter values should come from a discrete set of values
-                    if "value_map" in parameter_pair[data_source + "_parameter"].keys():
-                        value = parameter_pair[data_source + "_parameter"]["value_map"][value]
+                    if "value_map" in parameter_pair[waveform_generator + "_parameter"].keys():
+                        value = parameter_pair[waveform_generator + "_parameter"]["value_map"][
+                            value
+                        ]
                     # write to target dictionary for SigMF
                     waveform_config[parameter_pair["sigmf_parameter_name"]] = value
             else:
-                raise Exception(f"Incomplete specification in field '{data_source}_parameter'!")
+                raise Exception(
+                    f"Incomplete specification in field '{waveform_generator}_parameter'!"
+                )
         # else:  # fill_non_explicit_fields
         #     waveform_config[parameter_pair["sigmf_parameter_name"]] = "none"
+    if not waveform_config:
+        raise Exception(
+            """ERROR: Check waveform config: waveform_generator, waveform_file_name, waveform_path, waveform_path_type, waveform_format")
+            Waveform Config is empty!!"""
+        )
+
+    waveform_config["standard"] = standard_key["standard"]
+    waveform_config["generator"] = standard_key["generator"]
 
     # check for non-JSON-serializable data types
     def isfloat(NumberString):
@@ -501,6 +478,7 @@ def read_tx_waveform_config(tx_data_recording_api_config, wireless_link_paramete
     waveform_path = tx_data_recording_api_config.waveform_path
     waveform_file_name = tx_data_recording_api_config.waveform_file_name
     waveform_format = tx_data_recording_api_config.waveform_format
+    waveform_generator = tx_data_recording_api_config.waveform_generator
 
     if waveform_format in ["tdms", "matlab", "matlab_ieee"]:
         if waveform_format == "tdms":
@@ -516,11 +494,9 @@ def read_tx_waveform_config(tx_data_recording_api_config, wireless_link_paramete
                 waveform_format,
             )
         tx_data_recording_api_config.waveform_config = map_metadata_to_sigmf_format(
-            waveform_config_src, wireless_link_parameter_map
+            waveform_config_src, wireless_link_parameter_map, waveform_generator
         )
     else:
-        waveform_config = {}
-        waveform_config["standard"] = "unknown"
-        tx_data_recording_api_config.waveform_config = waveform_config
+        raise Exception(f"Error: Waveform format is not supported: ", waveform_format)
 
     return tx_data_recording_api_config
