@@ -63,8 +63,8 @@ def parse_args():
     parser.add_argument(
         "-a",
         "--args",
-        # default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6",
-        default="type=x4xx,addr=192.168.40.2,master_clock_rate=245.76e6",
+        default="type=x300,addr=192.168.40.2,master_clock_rate=184.32e6",
+        #default="type=x4xx,addr=192.168.40.2,master_clock_rate=245.76e6",
         type=str,
         help="Device args to use when connecting to the USRP.",
     )
@@ -122,7 +122,7 @@ def parse_args():
         help="possible values: tdms, matlab, matlab_ieee",
     )
     parser.add_argument("-f", "--freq", default=3.6e9, type=float, help="RF center frequency in Hz")
-    parser.add_argument("-loo", "--lo_offset", default=20e6, type=float, help="LO offset in Hz")
+    parser.add_argument("-loo", "--lo_offset", default=20.0e6, type=float, help="LO offset in Hz")
     parser.add_argument(
         "-enable_loo",
         "--enable_lo_offset",
@@ -138,7 +138,7 @@ def parse_args():
     parser.add_argument(
         "-bw",
         "--bandwidth",
-        default=100e6,
+        default=20e6,
         type=float,
         help="analog front-end filter bandwidth in Hz",
     )
@@ -232,19 +232,28 @@ def main():
     num_mboards = graph.get_num_mboards()
     print(f"Number of mboards: {num_mboards}")
     graph.get_mb_controller(0).set_clock_source(args.reference)
-
+    args.max_RF_bandwidth = radio_ctrl.get_rx_bandwidth(0)
+    print("args.max_RF_bandwidth", args.max_RF_bandwidth)
     # Set the center frequency
     print(f"Requesting TX Freq: {(args.freq / 1e6)} MHz...")
-    if args.enable_lo_offset:
-        radio_ctrl.set_tx_frequency(args.freq + args.lo_offset, args.radio_chan)
-        duc_ctrl.set_freq(-args.lo_offset, args.duc_chan)
-        print(
-            "Note: LO Frequency offset is:",
-            args.lo_offset,
-            ". It should be greater than Signal BW /2 and less than (max_RF_bandwidth - Signal BW)/2",
-        )
+    if str2bool(args.enable_lo_offset):
+        if abs(args.lo_offset) > args.bandwidth / 2 and abs(args.lo_offset) < (
+            (args.max_RF_bandwidth - args.bandwidth) / 2
+        ):
+            radio_ctrl.set_tx_frequency(args.freq + args.lo_offset, args.radio_chan)
+            duc_ctrl.set_freq(-args.lo_offset, args.duc_chan)
+        else:
+            raise Exception(
+                "ERROR: The absolute value of LO Frequency offset is:",
+                abs(args.lo_offset),
+                ". It should be greater than ",
+                args.bandwidth / 2,
+                " and less than ",
+                (args.max_RF_bandwidth - args.bandwidth) / 2, 'Note: here TX bandwidth is given by user and not read from wavefrom config'
+            )
     else:
         radio_ctrl.set_tx_frequency(args.freq, args.radio_chan)
+        
     coerced_tx_freq = radio_ctrl.get_tx_frequency(args.radio_chan)
     print(f"Actual TX Freq: {coerced_tx_freq/ 1e6}  MHz...")
     print(f"** TX Carrier Frequency Offset: {coerced_tx_freq - args.freq}  Hz...")

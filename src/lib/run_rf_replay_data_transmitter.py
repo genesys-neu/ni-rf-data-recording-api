@@ -121,15 +121,15 @@ def rf_replay_data_transmitter(args):
     # Set the center frequency
     print(f"Requesting TX Freq: {(args.freq / 1e6)} MHz...")
     if str2bool(args.enable_lo_offset):
-        if args.lo_offset > args.bandwidth / 2 and args.lo_offset < (
+        if abs(args.lo_offset) > args.bandwidth / 2 and abs(args.lo_offset) < (
             (args.max_RF_bandwidth - args.bandwidth) / 2
         ):
             radio_ctrl.set_tx_frequency(args.freq + args.lo_offset, args.radio_chan)
             duc_ctrl.set_freq(-args.lo_offset, args.duc_chan)
         else:
             raise Exception(
-                "ERROR: LO Frequency offset is:",
-                args.lo_offset,
+                "ERROR: The absolute value of LO Frequency offset is:",
+                abs(args.lo_offset),
                 ". It should be greater than ",
                 args.bandwidth / 2,
                 " and less than ",
