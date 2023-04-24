@@ -38,7 +38,7 @@ if __name__ == "__main__":
                 # nr
                 self.waveform_generator = "5gnr_ni_rfmx_rfws"
                 self.waveform_file_name = (
-                    "NR_FR1_DL_FDD_SISO_BW-10MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM2"
+                    "NR_FR1_DL_FDD_SISO_BW-10MHz_CC-1_SCS-30kHz_OFDM_TM2"
                 )
                 # self.waveform_file_name = "NR_FR1_UL_All_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_enabled_PTRS"
                 self.waveform_path = "waveforms/nr/"

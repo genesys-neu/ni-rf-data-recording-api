@@ -85,7 +85,7 @@
         "bandwidth":      {"SeqType": "list",     "Values": [20e6]},
         "rate_source":    {"SeqType": "single",   "Values": "waveform_config"},
         "waveform_generator": {"SeqType": "single","Values": "5gnr_ni_rfmx_rfws"},
-        "waveform_file_name": {"SeqType": "list", "Values": ["NR_FR1_DL_FDD_SISO_BW-10MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM2"]},
+        "waveform_file_name": {"SeqType": "list", "Values": ["NR_FR1_DL_FDD_SISO_BW-10MHz_CC-1_SCS-30kHz_OFDM_TM2"]},
         "waveform_path":  {"SeqType": "single",   "Values": "waveforms/nr/"},
         "waveform_path_type": {"SeqType": "single","Values": "relative"},
         "waveform_format":{"SeqType": "single",   "Values": "tdms"},
