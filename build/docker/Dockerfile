@@ -42,7 +42,7 @@ RUN /bin/bash -c "source ~/.bashrc" source ~/.bashrc
 RUN apt install -y net-tools
 
 # install sigmf and pytest 
-RUN pip3 install sigmf pytest
+RUN pip3 install sigmf==1.0.0 pytest
 
 # install python package to read TDMS files
 RUN pip3 install npTDMS[hdf,pandas,thermocouple_scaling]
