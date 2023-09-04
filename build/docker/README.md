@@ -17,7 +17,14 @@ Note that in order to mount a host directory into the volume, it is necessary to
 cd ../../
 ```
 - Then, run the docker container:
+
+**Windows PowerShell**
+```powershell
+set RFDATAFACTORYPATH=pwd
+sudo docker run -ti --rm --network host --privileged -v $RFDATAFACTORYPATH/build/docker/utils:/utils -v $RFDATAFACTORYPATH/src:/src user/ni-rf-data-recorder-api
 ```
+**Unix**
+```bash
 RFDATAFACTORYPATH=`pwd`
 sudo docker run -ti --rm --network host --privileged -v $RFDATAFACTORYPATH/build/docker/utils:/utils -v $RFDATAFACTORYPATH/src:/src user/ni-rf-data-recorder-api
 ```
