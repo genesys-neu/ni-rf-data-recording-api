@@ -1,5 +1,5 @@
 #
-# Copyright 2022 National Instruments Corporation
+# Copyright 2023 National Instruments Corporation
 #
 # SPDX-License-Identifier: MIT
 #
@@ -107,6 +107,34 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config, 
             "gain_tx": np.float32(tx_args.gain).item(),
             "clock_reference": tx_args.clock_reference,
         }
+        # add mmwave TX info if enable_mmwave == True
+        if data_format_conversion_lib.str2bool(general_config["enable_mmwave"]):
+            mmwave_antenna_array = {
+                "serial_number": tx_args.mmwave_antenna_array_parameters.serial_number,
+                "antenna_array_specification_table": tx_args.mmwave_antenna_array_parameters.antenna_array_specification_table,
+                "device_type": tx_args.mmwave_antenna_array_parameters.device_type,
+                "rf_frequency": tx_args.mmwave_antenna_array_parameters.rf_frequency,
+                "beamformer_config_mode": tx_args.mmwave_antenna_array_parameters.beamformer_config_mode,
+                "disabled_antenna_elements": tx_args.mmwave_antenna_array_parameters.disabled_antenna_elements,
+                "antenna_element_gain_list": tx_args.mmwave_antenna_array_parameters.antenna_element_gain_list,
+                "antenna_element_phase_list_deg": tx_args.mmwave_antenna_array_parameters.antenna_element_phase_list_deg,
+                "beam_gain_db": tx_args.mmwave_antenna_array_parameters.beam_gain_db,
+                "beam_angle_elevation_deg": tx_args.mmwave_antenna_array_parameters.beam_angle_elevation_deg,
+                "beam_angle_azimuth_deg": tx_args.mmwave_antenna_array_parameters.beam_angle_azimuth_deg
+            }
+            mmwave_up_down_converter = {
+                "num_channels": tx_args.mmwave_up_down_converter_parameters.num_channels,
+                "serial_number": tx_args.mmwave_up_down_converter_parameters.serial_number,
+                "device_type": tx_args.mmwave_up_down_converter_parameters.device_type,
+                "if_frequency": tx_args.mmwave_up_down_converter_parameters.if_frequency,
+                "rf_frequency": tx_args.mmwave_up_down_converter_parameters.rf_frequency,
+                "lo_frequency": tx_args.mmwave_up_down_converter_parameters.lo_frequency,
+                "bandwidth": tx_args.mmwave_up_down_converter_parameters.bandwidth,
+                "disabled_channels": tx_args.mmwave_up_down_converter_parameters.disabled_channels,
+                "clock_reference_100MHz": tx_args.mmwave_up_down_converter_parameters.clock_reference_100MHz
+            }
+            signal_emitter["mmwave_antenna_array"] = mmwave_antenna_array
+            signal_emitter["mmwave_up_down_converter"] = mmwave_up_down_converter
 
         txs_info[idx] = {
             "transmitter_id": str(idx),
@@ -133,6 +161,35 @@ def write_rx_recorded_data_in_sigmf(rx_data, rx_args, txs_args, general_config, 
         "bandwidth": rx_args.coerced_rx_bandwidth,
         "gain": rx_args.coerced_rx_gain,
     }
+
+    # add mmwave RX info if enable_mmwave == True
+    if data_format_conversion_lib.str2bool(general_config["enable_mmwave"]):
+        mmwave_antenna_array = {
+            "serial_number": rx_args.mmwave_antenna_array_parameters.serial_number,
+            "antenna_array_specification_table": rx_args.mmwave_antenna_array_parameters.antenna_array_specification_table,
+            "device_type": rx_args.mmwave_antenna_array_parameters.device_type,
+            "rf_frequency": rx_args.mmwave_antenna_array_parameters.rf_frequency,
+            "beamformer_config_mode": rx_args.mmwave_antenna_array_parameters.beamformer_config_mode,
+            "disabled_antenna_elements": rx_args.mmwave_antenna_array_parameters.disabled_antenna_elements,
+            "antenna_element_gain_list": rx_args.mmwave_antenna_array_parameters.antenna_element_gain_list,
+            "antenna_element_phase_list_deg": rx_args.mmwave_antenna_array_parameters.antenna_element_phase_list_deg,
+            "beam_gain_db": rx_args.mmwave_antenna_array_parameters.beam_gain_db,
+            "beam_angle_elevation_deg": rx_args.mmwave_antenna_array_parameters.beam_angle_elevation_deg,
+            "beam_angle_azimuth_deg": rx_args.mmwave_antenna_array_parameters.beam_angle_azimuth_deg
+        }
+        mmwave_up_down_converter = {
+            "num_channels": rx_args.mmwave_up_down_converter_parameters.num_channels,
+            "serial_number": rx_args.mmwave_up_down_converter_parameters.serial_number,
+            "device_type": rx_args.mmwave_up_down_converter_parameters.device_type,
+            "if_frequency": rx_args.mmwave_up_down_converter_parameters.if_frequency,
+            "rf_frequency": rx_args.mmwave_up_down_converter_parameters.rf_frequency,
+            "lo_frequency": rx_args.mmwave_up_down_converter_parameters.lo_frequency,
+            "bandwidth": rx_args.mmwave_up_down_converter_parameters.bandwidth,
+            "disabled_channels": rx_args.mmwave_up_down_converter_parameters.disabled_channels,
+            "clock_reference_100MHz": rx_args.mmwave_up_down_converter_parameters.clock_reference_100MHz
+        }
+        rx_info["mmwave_antenna_array"] = mmwave_antenna_array
+        rx_info["mmwave_up_down_converter"] = mmwave_up_down_converter
 
     # ----------------------
     # Add annotation parameters to SigMF metadata

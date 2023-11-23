@@ -1,5 +1,5 @@
 #
-# Copyright 2022 National Instruments Corporation
+# Copyright 2023 National Instruments Corporation
 #
 # SPDX-License-Identifier: MIT
 #
@@ -123,6 +123,44 @@ def get_device_variations_config_dict(device_variations_config_dict, RFmode, var
                     )
                 variations_dict[key_id] = target_value
 
+            # get mmWave array antenna config parameters if exist
+            if "mmwave_antenna_array_parameters" in device_config:
+                mmwave_antenna_array_parameters = device_config["mmwave_antenna_array_parameters"]
+                for key, parameter_config in mmwave_antenna_array_parameters.items():
+                    key_id = device_id + "_" + "mmwave_antenna_array" + "_" + key
+                    # get parameter values, change to list if values given in range or single
+                    if parameter_config["SeqType"] == "range":
+                        parameter_config = change_parameter_range_to_list(parameter_config)
+                        target_value = parameter_config["Values"]
+                    elif parameter_config["SeqType"] == "list":
+                        target_value = parameter_config["Values"]
+                    elif parameter_config["SeqType"] == "single":
+                        target_value = [parameter_config["Values"]]
+                    else:
+                        raise Exception(
+                            "ERROR: The supported variations options are: range, list, and single"
+                        )
+                    variations_dict[key_id] = target_value
+
+            # get mmWave ud converter config parameters if exist
+            if "mmwave_up_down_converter_parameters" in device_config:
+                mmwave_up_down_converter_parameters = device_config["mmwave_up_down_converter_parameters"]
+                for key, parameter_config in mmwave_up_down_converter_parameters.items():
+                    key_id = device_id + "_" + "mmwave_up_down_converter" + "_" + key
+                    # get parameter values, change to list if values given in range or single
+                    if parameter_config["SeqType"] == "range":
+                        parameter_config = change_parameter_range_to_list(parameter_config)
+                        target_value = parameter_config["Values"]
+                    elif parameter_config["SeqType"] == "list":
+                        target_value = parameter_config["Values"]
+                    elif parameter_config["SeqType"] == "single":
+                        target_value = [parameter_config["Values"]]
+                    else:
+                        raise Exception(
+                            "ERROR: The supported variations options are: range, list, and single"
+                        )
+                    variations_dict[key_id] = target_value
+
     return variations_dict, num_usrps
 
 
@@ -181,6 +219,7 @@ class CreateVariationsMap:
         variations_dict, num_rx_usrps = get_device_variations_config_dict(
             rx_variations_config_dict, RFmode_rx, variations_dict
         )
+
         # ---------------------------------------
         ## Get Variations map by doing a Cross-product
         # --------------------------------------

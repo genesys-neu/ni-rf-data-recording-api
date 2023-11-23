@@ -1,11 +1,13 @@
 #
-# Copyright 2022 National Instruments Corporation
+# Copyright 2023 National Instruments Corporation
 #
 # SPDX-License-Identifier: MIT
 #
 """
 Data format conversion Lib
 """
+
+
 # Description:
 #   Change the data format of a given variable based on the need
 #
@@ -39,3 +41,13 @@ def str2bool(v):
         return False
     else:
         raise Exception("ERROR: Boolean value expected.")
+
+
+# string to list
+def str2list(input_string, data_type):
+    if input_string == '':
+        return []
+    else:
+        substrings = input_string.split(',')
+        target_list = [data_type(substring.strip()) for substring in substrings]
+        return target_list

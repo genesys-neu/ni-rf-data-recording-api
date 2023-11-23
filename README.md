@@ -1,6 +1,6 @@
 ![NI Logo](docs/figures/NI_NEU_API_landing_page.png "NI & NEU API Logo")
 
-# NI RF Data Recording API v1.0.0
+# NI RF Data Recording API v1.1.0
 
 Welcome to RF Data Recording API! The RF Data Recording API is the free and open-source Python-based API to record Real-World RF data sets in an easy and automated way.
 
@@ -15,32 +15,37 @@ The RF Data Recording API has been built based on [UHD](https://github.com/Ettus
 <details>
 <summary>"Click to expand"</summary>
 
-- [NI RF Data Recording API](#ni-rf-data-recording-api-v100)
-    - [Table of Contents](#table-of-contents)
-    - [Introduction](#introduction)
-    - [API Features](#api-features)
-    - [System Requirements](#system-requirements)
-        - [Software](#software)
-        - [Hardware](#hardware)
-    - [Reference Architecture](#reference-architecture)
-    - [API Components](#api-components)
-        - [Main Scripts for API Execution](#main-scripts-for-api-execution)
-        - [Waveforms](#waveforms)
-        - [Configuration Files](#configuration-files)
-        - [Wireless Link Parameter Map Dictionary](#wireless-link-parameter-map-dictionary)
-        - [API Library](#api-library)
-    - [System Setup](#system-setup)
-    - [How to Run NI RF Data Recording API](#how-to-run-ni-rf-data-recording-api)
-		- [Running RF Data Recording API based on Configuration File](#running-rf-data-recording-api-based-on-configuration-file)
-		- [RF Replay Data Transmitter](#rf-replay-data-transmitter)
-		- [RF Rx Data Recorder](#rf-rx-data-recorder)
-		- [LO Configuration](#lo-configuration)
-		- [Results](#results)
-		- [RF Data Pre-Processing](#rf-data-pre-processing)
-	- [Directories](#directories)
-    - [Contributing](#contributing)
-    - [Known Issues and Limitations](#known-issues-and-limitations)
-    -[Acknowledgment](#acknowledgment)
+- [NI RF Data Recording API v1.1.0](#ni-rf-data-recording-api-v110)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [API Features](#api-features)
+  - [System Requirements](#system-requirements)
+    - [Software](#software)
+    - [Hardware](#hardware)
+      - [mmWave Solution](#mmwave-solution)
+  - [Reference Architecture](#reference-architecture)
+  - [API Components](#api-components)
+    - [Main Scripts for API Execution](#main-scripts-for-api-execution)
+    - [Waveforms](#waveforms)
+    - [Configuration Files](#configuration-files)
+    - [Wireless Link Parameter Map Dictionary](#wireless-link-parameter-map-dictionary)
+    - [API Library](#api-library)
+  - [System Setup](#system-setup)
+  - [How to Run NI RF Data Recording API](#how-to-run-ni-rf-data-recording-api)
+    - [Pre-requisite for mmWave Support](#pre-requisite-for-mmwave-support)
+      - [Get the Driver API of mmWave Devices](#get-the-driver-api-of-mmwave-devices)
+      - [Get Necessary Inputs](#get-necessary-inputs)
+      - [Get Value Limits of Configurations for the Beam Former](#get-value-limits-of-configurations-for-the-beam-former)
+    - [Running RF Data Recording API based on Configuration File](#running-rf-data-recording-api-based-on-configuration-file)
+    - [RF Replay Data Transmitter](#rf-replay-data-transmitter)
+    - [RF Rx Data Recorder](#rf-rx-data-recorder)
+    - [LO Configuration](#lo-configuration)
+    - [Results](#results)
+    - [RF Data Pre-Processing](#rf-data-pre-processing)
+  - [Directories](#directories)
+  - [Contributing](#contributing)
+  - [Known Issues and Limitations](#known-issues-and-limitations)
+  - [Acknowledgment](#acknowledgment)
 
 </details>
 <!-- AUTO-GENERATED-CONTENT:END -->
@@ -60,6 +65,7 @@ Despite being in the early phase of research for 6G, AI & ML appears to be becom
 
 ## API Features
 - Interface NI’s USRP SDR platform via UHD driver and Python software platforms.
+- Support mmWave devices via the related official driver and Python software platforms.
 - Facilitate hassle-free setup of NI’s SDR platform for experimentation and data sets collection.
 - Highly configurable as it requires a single configuration file for setting the desired values of parameters of multiple connected SDRs for the required data recording campaign.
 - [JSON](http://www.json.org/) Or [YAML](https://yaml.org/) based configuration of data recording campaign. 
@@ -90,7 +96,9 @@ The following table presents the required hardware for this configuration (cable
 | SMA Cable  				| 4 		| 
 | 30 dB Attenuator  		| 1    		| 
 | 10 Gig Eth Cable (SFP+) *	| 4     	|
+
 ***Note1**: The USRP X310 can be connected to the host machine using different options. Look to [Network Connectivity Guide](https://files.ettus.com/manual/page_usrp_x3x0.html#x3x0_getting_started_connectivity).
+
 ***Note2**: The USRP X410 can be connected to the host machine using different options. Look to [Network Connectivity Guide](https://files.ettus.com/manual/page_usrp_x4xx.html#x4xx_getting_started_network_connectivity).
 - Host PC Linux server: Recommended with [10Gig Eth card (SFP+)](https://www.ettus.com/all-products/10gige-1m/).
 - SMA cable: Female/female cable that is included with the USRP RIO device.
@@ -103,6 +111,42 @@ Ensure your host has enough free disk space and RAM.
 - **Caution**: To ensure the specified EMC performance, operate the RF devices only with shielded cables and accessories.
 - **Caution**: To ensure the specified EMC performance, the length of all I/O cables except for those connected to the GPS antenna input of the USRP device must be no longer than 3 m (10 ft.).
 - **Caution**: The USRP RIO RF devices are not approved or licensed for transmission over the air using an antenna. As a result, operating this product with an antenna may violate local laws. Ensure that you are in compliance with all local laws before operating this product with an antenna.
+
+#### mmWave Solution 
+To support mmWave research, mmWave devices are required that include the mmWave beam formers and up/down frequency converters (UDC) either the Dual channel or the Single channel type.
+
+The following figure shows the setup using mmWave devices (two beam formers and one dual channel UDC) of TMYTEK-NI for a single Tx station and Rx station.
+![mmWave Hardware](docs/figures/mmWave_dual_ud_setup.png "Hardware Configuration with mmWave supported")
+
+The following table presents the required hardware for this configuration.
+| Item    					| Number	| 
+| ------------------------- | ----------|
+| Host PC (Linux Server)   	| 1 		|
+| X310 or X410 USRP Device    		| 2    		| 
+| SMA Cable  				| 4 		| 
+| 10 Gig Eth Cable (SFP+) *	| 2     	|
+| 1 Gig Eth Cable	        | 4         |
+| Switch	                | 1         |
+| BBox One 5G	            | 1     	|
+| BBox Lite 5G	            | 1     	|
+| UD Box 5G	                | 1     	|
+
+The following figure shows the setup using mmWave devices (two beam formers and two single channel UDC) of TMYTEK-NI for a single Tx station and Rx station.
+![mmWave Hardware](docs/figures/mmWave_single_ud_setup.png "Hardware Configuration with mmWave supported")
+
+The following table presents the required hardware for this configuration.
+| Item    					| Number	| 
+| ------------------------- | ----------|
+| Host PC (Linux Server)   	| 1 		|
+| X310 or X410 USRP Device    		| 2    		| 
+| SMA Cable  				| 4 		| 
+| 10 Gig Eth Cable (SFP+) *	| 2     	|
+| 1 Gig Eth Cable	        | 5         |
+| Switch	                | 1         |
+| BBox One 5G	            | 1     	|
+| BBox Lite 5G	            | 1     	|
+| UD Box 5G	                | 2     	|
+***Note**: The "BBox One 5G" and "BBox Lite 5G" is the beam former and "UD Box 5G" is the UDC. [TMYTEK-NI mmWave Device with NI Ettus USRP X410 Getting Started Guide](https://www.ni.com/docs/en-US/bundle/tmytek-ni-mmwave-device-with-ni-ettus-usrp-x410-getting-started/resource/tmytek-ni-mmwave-device-with-ni-ettus-usrp-x410-getting-started.pdf) can provide the reference.
 
 ---
 
@@ -119,9 +163,10 @@ By using a few clicks, the RF Data Recording API can generate real-world RF data
     - SigMF Data: Binary file includes collected raw data
     - SigMF Metadata (JSON format)
 
-The following figure shows the reference architecture of NI RF Data Recording API.
+The following figure shows the reference architecture of NI RF Data Recording API including mmWave solution.
 
-![RF Data Recording API Reference Architecture](docs/figures/rf_data_recording_reference_architecture.png "RF Data Recording API Reference Architecture")
+![RF Data Recording API Reference Architecture with mmWave Solution](docs/figures/mmwave_rf_data_recording_reference_architecture.png "RF Data Recording API Reference Architecture with mmWave Solution")
+***Note**: The update involves incorporating mmWave devices into the API loop, which are compatible with the existing inputs and outputs of the mmWave solution.
 
 ---
 
@@ -137,6 +182,8 @@ The main components of the source project are described in the following:
 To run the API in Tx or Rx RF mode only and configure it from the terminal, the following two scripts can be used:
 - **RF Replay Data Transmitter**: `src/rf_replay_data_transmitter_usrp_uhd.py`
 - **RF Rx Data Recorder**: `src/rf_data_recorder_usrp_uhd.py`
+
+***Note**: The above two scripts of **RF Replay Data Transmitter** and **RF Rx Data Recorder** do not implement the mmWave solution but you can reference the design of RF Data Recording API to update those scripts by yourself. For Tx, Rx, or Tx & Rx RF modes with mmWave support, use the main script of RF Data Recording API. All those modes can be enabled or disabled via the API configuration file.
 
 ---
 
@@ -180,7 +227,9 @@ Each configuration file has the following sections:
 - **Common Tx Stations configuration**: A list of parameters that are related to transmitters for clock reference configuration and the waveform replay data configuration to have a continuous transmission.
 - **Receivers configuration**: List of receivers where every Receiver has a list of parameters that you can sweep over. Those parameters are the RF configuration such as frequency, gain, sampling rate, antenna port, clock reference, … etc, and duration of record. The sampling rate can be configured by the user or given from the Tx configuration. If there are multiple transmitters with different sampling rates, the maximum value will be used. Three types of variations have been defined as it is mentioned above: “Range”, “List”, and “Single”.
 
-**Note**: If there are multiple transmitters, the API can be configured to execute them either in parallel or in sequential while if there are multiple receivers, the default is to execute them in parallel. 
+***Note1**: If there are multiple transmitters, the API can be configured to execute them either in parallel or in sequential while if there are multiple receivers, the default is to execute them in parallel. 
+
+***Note2**: For mmWave usage, the parameters of mmWave antenna array and UDC are necessary inputs as a sub-object of Transmitters and Receivers configuration.
 
 The following figure shows an exemplary of YAML/JSON RF data recording API configuration file.
 
@@ -194,9 +243,21 @@ Several configuration files have been created as a template for all operation mo
 - Single-Tx and Single Rx (YAML): [src/config/config_rf_data_recording_api.yaml](src/config/config_rf_data_recording_api.yaml)
 - Rx Only:  [src/config/config_rf_data_recording_api_rx_only.yaml](src/config/config_rf_data_recording_api_rx_only.yaml)
 - Tx Only: [src/config/config_rf_data_recording_api_tx_only.yaml](src/config/config_rf_data_recording_api_tx_only.yaml)
+- Single-Tx and Single Rx with Dual Channel UDC (JSON): [src/config/config_rf_data_recording_api_mmWave_dual_UDC.json](src/config/config_rf_data_recording_api_mmWave_dual_UDC.json)
+- Single-Tx and Single Rx with Single Channel UDC (JSON): [src/config/config_rf_data_recording_api_mmWave_single_UDC.json](src/config/config_rf_data_recording_api_mmWave_single_UDC.json)
 
-**Note**: For Tx only or Rx only, you can use the config file for this operation mode as it is mentioned in the configuration templates above or you can use the RF Replay Data Transmitter and RF Rx Data Recorder scripts by passing the configurations directly from the terminal.
+***Note1**: For Tx only or Rx only, you can use the config file for this operation mode as it is mentioned in the configuration templates above or you can use the RF Replay Data Transmitter and RF Rx Data Recorder scripts by passing the configurations directly from the terminal.
 
+***Note2**: 
+For mmWave solution usage, examples of the configuration based on Single-Tx and Single Rx are provided:
+- Dual Channel UDC: In the example `src/config/config_rf_data_recording_api_mmWave_dual_UDC.json`, the UDC is shared by Tx and Rx station so you can only keep "serial_number" and "num_channels" of "mmwave_up_down_converter_parameters" in "receivers_config":
+```
+"mmwave_up_down_converter_parameters": {
+        "serial_number":   {"SeqType": "single",    "Values": "UD-XXX"},
+        "num_channels":    {"SeqType": "single",    "Values": 2}
+      }
+```
+- Single Channel UDC: In the example `src/config/config_rf_data_recording_api_mmWave_single_UDC.json`, parameters of the beam former ("mmwave_antenna_array_parameters") and UDC ("mmwave_up_down_converter_parameters") should be given for both Tx section and Rx section.
 ---
 
 ### Wireless Link Parameter Map Dictionary
@@ -228,6 +289,8 @@ The RF Data Recording API library has several main components:
         - Python function: `src/lib/run_rf_replay_data_transmitter.py`
     - **Receivers**: The Rx sessions are generated and started simultaneously with transmitters. Data recording will start when the first Tx starts data transmission. The Rx data recording is executed for N records and for the given duration. 
         - Python function: `src/lib/run_rf_data_recorder.py`
+    - **mmWave divices**: The api of mmWave devices including beam formers and UDCs are called by transmitters and receivers. mmWave devices will start before the Tx starts data transmission and before receivers start recording data. mmWave devices will stop after receivers finish recording and transmitters finish data transmission.
+        - Python function: `src/lib/run_mmWave_device.py`
 - **Write Data set to SigMF format**:  For each data recording, data formatting and saving in SigMF format is done. The recorded data set is saved in two files: binary file for IQ data and a JSON file for the metadata. 
     - Python function: `write_rx_recorded_data_in_sigmf.py`
 
@@ -245,6 +308,8 @@ To setup the software of the system, the user has two options:
 [build/docker/README](build/docker/README.md).
 - ***Build and Install UHD Python API Manually***:  Follow the Getting Started Guide instructions in [docs/Getting Started Guide of NI RF Data Recording API.pdf](docs/Getting_Started_Guide_of_NI_RF_Data_Recording_API.pdf). The description of UHD installation test, UHD Python API test, change USRP IP, update UHD FPGA images is also provided.
 
+***Note**: For mmWave solution, software and hardware setup for the beam former and the UDC depend on specific requirements and device operation guide provided by the producer.
+
 ---
 
 ## How to Run NI RF Data Recording API
@@ -252,9 +317,27 @@ After system setup, open the terminal and clone the repository. Then, switch to 
 
 ---
 
+### Pre-requisite for mmWave Support
+The pre-requisites are only necessary when there is a need to support mmWave solution before running the main script. This API uses and is only applicable for specific mmWave devices (TMYTEK-NI mmWave devices) currently.
+
+#### Get the Driver API of mmWave Devices
+To download and install the specific driver version from [GitHub](https://github.com/tmytek/bbox-api/tree/master) that is compatible with the current API, run this command:
+```
+python3.9 rf_data_get_tmytek_api.py
+```
+***Note**: This script can help you to clone the driver from GitHub and copy designated files to the current repository of NI RF Data Recording API in your local machine. Please check the default value of input variables defined in this script and update if required. After executing the above command, "requirements.txt" should be copied into the `src/lib`, which describes all dependencies of the driver. Please double check that you have installed all of listed python packages when set up the environment according to `mmWave Driver API Package Installation` in [docs/Getting Started Guide of NI RF Data Recording API.pdf](docs/Getting_Started_Guide_of_NI_RF_Data_Recording_API.pdf). You can also manually clone the driver and copy to the right place within the current repository in your local machine.
+
+#### Get Necessary Inputs
+Put the required inputs (AAKIT table and calibration table) of the beam former to the [src/files](src/files) folder as it is described in the [README](src/files/README.md).
+
+#### Get Value Limits of Configurations for the Beam Former
+To get value limits of mmwave antenna array parameters before editing the configuration file, you can run the following command:
+```
+python3.9 rf_data_get_mmwave_devices_config_limitation.py
+```
+
 ### Running RF Data Recording API based on Configuration File
 To run the main script using the default configuration file `config/config_rf_data_recording_api.json`, use the following command:
-
 ```
 python3.9 main_rf_data_recording_api.py
 ```
@@ -344,6 +427,10 @@ The figure below shows an example of recorded data sets in SigMF format. The fig
 
 ![Results](docs/figures/example_sigmf_recordings.png  "Results")
 
+For mmWave solution, the figure below shows the corresponding meta-data in SigMF meta-data file.
+
+![Results](docs/figures/mmWave_example_sigmf_recordings.png  "Results")
+
 ---
 
 ### RF Data Pre-Processing
@@ -376,10 +463,14 @@ The following tree shows the RF Data Recording API repository structure:
   │  └─ figures
   ├─ resources  - # For all static resources in the project. For example, images, i.e. spectrogram
   ├─ src/config - # Templates for all API Configurations and wireless link parameter map dictionary
+  ├─ src/files  - # Contains calibration table and AAKIT table of mmWave antenna array
   ├─ src/lib    - # RF Data Recording API library
   ├─ src/tests  - # Contains all tests (test API interfaces, plot spectrogram of Tx waveform, read SigMF metadata)
+  ├─ src/tlk_core_log  - # Contains log of executing api of mmWave devices 
   ├─ src/waveforms  - # Contains all waveforms for 5G NR, LTE, Radar and WiFi
   │  ├─ main_rf_data_recording_api.py   - # Main Script to execute the API in all RF modes, configured via configuration files.
+  │  ├─ rf_data_get_mmwave_devices_config_limitation.py   - # Script to get value limits of mmwave antenna array parameters
+  │  ├─ rf_data_get_tmytek_api.py   - # Script to clone the designated version of driver from GitHub and integrate it.
   │  ├─ rf_replay_data_transmitter_usrp_uhd.py  - # For Tx only, configured via terminal
   │  ├─ rf_data_recorder_usrp_uhd.py    - # For Rx only, configured via terminal 
   │  ├─ rf_data_pre_processing_plot.py  - # Read SigMF metadata and plot time domain and spectrum of recorded IQ data
@@ -388,6 +479,8 @@ The following tree shows the RF Data Recording API repository structure:
   ├─ README.md
   └─ License.md - # MIT License
   ```
+
+***Note**: For mmWave support, after executing the command via [Get the Driver API of mmWave Devices](#get-the-driver-api-of-mmwave-devices), the driver and related dependencies will be copied and integrated to the current RF Data Recording API repository in your local machine.
 
 ---
 
@@ -415,6 +508,8 @@ Note: Maintenance of this Git repository will be done on best effort basis.
 
 ## Known Issues and Limitations
 -	Tested on both X310 and X410 USRP only
+-   For the mmWave support, tested on BBox One 5G and BBox Lite 5G as the beam former, UD Box 5G as the UDC based on the one Tx station and one Rx station. 
+-   Currently, the software mmWave driver version used in the example has restrictions on the calling path, i.e., the relative path cannot be changed, which depends on the updates and iterations by the driver developer.
 
 ---
 

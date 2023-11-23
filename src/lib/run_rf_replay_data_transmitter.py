@@ -1,5 +1,5 @@
 #
-# Copyright 2022 National Instruments Corporation
+# Copyright 2023 National Instruments Corporation
 #
 # SPDX-License-Identifier: MIT
 #
@@ -24,7 +24,7 @@ from nptdms import TdmsFile
 import scipy.io
 
 # import other functions
-from lib import read_waveform_data_interface
+from lib import read_waveform_data_interface, run_mmWave_device
 from lib import sync_settings
 
 # string to boolean
@@ -43,6 +43,13 @@ def rf_replay_data_transmitter(args):
     """
     Run Tx waveform playback
     """
+
+    # Run mmwave devices first if exist
+    if args.enable_mmwave:
+        mmwave_up_down_converter_parameters = args.mmwave_up_down_converter_parameters
+        mmwave_antenna_array_parameters = args.mmwave_antenna_array_parameters
+        run_mmWave_device.start_ud_execution(mmwave_up_down_converter_parameters)
+        run_mmWave_device.start_beamformer(mmwave_antenna_array_parameters)
 
     # Print help message
     print("UHD/RFNoC Replay samples from file ")
@@ -300,5 +307,11 @@ def rf_replay_data_transmitter(args):
 
     print("Stopping replay...")
     replay_ctrl.stop(args.replay_chan)
+
+    # Stop the mmwave devices if exist
+    if args.enable_mmwave:
+        run_mmWave_device.deinit_mmwave_device(mmwave_up_down_converter_parameters.serial_number)
+        run_mmWave_device.deinit_mmwave_device(mmwave_antenna_array_parameters.serial_number)
+
     print("Letting device settle...")
     time.sleep(0.05)  # sleep for 50ms

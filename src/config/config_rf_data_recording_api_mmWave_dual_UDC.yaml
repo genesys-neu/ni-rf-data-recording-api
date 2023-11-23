@@ -1,0 +1,296 @@
+#
+# Copyright 2023 National Instruments Corporation
+#
+# SPDX-License-Identifier: MIT
+#
+# RF Data Collection API Configuration
+#
+# Notes: 
+# - Seqtype: The parameter values can be given in range (start, stop, step), list, or single.
+#
+# =================================================
+# ============= general configuration =============
+# =================================================
+general_config:
+  # Path to store captured rx data, type = str
+  rx_recorded_data_path: "/home/user/workarea/recorded-data/mmwave-recorded-data"
+  # Rx recorded data saving format, type = str, possible values (SigMF)
+  rx_recorded_data_saving_format: "SigMF"
+  # Number of snapshots from RX IQ data acquisition, type= int
+  nrecords: 10
+  # Tx USRPs execution mode: "parallel" or "sequential"
+  # parallel: TX USRPs will transmit their related waveforms simultaneously (in parallel)",
+  # sequential: TX USRPs will transmit their related waveforms one by one in sequential manner: Transmit wavefor1, record IQ data, Transmit waveform2, record...",
+  # Note: If there are more than one RX USRP, they will run in parallel."
+  txs_execution: "parallel"
+  # wireless_link_parameter_map: Parameters pair is given via parameter map dictionary (e.g. RFWS parameter name vs. SigMF meta-data parameter name)
+  wireless_link_parameter_map: "wireless_link_parameter_map.yaml"
+  # Enable or disable console logging: "True" or "False"
+  enable_console_logging: "True"
+  # Author name, handle, email, and/or other ID like Amateur Call Sign. 
+  author: Abdo Gaber
+  # A text description of the SigMF Recording.
+  description: "TRX use case"
+  # captured_data_file_name: user preferred name for rx captured data
+  captured_data_file_name: "rx-waveform-td-rec-"
+  # use timestamp from TX waveform file for RX waveform file instead of generating a recent one
+  use_tx_timestamp: "True"
+  # Enable or disable mmwave support
+  enable_mmwave: "True"
+  # User Comment
+  comment: "Using NI RF Data Recording API"
+
+# ============================================
+# =============== Transmitters   =============
+# ============================================
+transmitters_config:
+  -
+    RFmode: "Tx"  # Tx or Rx, type=str
+    # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
+    type: "x4xx"  # USRP type, for example: x300, x4xx, type=str.
+    IPaddress: "192.168.13.2" # IP address of USRP, type=str.
+    Parameters:
+      freq:       # RF target center frequency in Hz, type = float.
+        SeqType: "range"
+        Values: [3.6e+9,3.6e+9,100.0e+6]
+      lo_offset:  # LO offset in Hz, type=float.
+        SeqType: "single" 
+        Values: 20.0e+6
+      enable_lo_offset:   # Enable LO offset, type: str2bool, True or False.
+        SeqType: "single"
+        Values: "True"
+      rate:       # rate of radio block, type = float.
+        SeqType: "list"
+        Values: [100.0e+6]
+      bandwidth:    # TX analog front-end filter bandwidth in Hz, type = float.
+        # .......... If rate_source --> waveform_config: It will be read from the waveform config file.
+        # .......... If rate_source --> user_defined: The given bandwidth by the user in this config file will be used.
+        SeqType: "list"
+        Values: [100.0e+6]
+      rate_source:  # waveform_config: The rate will be read from the waveform config file.
+      # ............ user_defined: The given rate by the user in this config file will be used.
+        SeqType: "single"
+        Values: "waveform_config"
+      waveform_generator:
+      # waveform_generator: Name of waveform generator, name should be added to wireless_link_parameter_map.yaml"
+        SeqType: "single"
+        Values: "5gnr_ni_rfmx_rfws"
+      waveform_file_name: # TX waveform file name without extension, type = str
+        # Example: "NR_FR1_DL_FDD_SISO_BW-20MHz_CC-1_SCS-30kHz_Mod-64QAM_OFDM_TM3.1(.tdms)",
+        # ........ "IEEE_tx11ac_legacy_20MHz_80MSps_MCS7_27bytes_1frame (folder name), waveform in ssb_str.mat".
+        SeqType: "list"
+        Values: ["NR_FR1_DL_FDD_SISO_BW-10MHz_CC-1_SCS-30kHz_OFDM_TM2"]
+      waveform_path:    # Path to tx waveform file or folder, type = str.
+        SeqType: "single"
+        Values: "waveforms/nr/"
+      waveform_path_type:    # Path type: relative or absolute 
+        #...absolute: Full path to waveform should be given to use waveforms from another directory,
+        #...relative: path related to waveform folder given with the API, i.e waveforms/nr/",
+        SeqType: "single"
+        Values: "relative"
+      waveform_format:  # Possible values: tdms, matlab_ieee, or matlab, type = str.
+        SeqType: "single"
+        Values: "tdms"
+      gain:     # Gain for the RF chain, type = float.
+        SeqType: "list"
+        Values: [20]
+      antenna:  # TX antenna selection (TX/RX), type = str.
+        SeqType: "list"
+        Values: ["TX/RX"]
+    mmwave_antenna_array_parameters:
+      # serial number of mmWave analog beamformer (eg. BBox One/Lite) or up down converter, type = str
+      serial_number: 
+        SeqType: "single"
+        Values: "D2251E045-28"
+      # file name of array antenna table recorded basic information about the array antenna, type = str
+      antenna_array_specification_table: 
+        SeqType: "single"
+        Values: "AAKIT_TMYTEK_28ONE_4x4_C2250E048-28.csv"
+      # operating frequency of mmWave analog beamformer or RF frequency of mmWave up down converter, type = float
+      rf_frequency: 
+        SeqType: "single"
+        Values: 28.0e+9
+      # Indicate different method to configure the beamformer using 'per_antenna_element' and 'target_beam_properties', type = str
+      # ..per_antenna_element: configure with gains and phases per channel and can also disable channels
+      # ..target_beam_properties: set target beam angles (patterns) with target azimuth, elevation angles and a target gain (for the main lobe)
+      beamformer_config_mode: 
+        SeqType: "single"
+        Values: "target_beam_properties"
+      # channel indexes (starts from 1) powered off of mmWave analog beamformer, when no channels are disabled the string should be empty, type = str
+      disabled_antenna_elements: 
+        SeqType: "single"
+        Values: ""
+      # gain (db) (eg. 10.5 ) for each channels of mmWave analog beamformer. Take effect in 'per_antenna_element' mode, type = str
+      antenna_element_gain_list: 
+          SeqType: "single"
+          Values: "10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0"
+      # phase (deg) (0 to 360) for each channels of mmWave analog beamformer. Take effect in 'per_antenna_element' mode, type = str
+      antenna_element_phase_list_deg: 
+        SeqType: "single"
+        Values: "40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40"
+      # target resulting beamformer gain in the beam pattern main lobe (db) of mmWave analog beamformer. Take effect in 'target_beam_properties' mode, type = float
+      beam_gain_db: 
+        SeqType: "single"
+        Values: 9.0
+      # beam steering angle (Theta deg) between the positive Z-axis and the vector of mmWave analog beamformer. Take effect in 'target_beam_properties' mode, type = int
+      beam_angle_elevation_deg: 
+        SeqType: "single"
+        Values: 0
+      # beam steering angle (Phi deg) between the projection of the vector of mmWave analog beamformer onto the xy-plane and the positive X-axis. Take effect in 'target_beam_properties' mode, type = int
+      beam_angle_azimuth_deg: 
+        SeqType: "single"
+        Values: 0
+    mmwave_up_down_converter_parameters:
+      # serial number of mmWave analog beamformer (eg. BBox One/Lite) or up down converter, type = str
+      serial_number: 
+        SeqType: "single"
+        Values: "UD-BD22460031-24"
+      num_channels:  # The number of channels for the mmwave up down converter, type = int
+        SeqType: "single"
+        Values: 2
+      if_frequency:  # IF frequency (Hz) of mmWave up down converter, type = int
+        SeqType: "single"
+        Values: 3.6e+9
+      rf_frequency:   # RF frequency (Hz) of mmWave up down converter, type = int
+        SeqType: "single"
+        Values: 28.0e+9
+      lo_frequency:  # LO frequency (Hz) of mmWave up down converter, type = int
+        SeqType: "single"
+        Values: 31.6e+9
+      bandwidth:   # Bandwidth (Hz) of mmWave up down converter, type = int
+        SeqType: "single"
+        Values: 100.0e+6
+      disabled_channels:  # Channel indexes (starts from 1) powered off of mmWave up down converter, when no channels are disabled the string should be empty, type = str
+        SeqType: "single"
+        Values: ""
+      enable_10MHz_clock_out:  # Enable 10MHz clock out, type = str2bool, True or False.
+        SeqType: "single"
+        Values: "False"
+      enable_100MHz_clock_out:  # Enable 100MHz clock out, type = str2bool, True or False.
+        SeqType: "single"
+        Values: "False"
+      # when use external clock, 'enable_100MHz_clock_out' should be False, type = str
+      clock_reference_100MHz:  # 100MHz clock reference source (internal, external), type = str.
+        SeqType: "single"
+        Values: "internal"
+      enable_5V_out:  # Enable 5V out
+        SeqType: "single"
+        Values: "False"
+      enable_9V_out:  # Enable 9V out
+        SeqType: "single"
+        Values: "False"
+common_transmitters_config:
+  tx_clock_reference:   # Tx sync reference source (internal, external, gpsdo), type = str.
+    SeqType: "list"
+    Values: ["internal"]
+  tx_radio_id:    # radio block to use (e.g., 0 or 1), type = in.
+    SeqType: "list"
+    Values: [0]
+  tx_radio_chan:  # radio channel to use, type = int.
+    SeqType: "list"
+    Values: [0]
+  tx_replay_id:   # replay block to use (e.g., 0 or 1), type = int.
+    SeqType: "list"
+    Values: [0]
+  tx_replay_chan: # replay channel to use, type = int.
+    SeqType: "list"
+    Values: [0]
+  tx_duc_chan:    # duc channel to use, type = int.
+    SeqType: "list"
+    Values: [0]
+  tx_duc_id:    # duc id to use, type = int.
+    SeqType: "list"
+    Values: [0]
+# ============================================
+# ================== Receivers   =============
+# ============================================
+receivers_config:
+  -
+    RFmode: "Rx"    # Tx or Rx, type=str.
+    # USRP type and IPaddress will be used to create Device args to use when connecting to the USRP.
+    type: "x4xx"    # USRP type, for example: x300,x4xx, type=str.
+    IPaddress: "192.168.11.2" # IP address of USRP, type=str.
+    Parameters:
+      freq:         # RF target center frequency in Hz, type = float.
+        SeqType: "range"
+        Values: [3.6e+9,3.6e+9,100.0e+6]
+      rate:         # rate of radio block, type = float.
+        SeqType: "list"
+        Values: [100.0e+6]
+      bandwidth:  # For future use
+        SeqType: "list"
+        Values: [100.0e+6]
+      rate_source:  # waveform_config: The rate will be read from the waveform config file.
+      # ............................in case of multi TX, the maximum rate will be used.
+      # ............ user_defined: The given rate by the user in this config file will be used.
+        SeqType: "single"
+        Values: "waveform_config"
+      gain:       # Gain for the RF chain in dB, type = float.
+        SeqType: "list"
+        Values: [20]
+      channels:   # Rx Channel selection (X310: 0,1) or (X410: 0,1,2,3).
+        SeqType: "list"
+        Values: [0]
+      antenna:    # RX antenna selection (TX/RX, RX2), type = str.
+        SeqType: "list"
+        Values: ["TX/RX"]
+      clock_reference:  # Rx sync reference source (internal, external, gpsdo), type = str.
+        SeqType: "list"
+        Values: ["internal"]
+      duration:   # Rx Time duration of IQ data acquisition, type=float.
+        SeqType: "list"
+        Values: [0.006]
+      channel_attenuation_db: # Expected channel attenuation in dB, type = float.
+        SeqType: "single"
+        Values: 33.0
+    mmwave_antenna_array_parameters:
+      # serial number of mmWave analog beamformer (eg. BBox One/Lite) or up down converter, type = str
+      serial_number: 
+        SeqType: "single"
+        Values: "D2310L005-28"
+      # file name of array antenna table recorded basic information about the array antenna, type = str
+      antenna_array_specification_table: 
+        SeqType: "single"
+        Values: "AAKIT_TMYTEK_28LITE_4x4_2303-28AK344A-005.csv"
+      # operating frequency of mmWave analog beamformer or RF frequency of mmWave up down converter, type = float
+      rf_frequency: 
+        SeqType: "single"
+        Values: 28.0e+9
+      # Indicate different method to configure the beamformer using 'per_antenna_element' and 'target_beam_properties', type = str
+      # ..per_antenna_element: configure with gains and phases per channel and can also disable channels
+      # ..target_beam_properties: set target beam angles (patterns) with target azimuth, elevation angles and a target gain (for the main lobe)
+      beamformer_config_mode: 
+        SeqType: "single"
+        Values: "target_beam_properties"
+      # channel indexes (starts from 1) powered off of mmWave analog beamformer, when no channels are disabled the string should be empty, type = str
+      disabled_antenna_elements: 
+        SeqType: "single"
+        Values: ""
+      # gain (db) (eg. 10.5 ) for each channels of mmWave analog beamformer. Take effect in 'per_antenna_element' mode, type = str
+      antenna_element_gain_list: 
+          SeqType: "single"
+          Values: "10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0"
+      # phase (deg) (0 to 360) for each channels of mmWave analog beamformer. Take effect in 'per_antenna_element' mode, type = str
+      antenna_element_phase_list_deg: 
+        SeqType: "single"
+        Values: "40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40"
+      # target resulting beamformer gain in the beam pattern main lobe (db) of mmWave analog beamformer. Take effect in 'target_beam_properties' mode, type = float
+      beam_gain_db: 
+        SeqType: "single"
+        Values: 13.0
+      # beam steering angle (Theta deg) between the positive Z-axis and the vector of mmWave analog beamformer. Take effect in 'target_beam_properties' mode, type = int
+      beam_angle_elevation_deg: 
+        SeqType: "single"
+        Values: 0
+      # beam steering angle (Phi deg) between the projection of the vector of mmWave analog beamformer onto the xy-plane and the positive X-axis. Take effect in 'target_beam_properties' mode, type = int
+      beam_angle_azimuth_deg: 
+        SeqType: "single"
+        Values: 0
+    mmwave_up_down_converter_parameters:
+      # serial number of mmWave analog beamformer (eg. BBox One/Lite) or up down converter, type = str
+      serial_number: 
+        SeqType: "single"
+        Values: "UD-BD22460031-24"
+      num_channels:  # The number of channels for the mmwave up down converter, type = int
+        SeqType: "single"
+        Values: 2

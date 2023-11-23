@@ -1,5 +1,5 @@
 #
-# Copyright 2022 National Instruments Corporation
+# Copyright 2023 National Instruments Corporation
 #
 # SPDX-License-Identifier: MIT
 #
@@ -35,6 +35,8 @@ general_config:
   captured_data_file_name: "rx-waveform-td-rec-"
   # use timestamp from TX waveform file for RX waveform file instead of generating a recent one
   use_tx_timestamp: "False"
+  # Enable or disable mmwave support
+  enable_mmwave: "False"
   # User Comment
   comment: "Using NI RF Data Recording API"
 # ============================================

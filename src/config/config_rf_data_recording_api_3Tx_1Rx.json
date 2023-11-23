@@ -1,6 +1,6 @@
 {   "possible_values":[
     "",
-    "Copyright 2022 National Instruments Corporation",
+    "Copyright 2023 National Instruments Corporation",
     "",
     "SPDX-License-Identifier: MIT",
     "",
@@ -19,7 +19,8 @@
     "description: user description for the test case",
     "captured_data_file_name: user preferred name for rx captured data",
     "comment: user comment",  
-    "use_tx_timestamp: boolean, enable it if API is integrated to system", 
+    "use_tx_timestamp: boolean, enable it if API is integrated to system",
+    "enable_mmwave: True or False, enable mmwave support",
     "DeviceName: Arbitrary device name, type=str",
     "RFmode:Tx or Rx, type=str",
     "type: USRP type, for example: x300, x4xx, type=str",
@@ -58,7 +59,30 @@
     "tx_replay_id:replay block to use (e.g., 0 or 1), type = int",
     "tx_replay_chan: replay channel to use, type = int ",
     "tx_duc_chan: duc channel to use, type = int ",
-    "tx_duc_id: duc id to use, type = int "
+    "tx_duc_id: duc id to use, type = int ",
+    "serial_number: serial number of mmWave analog beamformer (eg. BBox One/Lite) or up down converter, type = str",
+    "antenna_array_specification_table: file name of array antenna table recorded basic information about the array antenna, type = str",
+    "rf_frequency: operating frequency of mmWave analog beamformer or RF frequency of mmWave up down converter, type = float ",
+    "beamformer_config_mode: Indicate different method to configure the beamformer using 'per_antenna_element' and 'target_beam_properties', type = str ",
+    "......................per_antenna_element: configure with gains and phases per channel and can also disable channels",
+    "......................target_beam_properties: set target beam angles (patterns) with target azimuth, elevation angles and a target gain (for the main lobe)",
+    "disabled_antenna_elements: channel indexes (starts from 1) powered off of mmWave analog beamformer, when no channels are disabled the string should be empty, type = str",
+    "antenna_element_gain_list: gain (db) (eg. 10.5 ) for each channels of mmWave analog beamformer. Take effect in 'per_antenna_element' mode, type = str ",
+    "antenna_element_phase_list_deg: phase (deg) (0 to 360) for each channels of mmWave analog beamformer. Take effect in 'per_antenna_element' mode, type = str ",
+    "beam_gain_db: target resulting beamformer gain in the beam pattern main lobe (db) of mmWave analog beamformer. Take effect in 'target_beam_properties' mode, type = float ",
+    "beam_angle_elevation_deg: beam steering angle (Theta deg) between the positive Z-axis and the vector of mmWave analog beamformer. Take effect in 'target_beam_properties' mode, type = int ",
+    "beam_angle_azimuth_deg: beam steering angle (Phi deg) between the projection of the vector of mmWave analog beamformer onto the xy-plane and the positive X-axis. Take effect in 'target_beam_properties' mode, type = int ",
+    "num_channels: The number of channels for the mmwave up down converter, type = int ",
+    "if_frequency: IF frequency (Hz) of mmWave up down converter, type = int",
+    "rf_frequency: RF frequency (Hz) of mmWave up down converter, type = int",
+    "lo_frequency: LO frequency (Hz) of mmWave up down converter, type = int",
+    "bandwidth: bandwidth (Hz) of mmWave up down converter, type = int",
+    "disabled_channels: channel indexes (starts from 1) powered off of up down converter, empty string means no channels are disabled, type = str",
+    "enable_10MHz_clock_out: True or False, 10 MHz reference source output enable of mmWave up down converter which is available for synchronizing with clock source of other device",
+    "enable_100MHz_clock_out: True or False, 100 MHz reference source output enable of mmWave up down converter, when True, 'clock_reference_100MHz' should be 'internal'",
+    "clock_reference_100MHz: 'internal' or 'external', use internal or external 100 MHz reference clock source of mmWave up down converter, when use external clock, 'enable_100MHz_clock_out' should be False, type = str",
+    "enable_5V_out: True or False, output 5V power enable of mmWave up down converter",
+    "enable_9V_out: True or False, output 9V power enable of mmWave up down converter"
     ],
     "general_config": {
       "rx_recorded_data_path": "/home/user/workarea/recorded-data",
@@ -71,7 +95,8 @@
       "description": "CBRS use case", 
       "captured_data_file_name": "rx-waveform-td-rec-", 
       "comment": "Using NI RF Data Recording API",
-      "use_tx_timestamp": "False"
+      "use_tx_timestamp": "False",
+      "enable_mmwave": "False"
     },
     "transmitters_config": [
       {

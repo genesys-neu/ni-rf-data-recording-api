@@ -1,5 +1,5 @@
 #
-# Copyright 2022 National Instruments Corporation
+# Copyright 2023 National Instruments Corporation
 #
 # SPDX-License-Identifier: MIT
 #
@@ -31,12 +31,25 @@ import time
 from termcolor import colored, cprint
 
 # import related functions
-from lib import write_rx_recorded_data_in_sigmf
+from lib import write_rx_recorded_data_in_sigmf, run_mmWave_device
 from lib import sync_settings
-
 
 def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
     """RX Data Recorder"""
+
+    # Run mmwave devices first if exist
+    if rx_args.enable_mmwave:
+        start_ud_execution_called = True
+        mmwave_up_down_converter_parameters = rx_args.mmwave_up_down_converter_parameters
+        mmwave_antenna_array_parameters = rx_args.mmwave_antenna_array_parameters
+        for tx_args in txs_args:
+            if (mmwave_up_down_converter_parameters.serial_number ==
+                    tx_args.mmwave_up_down_converter_parameters.serial_number):
+                start_ud_execution_called = False
+                break
+        if start_ud_execution_called:
+            run_mmWave_device.start_ud_execution(mmwave_up_down_converter_parameters)
+        run_mmWave_device.start_beamformer(mmwave_antenna_array_parameters)
 
     # Check if motherboard type is x4xx
     isX4xx = bool(rx_args.hw_type.find("x4xx"))
@@ -161,3 +174,8 @@ def rf_data_recorder(rx_args, txs_args, general_config, rx_data_nbytes_que):
 
     # Send command to TX thread to stop data transmission
     sync_settings.stop_tx_signal_called = True
+
+    if rx_args.enable_mmwave:
+        if start_ud_execution_called:
+            run_mmWave_device.deinit_mmwave_device(mmwave_up_down_converter_parameters.serial_number)
+        run_mmWave_device.deinit_mmwave_device(mmwave_antenna_array_parameters.serial_number)

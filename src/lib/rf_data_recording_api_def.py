@@ -1,5 +1,5 @@
 #
-# Copyright 2022 National Instruments Corporation
+# Copyright 2023 National Instruments Corporation
 #
 # SPDX-License-Identifier: MIT
 #
@@ -21,6 +21,7 @@ from pathlib import Path
 import pandas as pd
 import uhd
 import math
+import lib.run_rf_replay_data_transmitter
 
 # to read tdms properties from rfws file
 # https://www.datacamp.com/community/tutorials/python-xml-elementtree
@@ -37,6 +38,8 @@ from lib import run_rf_replay_data_transmitter
 from lib import run_rf_data_recorder
 from lib import sync_settings
 from lib import rf_data_recording_config_interface
+from lib.run_mmWave_device import get_device_type, get_device_name
+from lib.data_format_conversion_lib import str2bool, str2list
 
 
 class RFDataRecorderAPI:
@@ -55,6 +58,70 @@ class RFDataRecorderAPI:
     modulation_schemes = {"1": "BPSK", "2": "QPSK", "4": "16QAM", "6": "64QAM", "8": "256QAM"}
     RFmode = ["Tx", "Rx"]
     API_operation_modes = ["Tx-only", "Rx-only", "Tx-Rx"]
+
+    # Define mmWave Array Antenna Class for RF Data Recording API Config Parameters
+    class MMWaveAntennaArrayConfig:
+        """mmWave Antenna Array Config class"""
+
+        def __init__(self, iteration_config, usrp_id, rf_mode):
+            device_id = usrp_id + "_" + "mmwave_antenna_array" + "_"
+            self.rf_mode = rf_mode
+            self.serial_number = iteration_config[device_id + "serial_number"]
+            self.device_type = iteration_config[device_id + "device_type"]
+            self.antenna_array_specification_table = iteration_config[device_id + "antenna_array_specification_table"]
+            self.rf_frequency = iteration_config[device_id + "rf_frequency"]
+            self.beamformer_config_mode = iteration_config[device_id + "beamformer_config_mode"]
+            self.disabled_antenna_elements = str2list(iteration_config[device_id + "disabled_antenna_elements"], int)
+            self.antenna_element_gain_list = str2list(iteration_config[device_id + "antenna_element_gain_list"], float)
+            self.antenna_element_phase_list_deg = str2list(iteration_config[device_id + "antenna_element_phase_list_deg"], int)
+            self.beam_gain_db = iteration_config[device_id + "beam_gain_db"]
+            self.beam_angle_elevation_deg = int(iteration_config[device_id + "beam_angle_elevation_deg"])
+            self.beam_angle_azimuth_deg = int(iteration_config[device_id + "beam_angle_azimuth_deg"])
+
+    # Define mmWave Up Down Converter Class for RF Data Recording API Config Parameters
+    class MMWaveUpDownConverterConfig:
+        """mmWave Up Down Converter Config class"""
+
+        def __init__(self, iteration_config, usrp_id):
+            device_id = usrp_id + "_" + "mmwave_up_down_converter" + "_"
+            self.serial_number = iteration_config[device_id + "serial_number"]
+            self.num_channels = int(iteration_config[device_id + "num_channels"])
+            '''
+            Find the correct device_id of dual channel ud converter shared for both Tx and Rx in Tx config for Rx config
+            Steps: 
+            1. when the num_channels of ud converter is 2 in RX loop, check the number of parameters of ud converter
+            2. if there are only two parameters exist: serial_number, num_channels, find the correct device_id
+            '''
+            if self.num_channels == 2 and usrp_id.startswith(RFDataRecorderAPI.RFmode[1]):
+                device_id_prefix_columns = [col for col in iteration_config.index if col.startswith(device_id)]
+                if len(device_id_prefix_columns) == 2:
+                    device_id = self.mapping_with_tx_config(iteration_config, self.serial_number)
+                    if device_id is None:
+                        raise Exception(
+                            f"ERROR: The serial number {self.serial_number} of ud converter in rx loop is different with tx.")
+            self.device_type = iteration_config[device_id + "device_type"]
+            self.if_frequency = iteration_config[device_id + "if_frequency"]
+            self.rf_frequency = iteration_config[device_id + "rf_frequency"]
+            self.lo_frequency = iteration_config[device_id + "lo_frequency"]
+            self.bandwidth = iteration_config[device_id + "bandwidth"]
+            self.disabled_channels = str2list(iteration_config[device_id + "disabled_channels"], int)
+            self.enable_10MHz_clock_out = iteration_config[device_id + "enable_10MHz_clock_out"]
+            self.enable_100MHz_clock_out = iteration_config[device_id + "enable_100MHz_clock_out"]
+            self.clock_reference_100MHz = iteration_config[device_id + "clock_reference_100MHz"]
+            self.enable_5V_out = iteration_config[device_id + "enable_5V_out"]
+            self.enable_9V_out = iteration_config[device_id + "enable_9V_out"]
+
+        # Get device_id of Tx ud converter containing extra config which is same with Rx via serial_number value
+        def mapping_with_tx_config(self, iteration_config, serial_number):
+            # get the list of columns of which the value is serial_number
+            matching_indexes = iteration_config.index[iteration_config == serial_number].tolist()
+            for index in matching_indexes:
+                if index.startswith(RFDataRecorderAPI.RFmode[0]) and index.endswith("serial_number"):
+                    start_index = index.rfind("serial_number")
+                    device_id = index[:start_index]
+                    return device_id
+                else:
+                    return None
 
     # Define TX Class for RF Data Reecording API Config Parameters
     class TxRFDataRecorderConfig:
@@ -129,6 +196,16 @@ class RFDataRecorderAPI:
             waveform_config = {}
             self.waveform_config = waveform_config
 
+            self.enable_mmwave = False
+            if str2bool(general_config["enable_mmwave"]):
+                self.enable_mmwave = True
+                self.mmwave_antenna_array_parameters = RFDataRecorderAPI.MMWaveAntennaArrayConfig(
+                    iteration_config,
+                    tx_id,
+                    RFDataRecorderAPI.RFmode[0])
+                self.mmwave_up_down_converter_parameters = RFDataRecorderAPI.MMWaveUpDownConverterConfig(
+                    iteration_config, tx_id)
+
     # Define RX Class for RX Config Parameters
     class RxRFDataRecorderConfig:
         """Rx RFDataRecorder Config class"""
@@ -185,6 +262,16 @@ class RFDataRecorderAPI:
             # channel parameters of this RX
             # expected channel atteuntion, type = float"
             self.channel_attenuation_db = iteration_config[rx_id + "_channel_attenuation_db"]
+
+            self.enable_mmwave = False
+            if str2bool(general_config["enable_mmwave"]):
+                self.enable_mmwave = True
+                self.mmwave_antenna_array_parameters = RFDataRecorderAPI.MMWaveAntennaArrayConfig(
+                    iteration_config,
+                    rx_id,
+                    RFDataRecorderAPI.RFmode[1])
+                self.mmwave_up_down_converter_parameters = RFDataRecorderAPI.MMWaveUpDownConverterConfig(
+                    iteration_config, rx_id)
 
     ## Get Hw type, subtype and HW ID of TX and RX stations
     # For USRP:
@@ -255,6 +342,55 @@ class RFDataRecorderAPI:
 
             return variations_product
 
+        def add_mmwave_hw_type(RFmode, idx, variations_product, device_name):
+            hw_type_index = RFmode + str(idx) + "_hw_type"
+            variations_product[hw_type_index] = variations_product[hw_type_index] + " + " + device_name
+            return variations_product
+
+        def get_mmwave_device_info(num_usrps, RFmode, variations_product):
+            for n in range(num_usrps):
+                idx = n + 1
+                # mmwave beam former
+                device_id_beam_former = RFmode + str(idx) + "_mmwave_antenna_array_"
+                serial_number_list_beam_former = variations_product[device_id_beam_former + "serial_number"]
+                serial_number_beam_former = serial_number_list_beam_former[0]
+                device_name_beam_former = get_device_name(serial_number_beam_former)
+                # Add mmwave device name to hw_type
+                variations_product = add_mmwave_hw_type(RFmode, idx, variations_product, device_name_beam_former)
+                # Add device type
+                device_type_beam_former = get_device_type(serial_number_beam_former)
+                if device_type_beam_former is None:
+                    raise Exception(
+                        f"ERROR: The device type of beam former can't be found. SN: {serial_number_beam_former}")
+                else:
+                    data_frame_i = pd.DataFrame({device_id_beam_former + "device_type": [device_type_beam_former]})
+                    variations_product = variations_product.merge(data_frame_i, how="cross")
+
+                # mmwave ud converter
+                device_id_ud_converter = RFmode + str(idx) + "_mmwave_up_down_converter_"
+                serial_number_list_ud_converter = variations_product[device_id_ud_converter + "serial_number"]
+                serial_number_ud_converter = serial_number_list_ud_converter[0]
+                device_name_ud_converter = get_device_name(serial_number_ud_converter)
+                # Add mmwave device name to hw_type
+                variations_product = add_mmwave_hw_type(RFmode, idx, variations_product,
+                                                        device_name_ud_converter)
+                # Add device type
+                num_channels = int(variations_product[device_id_ud_converter + "num_channels"][0])
+                if RFmode == RFDataRecorderAPI.RFmode[1] and num_channels == 2:
+                    device_id_prefix_columns = [col for col in variations_product.columns if
+                                                col.startswith(device_id_ud_converter)]
+                    # no need to find device type for rx dual udc which has only 2 params
+                    if len(device_id_prefix_columns) == 2:
+                        continue
+                device_type_ud_converter = get_device_type(serial_number_ud_converter)
+                if device_type_ud_converter is None:
+                    raise Exception(
+                        f"ERROR: The device type of ud converter can't be found. SN: {serial_number_ud_converter}")
+                else:
+                    data_frame_i = pd.DataFrame({device_id_ud_converter + "device_type": [device_type_ud_converter]})
+                    variations_product = variations_product.merge(data_frame_i, how="cross")
+            return variations_product
+
         # get hW info of TX Stations
         num_tx_usrps = int(general_config["num_tx_usrps"])
         if num_tx_usrps > 0:
@@ -262,6 +398,9 @@ class RFDataRecorderAPI:
             variations_product = get_usrp_mboard_info(
                 num_tx_usrps, RFDataRecorderAPI.RFmode[0], variations_product
             )
+            if str2bool(general_config["enable_mmwave"][0]):
+                variations_product = get_mmwave_device_info(
+                    num_tx_usrps, RFDataRecorderAPI.RFmode[0], variations_product)
 
         # get hW info of RX Stations
         num_rx_usrps = int(general_config["num_rx_usrps"])
@@ -270,6 +409,10 @@ class RFDataRecorderAPI:
             variations_product = get_usrp_mboard_info(
                 num_rx_usrps, RFDataRecorderAPI.RFmode[1], variations_product
             )
+            if str2bool(general_config["enable_mmwave"][0]):
+                variations_product = get_mmwave_device_info(
+                    num_rx_usrps, RFDataRecorderAPI.RFmode[1], variations_product
+                )
 
         if enable_console_logging:
             print("Updated variations cross product including Tx and RX stations HW info: ")
