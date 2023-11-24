@@ -116,7 +116,7 @@ Ensure your host has enough free disk space and RAM.
 To support mmWave research, mmWave devices are required that include the mmWave beam formers and up/down frequency converters (UDC) either the Dual channel or the Single channel type.
 
 The following figure shows the setup using mmWave devices (two beam formers and one dual channel UDC) of TMYTEK-NI for a single Tx station and Rx station.
-![mmWave Hardware](docs/figures/mmWave_dual_ud_setup.png "Hardware Configuration with mmWave supported")
+![mmWave Hardware](docs/figures/mmWave_dual_ud_setup.PNG "Hardware Configuration with mmWave supported")
 
 The following table presents the required hardware for this configuration.
 | Item    					| Number	| 
@@ -132,7 +132,7 @@ The following table presents the required hardware for this configuration.
 | UD Box 5G	                | 1     	|
 
 The following figure shows the setup using mmWave devices (two beam formers and two single channel UDC) of TMYTEK-NI for a single Tx station and Rx station.
-![mmWave Hardware](docs/figures/mmWave_single_ud_setup.png "Hardware Configuration with mmWave supported")
+![mmWave Hardware](docs/figures/mmWave_single_ud_setup.PNG "Hardware Configuration with mmWave supported")
 
 The following table presents the required hardware for this configuration.
 | Item    					| Number	| 
@@ -165,7 +165,7 @@ By using a few clicks, the RF Data Recording API can generate real-world RF data
 
 The following figure shows the reference architecture of NI RF Data Recording API including mmWave solution.
 
-![RF Data Recording API Reference Architecture with mmWave Solution](docs/figures/mmwave_rf_data_recording_reference_architecture.png "RF Data Recording API Reference Architecture with mmWave Solution")
+![RF Data Recording API Reference Architecture with mmWave Solution](docs/figures/mmwave_rf_data_recording_reference_architecture.PNG "RF Data Recording API Reference Architecture with mmWave Solution")
 ***Note**: The update involves incorporating mmWave devices into the API loop, which are compatible with the existing inputs and outputs of the mmWave solution.
 
 ---
@@ -429,7 +429,7 @@ The figure below shows an example of recorded data sets in SigMF format. The fig
 
 For mmWave solution, the figure below shows the corresponding meta-data in SigMF meta-data file.
 
-![Results](docs/figures/mmWave_example_sigmf_recordings.png  "Results")
+![Results](docs/figures/mmWave_example_sigmf_recordings.PNG  "Results")
 
 ---
 
