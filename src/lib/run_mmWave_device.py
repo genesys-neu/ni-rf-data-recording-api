@@ -72,6 +72,7 @@ def start_ud_execution(config):
             # init channels
             disabled_channels = config.disabled_channels
             # enable all channels by default
+            current_state = service.getUDState(sn)  # the state has to get before set
             service.setUDState(sn, 1, UDState.CH1)
             service.setUDState(sn, 1, UDState.CH2)
             # disable selected channels

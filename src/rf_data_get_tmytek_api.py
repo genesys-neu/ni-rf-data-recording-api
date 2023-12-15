@@ -65,8 +65,8 @@ def copy_api_to_rf_repo(target_root_path, api_folder_path):
     requirement_txt = api_folder_path + "/requirements.txt"
 
     shutil.copytree(api_lib, target_lib, dirs_exist_ok=True)  # copy lib
-    shutil.copy(api_logging_config_file, target_root_path) # copy logging.conf
-    shutil.copy(requirement_txt, target_lib) # copy requirements.txt
+    shutil.copy(api_logging_config_file, target_root_path)  # copy logging.conf
+    shutil.copy(requirement_txt, target_lib)  # copy requirements.txt
     print("TMYTek API copy and merge finished")
 
 
@@ -79,9 +79,9 @@ def main():
 
 
 if __name__ == "__main__":
-    github_repo_url = "https://github.com/tmytek/bbox-api.git" # Url of GitHub repo for the device
-    tag = "v1.7.3" # Tag version of the repo
-    tmytek_api_target_folder = "/home/user/tmytek_api"  # This folder should not exist before running
-    tmytek_api_relative_path = "/example_Linux/TLKCore_release/" # Relative path of the target released linux api
-    tmytek_api_file_name = "TLKCore_v1.1.4_Linux_Python3.8-64bit" # Target file name of the api
+    github_repo_url = "https://github.com/tmytek/tlkcore-examples.git"  # Url of GitHub repo for the device
+    tag = "v2.0.0"  # Tag version of the repo
+    tmytek_api_target_folder = "/home/mmwave/tmytek_api/v200"  # This folder should not exist before running
+    tmytek_api_relative_path = "/release/"  # Relative path of the target released linux api
+    tmytek_api_file_name = "TLKCore_v1.2.0_Linux_Python3.8-64bit"  # Target file name of the api
     main()
